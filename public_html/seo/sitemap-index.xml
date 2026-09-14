@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Static pages sitemap -->
+  <sitemap>
+    <loc>https://www.kampkiepie.co.za/sitemap.xml</loc>
+    <lastmod>2026-08-24</lastmod>
+  </sitemap>
+
+  <!-- Resort profiles sitemap -->
+  <sitemap>
+    <loc>https://www.kampkiepie.co.za/sitemap-resorts.xml</loc>
+    <lastmod>2026-08-24</lastmod>
+  </sitemap>
+
+</sitemapindex>

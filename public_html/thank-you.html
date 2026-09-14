@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">	
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Application Received | KampKiepie</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #173B2C; --orange: #F97316; --orange-light: #fb923c;
+      --cream: #FBF6EC; --text: #1a1a1a; --muted: #6b7280; --white: #ffffff;
+      --radius: 12px; --shadow: 0 4px 24px rgba(23,59,44,0.10);
+    }
+    body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    nav { background: var(--green); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .nav-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--cream); text-decoration: none; }
+    .nav-logo span { color: var(--orange); }
+
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 48px 20px; }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .card-top {
+      background: var(--green);
+      padding: 48px 36px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-top::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 0%, rgba(249,115,22,0.15) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .checkmark {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(249,115,22,0.15);
+      border: 2px solid rgba(249,115,22,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+    }
+    .card-top h1 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 1.7rem;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .card-top h1 span { color: var(--orange); }
+    .card-top p {
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.65);
+      max-width: 360px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .card-body { padding: 32px 36px 36px; }
+
+    .what-next {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .next-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .next-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .next-body strong {
+      display: block;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--green);
+      margin-bottom: 2px;
+    }
+    .next-body span { font-size: 0.82rem; color: var(--muted); }
+
+    .divider { border: none; border-top: 1px solid #e8e0d0; margin: 0 0 24px; }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 13px 32px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    .cta-btn:hover { background: var(--orange-light); }
+    .cta-note { font-size: 0.78rem; color: var(--muted); margin-top: 12px; }
+
+    footer { background: var(--green); color: rgba(255,255,255,0.5); text-align: center; padding: 16px 32px; font-size: 0.76rem; flex-shrink: 0; }
+    footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+
+    @media (max-width: 520px) {
+      .card-top { padding: 36px 24px 32px; }
+      .card-body { padding: 24px 24px 28px; }
+      nav { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://www.kampkiepie.co.za">Kamp<span>Kiepie</span></a>
+</nav>
+
+<main>
+  <div class="card">
+    <div class="card-top">
+      <div class="checkmark">🎉</div>
+      <h1>Application <span>received!</span></h1>
+      <p>Thanks for applying to join KampKiepie. We've sent a confirmation to your email and our team will be in touch within 1 business day.</p>
+    </div>
+    <div class="card-body">
+      <div class="what-next">
+        <div class="next-item">
+          <div class="next-num">1</div>
+          <div class="next-body">
+            <strong>Check your inbox</strong>
+            <span>A confirmation copy has been sent to your email address.</span>
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">2</div>
+          <div class="next-body">
+            <strong>We set up your listing</strong>
+            <span>Our team will contact you to confirm details and build your resort profile.</span>
+          </div>
+        </div>
+        <div class="next-item">
+          <div class="next-num">3</div>
+          <div class="next-body">
+            <strong>Go live and start referring</strong>
+            <span>Once live, share your unique referral link with fellow resort owners to reduce your commission rate.</span>
+          </div>
+        </div>
+      </div>
+      <hr class="divider" />
+      <a class="cta-btn" href="https://www.kampkiepie.co.za">Explore KampKiepie →</a>
+      <p class="cta-note">Questions? Email us at <a href="mailto:sales@kampkiepie.co.za" style="color:var(--orange);">sales@kampkiepie.co.za</a></p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 KampKiepie · <a href="https://www.kampkiepie.co.za/terms">Terms</a> · <a href="https://www.kampkiepie.co.za/privacy">Privacy</a> · Website by <a href="https://binarybotany.co.za" target="_blank">Binary Botany</a> &amp; Swiftglide Apps</p>
+</footer>
+
+</body>
+</html>

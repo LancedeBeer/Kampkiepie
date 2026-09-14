@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- ── SEO ── -->
+<title>Resort Map – KampKiepie | Campsites Across South Africa</title>
+<meta name="description" content="Explore South African campsites, caravan parks, glamping and lodges on an interactive map. Find resorts near you across all 9 provinces.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.kampkiepie.co.za/map.html">
+<link rel="alternate" hreflang="en-ZA" href="https://www.kampkiepie.co.za/map.html">
+<link rel="alternate" hreflang="x-default" href="https://www.kampkiepie.co.za/map.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KampKiepie">
+<meta property="og:url" content="https://www.kampkiepie.co.za/map.html">
+<meta property="og:title" content="Resort Map – Find Campsites Across South Africa">
+<meta property="og:description" content="Interactive map of 750+ South African resorts. Find camping, glamping and accommodation near you across all 9 provinces.">
+<meta property="og:image" content="https://www.kampkiepie.co.za/og-default.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_ZA">
+<meta property="og:locale:alternate" content="af_ZA">
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Resort Map – Find Campsites Across South Africa">
+<meta name="twitter:description" content="Interactive map of 750+ South African resorts. Find camping near you.">
+<meta name="twitter:image" content="https://www.kampkiepie.co.za/og-default.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+:root{
+  --orange:#F97316; --orange-d:#EA580C; --orange-l:#FFF7ED;
+  --green:#173B2C; --green-2:#0F2B20; --green-l:#F0FDF4;
+  --cream:#FBF6EC; --card:#FFFFFF; --text:#18181B;
+  --muted:#6B7280; --subtle:#9CA3AF; --border:#E7E2D6;
+  --r:16px; --sh:0 4px 18px rgba(23,59,44,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;
+  display:flex;flex-direction:column;min-height:100vh;}
+a{color:inherit;}
+h1,h2,h3{font-family:'Poppins',sans-serif;}
+.topbar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:26px;padding:14px 32px;flex-shrink:0;}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.topbar-logo-icon{width:40px;height:40px;border-radius:11px;background:var(--orange);
+  display:flex;align-items:center;justify-content:center;font-size:20px;}
+.topbar-logo-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;color:var(--green);}
+.topbar-logo-text em{font-style:normal;color:var(--orange);}
+.topbar-nav{display:flex;gap:26px;flex:1;}
+.topbar-nav a{font-size:14.5px;font-weight:700;color:var(--green);text-decoration:none;}
+.topbar-nav a:hover{color:var(--orange);}
+.topbar-nav a.current{color:var(--orange);border-bottom:2px solid var(--orange);padding-bottom:3px;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pill-count{background:var(--orange);color:#fff;font-size:13px;font-weight:800;border-radius:999px;padding:8px 16px;white-space:nowrap;}
+.pill-admin{display:flex;align-items:center;gap:6px;background:var(--green);color:#fff;font-size:13px;font-weight:800;
+  border-radius:999px;padding:8px 16px;text-decoration:none;white-space:nowrap;}
+@media(max-width:900px){.topbar-nav{display:none;}}
+@media(max-width:640px){
+  .topbar{padding:10px 14px;gap:8px;position:relative;}
+  .topbar-logo-icon{width:32px;height:32px;font-size:16px;border-radius:9px;}
+  .topbar-logo-text{font-size:15px;}
+  .pill-count{font-size:10.5px;padding:6px 10px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;}
+  .topbar-right{margin-left:auto;}
+  .pill-admin{padding:8px;border-radius:50%;}
+  .pill-admin-label{display:none;}
+}
+
+.map-page-head{padding:20px 32px;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0;}
+.map-page-title{font-weight:800;font-size:20px;color:var(--green);}
+.map-page-sub{font-size:12.5px;color:var(--muted);font-weight:700;margin-top:3px;}
+.map-search{display:flex;gap:8px;align-items:center;}
+.map-search input{height:42px;border-radius:10px;border:1.5px solid var(--border);padding:0 14px;
+  font-family:'Nunito',sans-serif;font-size:13.5px;outline:none;width:220px;}
+.map-search input:focus{border-color:var(--orange);}
+
+.map-shell{flex:1;position:relative;min-height:420px;}
+#map{position:absolute;inset:0;}
+
+.leaflet-popup-content-wrapper{border-radius:12px;}
+.map-popup-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--green);margin-bottom:4px;}
+.map-popup-loc{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px;}
+.map-popup-link{display:inline-block;background:var(--orange);color:#fff;border-radius:999px;padding:7px 14px;
+  font-size:12px;font-weight:800;text-decoration:none;}
+
+.map-note{background:var(--orange-l);color:var(--orange-d);font-size:12.5px;font-weight:700;
+  padding:10px 32px;text-align:center;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" style="display:contents;text-decoration:none;color:inherit;">
+    <div class="topbar-logo">
+      <img src="KampKiepieLogo.png" alt="KampKiepie" style="height:40px;width:auto;display:block;border-radius:8px;">
+      <div class="topbar-logo-text">Kamp<em>Kiepie</em></div>
+    </div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index2.html">Resorts</a>
+    <a href="map.html" class="current">Map</a>
+    <a href="about.html">About</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="list-your-resort.html">List Your Resort</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="pill-count" id="resortCountPill">Loading…</span>
+    <a class="pill-admin" href="admin.html" target="_blank">⚙️<span class="pill-admin-label"> Admin</span></a>
+  </div>
+</header>
+
+<div class="map-page-head">
+  <div>
+    <div class="map-page-title">Resort Map</div>
+    <div class="map-page-sub" id="mapSub">Loading resort locations…</div>
+  </div>
+  <div class="map-search">
+    <input type="text" id="mapSearch" placeholder="Search resort name..." oninput="filterMapMarkers(this.value)">
+  </div>
+</div>
+
+<div class="map-note">📍 Only resorts with a known map location are shown here. If you can't find a resort on the map, it doesn't yet have location data — try the <a href="index2.html" style="color:var(--orange-d);font-weight:800;">full directory</a> instead.</div>
+
+<div class="map-shell">
+  <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const SHEET_RESORT = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
+let map, markers = [];
+
+window.addEventListener('DOMContentLoaded', async () => {
+  map = L.map('map', { minZoom: 4 });
+  map.fitBounds([[-33.42, 17], [-17.42, 31]]);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  try {
+    await loadResorts();
+  } catch (e) {
+    document.getElementById('mapSub').textContent = 'Could not load resort locations: ' + e.message;
+  }
+});
+
+async function fetchCsv(url) {
+  const bustUrl = url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now();
+  const res = await fetch(bustUrl, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.text();
+}
+function parseCsv(text) {
+  const rows = []; let row = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else { inQ = false; } }
+      else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cur); cur = ''; }
+      else if (c === '\r') { /* skip */ }
+      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
+      else cur += c;
+    }
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+function truthy(v) { if (!v) return false; const s = String(v).trim().toLowerCase(); return s === 'true' || s === '1' || s === 'yes'; }
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function isValidLatLng(str) {
+  if (!str) return false;
+  return /^-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/.test(String(str).trim());
+}
+
+async function loadResorts() {
+  const csv = await fetchCsv(SHEET_RESORT);
+  const rows = parseCsv(csv);
+  const headers = rows[0].map(h => (h || '').trim());
+  const col = name => headers.indexOf(name);
+  const iName = col('Resort- Header/ResortName'), iActive = col('Resorts - Switches/BetaActive?'),
+    iResortID = col('ResortID'), iMapCoords = col('Map/Coordinates'),
+    iCity = col('Resort- Header/CityRowID'), iAddress = col('Resort- Header/Address');
+
+  if (iMapCoords < 0) {
+    document.getElementById('mapSub').textContent = 'The Map/Coordinates column could not be found in the sheet.';
+    return;
+  }
+
+  let plotted = 0, totalActive = 0;
+  rows.slice(1).forEach(row => {
+    const name = (row[iName] || '').trim();
+    if (!name) return;
+    const active = truthy(row[iActive]);
+    if (active) totalActive++;
+    if (!active) return;
+    const coords = (row[iMapCoords] || '').trim();
+    if (!isValidLatLng(coords)) return;
+    const [latStr, lngStr] = coords.split(',').map(s => s.trim());
+    const lat = parseFloat(latStr), lng = parseFloat(lngStr);
+    if (isNaN(lat) || isNaN(lng)) return;
+    const resortId = (row[iResortID] || '').trim();
+    const address = (row[iAddress] || '').trim();
+
+    const marker = L.marker([lat, lng]).addTo(map);
+    marker.bindPopup(
+      '<div class="map-popup-name">' + esc(name) + '</div>' +
+      (address ? '<div class="map-popup-loc">📍 ' + esc(address) + '</div>' : '') +
+      '<a class="map-popup-link" href="resort.html?id=' + encodeURIComponent(resortId) + '" target="_blank">View Resort →</a>'
+    );
+    marker._resortName = name.toLowerCase();
+    markers.push(marker);
+    plotted++;
+  });
+
+  document.getElementById('resortCountPill').textContent = totalActive + ' resorts';
+  document.getElementById('mapSub').textContent = plotted + ' of ' + totalActive + ' resorts shown on the map';
+}
+
+function filterMapMarkers(query) {
+  const q = query.trim().toLowerCase();
+  markers.forEach(m => {
+    const match = !q || m._resortName.includes(q);
+    if (match) { if (!map.hasLayer(m)) m.addTo(map); }
+    else { if (map.hasLayer(m)) map.removeLayer(m); }
+  });
+}
+</script>
+</body>
+</html>

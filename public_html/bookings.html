@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>KampKiepie - Book Your Stay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#F97316;
+  --brand-l:#FFF7ED;
+  --brand-d:#EA580C;
+  --ok:#16A34A;
+  --ok-l:#F0FDF4;
+  --warn:#D97706;
+  --warn-l:#FFFBEB;
+  --bad:#DC2626;
+  --bad-l:#FEF2F2;
+  --bg:#F4F4F6;
+  --text:#18181B;
+  --muted:#6B7280;
+  --subtle:#9CA3AF;
+  --border:#E4E4E7;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-y:scroll;scrollbar-gutter:stable;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(249,115,22,.10), transparent 24%),
+    radial-gradient(circle at top right, rgba(22,163,74,.08), transparent 26%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+.topbar{
+  position:sticky;top:0;z-index:100;
+  min-height:60px;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;padding:10px 16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+}
+.logo{
+  width:34px;height:34px;border-radius:9px;background:var(--brand);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:18px;flex:0 0 auto;
+}
+.brandname{
+  font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;
+}
+.back-link{
+  font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:800;
+  color:var(--muted);text-decoration:none;white-space:nowrap;flex-shrink:0;
+  padding:6px 11px;border-radius:20px;background:var(--bg);border:1.5px solid var(--border);
+  transition:border-color .15s,color .15s;
+  max-width:42vw;overflow:hidden;text-overflow:ellipsis;
+}
+.back-link:hover{border-color:var(--brand);color:var(--brand);}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 14px 56px}
+.hero{
+  background:linear-gradient(135deg, var(--brand), var(--brand-d));
+  color:#fff;border-radius:18px;padding:26px 22px;margin-bottom:16px;
+  box-shadow:var(--sh);
+}
+.hero h1{font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;line-height:1.2}
+.hero p{margin-top:8px;font-size:14px;font-weight:700;opacity:.92;max-width:560px}
+.card{
+  background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh);
+  padding:16px;margin-bottom:16px;
+}
+.searchgrid{
+  display:grid;grid-template-columns:1fr;gap:12px
+}
+@media(min-width:760px){.searchgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1000px){.searchgrid{grid-template-columns:repeat(5,minmax(0,1fr)) auto}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.input,.select{
+  height:44px;padding:0 12px;border:1.5px solid var(--border);border-radius:10px;
+  background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:14px;font-weight:700;outline:none;transition:border-color .18s,background .18s;width:100%
+}
+.input:focus,.select:focus{background:#fff;border-color:var(--brand)}
+.stepper{display:flex;align-items:center;gap:8px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;height:44px;padding:0 6px}
+.stepper button{
+  width:32px;height:32px;border:none;border-radius:8px;background:#fff;color:var(--brand-d);
+  font-size:16px;font-weight:900;cursor:pointer;flex:0 0 auto
+}
+.stepper span{flex:1;text-align:center;font-weight:800;font-size:14px}
+.btn{
+  height:44px;border:none;border-radius:10px;padding:0 18px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap
+}
+.btn-brand{background:var(--brand);color:#fff}
+.btn-brand:hover{background:var(--brand-d)}
+.btn-soft{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+.btn-soft:hover{background:#fff}
+.btn-block{width:100%}
+.resultsHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.resultsHead h2{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800}
+.pill{background:var(--brand-l);color:var(--brand-d);font-size:12px;font-weight:800;border-radius:999px;padding:5px 10px}
+.standgrid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:700px){.standgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1040px){.standgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.standcard{
+  background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--sh);
+  display:flex;flex-direction:column;cursor:pointer;transition:transform .15s;
+}
+.standcard:hover{transform:translateY(-2px)}
+.standcard .thumb{
+  height:120px;background:linear-gradient(135deg, var(--brand-l), #FFEDD5);
+  display:flex;align-items:center;justify-content:center;font-size:38px
+}
+.standcard .body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.standcard h3{font-family:'Poppins',sans-serif;font-size:15px;font-weight:800}
+.standcard .type{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.standcard .desc{font-size:12px;color:var(--muted);font-weight:700;line-height:1.5;flex:1}
+.standcard .meta{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;background:var(--bg);color:var(--muted)}
+.standcard .pricerow{display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px;margin-top:2px}
+.standcard .price{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:var(--brand-d)}
+.standcard .pricesub{font-size:11px;color:var(--subtle);font-weight:700}
+.notice{border-radius:12px;padding:14px 16px;font-size:13px;font-weight:700;line-height:1.55}
+.notice.info{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.notice.warn{background:var(--warn-l);color:#92400E;border:1px solid #FCD34D}
+.notice.ok{background:var(--ok-l);color:#166534;border:1px solid #BBF7D0}
+.notice.bad{background:var(--bad-l);color:#991B1B;border:1px solid #FECACA}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:40px 16px}
+.small{font-size:12px;color:var(--muted);font-weight:700;line-height:1.6}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;display:none;align-items:flex-end;justify-content:center;padding:0}
+.modal.on{display:flex}
+@media(min-width:760px){.modal{align-items:center;padding:16px}}
+.modal-box{
+  width:100%;max-width:720px;max-height:94vh;overflow:auto;background:#fff;
+  border-radius:20px 20px 0 0;box-shadow:0 30px 80px rgba(0,0,0,.3)
+}
+@media(min-width:760px){.modal-box{border-radius:18px}}
+.modal-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff}
+.modal-h h2{font-family:'Poppins',sans-serif;font-size:16px;font-weight:800}
+.modal-b{padding:18px}
+.formgrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.field.full{grid-column:1/-1}
+.amenities{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.footer-gap{height:20px}
+.hidden{display:none !important}
+.matrix-scroll{overflow-x:auto}
+.matrix-table{border-collapse:collapse;width:100%}
+.matrix-table th, .matrix-table td{padding:1px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+.matrix-table th{font-size:7px;font-weight:800;color:var(--muted)}
+.matrix-table tfoot th{border-top:1px solid var(--border);border-bottom:none;color:var(--subtle);font-size:7px}
+.matrix-table th.weekend{background:var(--bg)}
+.matrix-table th.holiday-col{color:#EA580C;font-weight:900}
+.matrix-standcol{position:sticky;left:0;background:#fff;z-index:2;font-size:8px;font-weight:800;min-width:90px;white-space:nowrap;text-align:left !important}
+.matrix-table thead th.matrix-standcol{z-index:3}
+.matrix-nav{display:flex;gap:8px}
+.daycell{display:block;width:10px;height:10px;border-radius:2px;margin:0 auto;box-sizing:border-box;position:relative;}
+.daycell.available{background:var(--ok-l);border:1px solid var(--ok)}
+.daycell.reserved{background:#2563EB;border:1px solid #1D4ED8}
+.daycell.booked, .daycell.maintenance{background:var(--bad);border:1px solid #B91C1C}
+.daycell.past{background:var(--bg);border:1px solid var(--border);opacity:.45}
+.daycell.weekend{box-shadow:inset 0 0 0 1px rgba(24,24,27,.22)}
+.daycell.holiday::after{content:'';position:absolute;top:-2px;right:-2px;width:5px;height:5px;border-radius:50%;background:#F97316;border:1px solid #fff}
+.matrix-legend{display:flex;gap:10px;align-items:center;margin-top:8px;font-size:8px;font-weight:700;color:var(--muted);flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
+.dot.available{background:var(--ok-l);border:1px solid var(--ok)}
+.dot.reserved{background:#2563EB;border:1px solid #1D4ED8}
+.dot.booked{background:var(--bad);border:1px solid #B91C1C}
+.dot.past{background:var(--bg);border:1px solid var(--border)}
+.price-breakdown-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.price-breakdown-table th{text-align:left;padding:3px 6px;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border)}
+.price-breakdown-table td{padding:3px 6px;border-bottom:1px solid var(--border)}
+.price-breakdown-table tfoot td{font-weight:800;border-top:2px solid var(--border);border-bottom:none;padding:5px 6px}
+.tier-badge{font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:999px}
+.tier-badge.peak{background:var(--bad-l);color:var(--bad)}
+.tier-badge.shoulder{background:var(--warn-l);color:var(--warn)}
+.tier-badge.offPeak{background:var(--ok-l);color:var(--ok)}
+.tier-badge.weekend{background:#EFF6FF;color:#1D4ED8}
+
+/* ── Day-cell price tooltip ── */
+#kkTip{
+  position:fixed;z-index:9999;pointer-events:none;
+  background:#18181B;color:#fff;border-radius:10px;
+  padding:9px 12px;font-size:11px;font-weight:700;
+  white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.28);
+  opacity:0;transition:opacity .1s;transform:translateY(-100%) translateY(-6px);
+}
+#kkTip.on{opacity:1;}
+#kkTip .tip-date{font-size:10px;color:rgba(255,255,255,.6);margin-bottom:4px;}
+#kkTip .tip-price{font-size:15px;font-weight:900;letter-spacing:-.3px;}
+#kkTip .tip-sub{font-size:9.5px;color:rgba(255,255,255,.55);margin-top:2px;}
+
+/* ── Week view ── */
+.matrix-toggle{display:flex;border:1.5px solid var(--border);border-radius:8px;overflow:hidden;flex-shrink:0}
+.mtog{height:28px;padding:0 13px;border:none;background:#fff;font-family:'Nunito',sans-serif;
+  font-size:11px;font-weight:800;cursor:pointer;color:var(--muted);transition:background .13s,color .13s}
+.mtog.active{background:var(--brand);color:#fff}
+.week-table{border-collapse:separate;border-spacing:2px;width:100%;min-width:520px}
+.week-table th{border:none;text-align:center;vertical-align:middle}
+.week-table td{border:none;padding:0;text-align:center;vertical-align:middle}
+.week-standcol{font-size:10px;font-weight:800;min-width:88px;max-width:110px;
+  text-align:left!important;padding:4px 8px;position:sticky;left:0;background:#fff;z-index:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.week-dayhdr{min-width:80px;font-size:10px;font-weight:800;color:var(--muted);padding:3px 4px;line-height:1.3}
+.week-dayhdr.weekend{background:var(--bg);border-radius:5px;}
+.week-dayhdr.holiday-col{color:var(--brand-d)}
+.week-dayhdr.today-col{background:var(--brand-l);border-radius:5px;}
+.wcell{height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;padding:2px 4px;border-radius:6px;}
+.wcell.available{background:var(--ok-l);cursor:default}
+.wcell.reserved{background:#DBEAFE}
+.wcell.booked,.wcell.maintenance{background:#FEE2E2}
+.wcell.past{background:var(--bg);opacity:.45}
+.wcell.today{outline:2px solid var(--brand);outline-offset:-2px;border-radius:6px;}
+.w-price{font-family:'Poppins',sans-serif;font-size:11px;font-weight:800;color:#15803D;line-height:1}
+.w-tier{font-size:8px;font-weight:800;border-radius:999px;padding:1px 4px}
+.w-tier.peak{background:var(--bad-l);color:var(--bad)}
+.w-tier.shoulder{background:var(--warn-l);color:var(--warn)}
+.w-tier.offPeak{background:var(--ok-l);color:var(--ok)}
+.w-tier.weekend{background:#EFF6FF;color:#1D4ED8}
+.w-label{font-size:9.5px;font-weight:700;color:var(--subtle)}
+.w-hol{font-size:7.5px;color:var(--brand-d);font-weight:800;margin-top:0}
+
+/* ── Mobile portrait: tighter week view ── */
+@media(max-width:600px){
+  .week-table{min-width:0;border-spacing:1px;}
+  .week-standcol{min-width:56px;max-width:68px;font-size:8.5px;padding:2px 4px;}
+  .week-dayhdr{min-width:36px;font-size:8.5px;padding:2px 2px;line-height:1.2;}
+  .wcell{height:32px;border-radius:5px;gap:0;padding:1px 2px;}
+  .w-price{font-size:9.5px;}
+  .w-tier{font-size:7px;padding:0 3px;}
+  .w-label{font-size:8.5px;}
+  .w-hol{display:none;}
+  .matrix-scroll{padding-bottom:10px;}
+}
+/* ── Compact vertical rhythm ───────────────────────────────────── */
+.topbar{min-height:46px;padding:6px 14px;}
+.wrap{padding:10px 12px 40px;}
+.hero{padding:13px 16px;margin-bottom:10px;}
+.hero h1{font-size:20px;}
+.hero p{margin-top:4px;font-size:13px;}
+.card{padding:10px;margin-bottom:10px;}
+.searchgrid{gap:8px;}
+.field{gap:3px;}
+.field label{font-size:10px;letter-spacing:.3px;}
+.input,.select{height:36px;font-size:13px;padding:0 10px;}
+.stepper{height:36px;padding:0 5px;}
+.stepper button{width:28px;height:28px;font-size:14px;}
+.stepper span{font-size:13px;}
+.btn{height:36px;font-size:13px;padding:0 14px;}
+.resultsHead{margin-bottom:8px;}
+.resultsHead h2{font-size:16px;}
+.standgrid{gap:10px;}
+.standcard .thumb{height:96px;}
+.standcard .body{padding:10px 12px 12px;gap:5px;}
+.standcard h3{font-size:14px;}
+.standcard .type{font-size:10px;}
+.standcard .desc{font-size:11.5px;margin-bottom:0;}
+.standcard .meta{gap:4px;}
+.chip{padding:3px 7px;font-size:10.5px;}
+.standcard .pricerow{padding-top:8px;}
+.standcard .price{font-size:16px;}
+.standcard .pricesub{font-size:10px;}
+.modal-h{padding:11px 16px;}
+.modal-h h2{font-size:14px;}
+.modal-b{padding:13px 16px;}
+.formgrid{gap:10px;}
+.notice{padding:10px 13px;font-size:12.5px;}
+.small{font-size:11.5px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">🏕️</div>
+  <div class="brandname" id="resortNameTop">KampKiepie</div>
+  <a href="#" id="backToResortLink" class="back-link hidden">← Back</a>
+</header>
+<div class="wrap" id="app">
+  <div class="center" id="loadingState">
+    <div class="small">Loading booking system…</div>
+  </div>
+</div>
+<div class="modal" id="standModal" onclick="modalBackdrop(event,'standModal')">
+  <div class="modal-box">
+    <div class="modal-h">
+      <h2 id="standModalTitle">Stand details</h2>
+      <button class="btn btn-soft" onclick="closeModal('standModal')">Close</button>
+    </div>
+    <div class="modal-b" id="standModalBody"></div>
+  </div>
+</div>
+<div class="modal" id="bookModal" onclick="modalBackdrop(event,'bookModal')">
+  <div class="modal-box">
+    <div class="modal-h">
+      <h2>Request this stand</h2>
+      <button class="btn btn-soft" onclick="closeModal('bookModal')">Close</button>
+    </div>
+    <div class="modal-b" id="bookModalBody"></div>
+  </div>
+</div>
+<script>
+const APP = {
+  resortId: '1',
+  resort: null,
+  resortActive: true,
+  defaults: {},
+  stands: [],
+  standTypes: [],
+  bookings: [],
+  blocks: [],
+  search: { checkIn:'', checkOut:'', adults:2, children:0, toddlers:0, standType:'' },
+  selectedStandId: null,
+  matrixMonths: [],
+  matrixStands: [],
+  matrixView: 'month',
+  matrixWeekStart: '',
+  matrixMonthIndex: 0,
+  lastChecked: null,
+  publicHolidays: [],
+  holidayByDate: {}
+};
+function esc(s){return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function optionHtml(value, label, selected){return `<option value="${esc(value)}"${selected ? ' selected' : ''}>${esc(label || value)}</option>`;}
+function truthy(v){return String(v ?? '').trim().toLowerCase()==='true' || String(v ?? '').trim()==='1' || String(v ?? '').trim().toLowerCase()==='yes';}
+const CURRENCY_SYMBOLS = { ZAR:'R', USD:'$', EUR:'€', GBP:'£' };
+function formatMoney(amount, currencyCode){
+  const symbol = currencyCode ? (CURRENCY_SYMBOLS[String(currencyCode).toUpperCase()] || String(currencyCode) + ' ') : '';
+  const num = Math.round(Number(amount || 0));
+  return symbol + num;
+}
+function dateOnly(d){if(!d) return ''; const dt=new Date(d); if(Number.isNaN(dt.getTime())) return String(d); return dt.toISOString().slice(0,10);}
+function displayDate(v){const s=String(v ?? '').trim(); if(!s) return ''; return s.includes('T') ? s.split('T')[0] : s;}
+function parseDateOnly(value){const s=String(value||'').trim(); if(!s) return null; const d=new Date(s+'T00:00:00Z'); return Number.isNaN(d.getTime())?null:d;}
+function addDays(dateStr, days){const d=parseDateOnly(dateStr); if(!d) return ''; d.setUTCDate(d.getUTCDate()+Number(days||0)); return d.toISOString().slice(0,10);}
+function overlap(aStart,aEnd,bStart,bEnd){return displayDate(aStart) < displayDate(bEnd) && displayDate(aEnd) > displayDate(bStart);}
+function monthLabel(yyyyMm){
+  const [y,m] = yyyyMm.split('-').map(Number);
+  return new Date(Date.UTC(y, m-1, 1)).toLocaleDateString('en-ZA', { month:'short', year:'numeric', timeZone:'UTC' });
+}
+function todayStr(){return dateOnly(new Date());}
+function getQueryParam(name){return new URLSearchParams(location.search).get(name);}
+function parseConfigText(text){
+  const out = {};
+  String(text||'').split(/\r?\n/).forEach(line=>{
+    const raw=line.trim();
+    if(!raw || raw.startsWith('#')) return;
+    const ix=raw.indexOf(':');
+    if(ix<0) return;
+    const key=raw.slice(0,ix).trim();
+    const value=raw.slice(ix+1).trim();
+    if(key) out[key]=value;
+  });
+  return out;
+}
+function extractSheetId(value){
+  const s=String(value||'').trim();
+  const match=s.match(/\/d\/([a-zA-Z0-9-_]+)/);
+  return match ? match[1] : s;
+}
+async function loadConfig(){
+  try{
+    const res=await fetch('config.txt',{cache:'no-store'});
+    if(!res.ok) return {};
+    const text=await res.text();
+    return parseConfigText(text);
+  }catch(err){
+    return {};
+  }
+}
+// ── KampKiepie localStorage cache ─────────────────────────────────────────────
+// kkGet: returns cached value or null if missing/expired/busted
+// kkSet: stores value with TTL (ms) and optional bust-flag
+// kkBust: admin calls this on save to invalidate all bustable entries
+const _KK_BUST = 'kkC_bust';
+const _KK_D30  = 30*24*60*60*1000;   // 30 days in ms
+const _KK_H4   =  8*60*60*1000;      //  8 hours
+function kkGet(key) {
+  try {
+    const e = JSON.parse(localStorage.getItem(key) || 'null');
+    if (!e || !e.v || !e.ts || !e.ttl) return null;
+    if (e.bustable && Number(localStorage.getItem(_KK_BUST)||0) > e.ts) return null;
+    if (Date.now() - e.ts > e.ttl) return null;
+    return e.v;
+  } catch(_) { return null; }
+}
+function kkSet(key, val, ttlMs, bustable) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ v:val, ts:Date.now(), ttl:ttlMs, bustable:!!bustable }));
+  } catch(_) {}  // quota exceeded — just skip caching
+}
+function kkBust() {
+  try { localStorage.setItem(_KK_BUST, String(Date.now())); } catch(_) {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
+function apiUrl(){
+  return window.__KK_API_URL || getQueryParam('api') || '';
+}
+function resortInfoSheetId(){
+  return window.__KK_RESORT_INFO_ID || '';
+}
+async function apiCall(action, params={}, method='GET', _retry=false){
+  const base=apiUrl();
+  if(!base) throw new Error('Booking system is not configured yet.');
+  const payload=Object.assign({ action, resortId:APP.resortId }, params);
+  const infoId=resortInfoSheetId();
+  if(infoId) payload.resortInfoSheetId=infoId;
+  let text='';
+  if(method==='GET'){
+    const url=new URL(base);
+    Object.entries(payload).forEach(([k,v])=>url.searchParams.set(k, typeof v==='object'?JSON.stringify(v):String(v)));
+    url.searchParams.set('_ts', Date.now().toString());
+    const res=await fetch(url.toString(),{method:'GET',redirect:'follow',cache:'no-store'});
+    text=await res.text();
+  } else {
+    const form=new URLSearchParams();
+    Object.entries(payload).forEach(([k,v])=>form.set(k, typeof v==='object'?JSON.stringify(v):String(v)));
+    const res=await fetch(base,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:form.toString()});
+    text=await res.text();
+  }
+  // Try parsing — if it fails and this is the first attempt, retry after 3.5s (cold start)
+  try{ return JSON.parse(text); }catch(e){
+    if(!_retry){
+      console.log('[KK bookings] cold-start detected, retrying in 3.5s…');
+      const app=document.getElementById('app');
+      if(app) app.innerHTML=`<div class="card center"><div class="spin" style="margin:0 auto 14px"></div><div class="small" style="color:var(--muted);font-weight:700">Connecting to booking system…</div></div>`;
+      await new Promise(r=>setTimeout(r,3500));
+      return apiCall(action, params, method, true);
+    }
+    throw new Error('Bad response from booking system.');
+  }
+}
+function isResortActive(raw){
+  if(!raw) return true;
+  const flags=[raw['Resort - KKBook/Active'], raw['Resorts - Switches/BetaActive?'], raw['Active']];
+  if(flags.every(f=>f===undefined || f===null || f==='')) return true;
+  return flags.some(f=>truthy(f));
+}
+function resortDisplayName(raw, fallback){
+  if(!raw) return fallback || 'KampKiepie';
+  return String(raw['Resort- Header/ResortName'] || raw.ResortName || fallback || 'KampKiepie');
+}
+function resortAddress(raw){
+  if(!raw) return '';
+  return String(raw['Resort- Header/Address'] || '');
+}
+function standLabel(s){
+  return [s.StandNumber, s.StandName].filter(Boolean).join(' - ');
+}
+function standTypeName(id){
+  const t=APP.standTypes.find(x=>String(x.StandTypeID)===String(id||''));
+  return t ? String(t.StandTypeName || t.StandTypeID) : String(id||'');
+}
+function activeStands(){
+  return APP.stands.filter(s=>!truthy(s.SoftDeleted) && truthy(s.Active));
+}
+function isStandAvailable(standId, checkIn, checkOut){
+  if(!checkIn || !checkOut) return true;
+  const bookingConflict = APP.bookings.some(b=>{
+    if(String(b.StandID||'') !== String(standId||'')) return false;
+    return overlap(b.CheckInDate, b.CheckOutDate, checkIn, checkOut);
+  });
+  if(bookingConflict) return false;
+  const blockConflict = APP.blocks.some(b=>{
+    if(String(b.StandID||'') !== String(standId||'')) return false;
+    return overlap(b.StartDate, b.EndDate, checkIn, checkOut);
+  });
+  return !blockConflict;
+}
+function nightsBetween(checkIn, checkOut){
+  const a=parseDateOnly(checkIn), b=parseDateOnly(checkOut);
+  if(!a||!b) return 0;
+  return Math.max(0, Math.round((b.getTime()-a.getTime())/86400000));
+}
+
+// ── DYNAMIC PRICING ENGINE ────────────────────────────────────────────────────
+
+// Classify a night by its START date into a pricing tier.
+// Priority: pre-holiday → peak → shoulder → weekend (Fri/Sat) → off-peak
+function classifyNight(dateStr) {
+  const sr = (() => { try { return JSON.parse(APP.defaults.SeasonRulesJSON||'{}'); } catch(e){return{};} })();
+  const peaks = sr.peak||[], shoulders = sr.shoulder||[];
+  const pht = (() => {
+    const s = String(APP.defaults.PreHolidayTreatment||'offPeak').toLowerCase().replace(/[^a-z]/g,'');
+    return s==='peak'?'peak':s==='shoulder'?'shoulder':s==='weekend'?'weekend':'offPeak';
+  })();
+  const tomorrow = addDays(dateStr, 1);
+  const norm = v => v ? String(v).trim().slice(0,10) : '';
+  const isPreHoliday = APP.publicHolidays.some(h =>
+    norm(h.date)===tomorrow || norm(h.observedDate)===tomorrow ||
+    norm(h.Date)===tomorrow  || norm(h.ObservedDate)===tomorrow
+  );
+  if (isPreHoliday) {
+    // Holiday itself in peak/shoulder? Inherit that tier for the pre-holiday night
+    if (peaks.some(r => r.start && r.end && tomorrow >= r.start && tomorrow <= r.end)) return 'peak';
+    if (shoulders.some(r => r.start && r.end && tomorrow >= r.start && tomorrow <= r.end)) return 'shoulder';
+    // Outside all special ranges — use the configured pht default
+    return pht;
+  }
+  if (peaks.some(r => r.start && r.end && dateStr >= r.start && dateStr <= r.end)) return 'peak';
+  if (shoulders.some(r => r.start && r.end && dateStr >= r.start && dateStr <= r.end)) return 'shoulder';
+  const d = parseDateOnly(dateStr);
+  if (d && (d.getUTCDay()===5 || d.getUTCDay()===6)) return 'weekend';
+  return 'offPeak';
+}
+
+// Render a price breakdown table for use in modals.
+function renderPriceBreakdown(est) {
+  if (!est || !est.breakdown) return '';
+  const tc = {peak:'peak',shoulder:'shoulder',offPeak:'offPeak',weekend:'weekend'};
+  return `
+    <div style="overflow:auto;margin-top:8px">
+      <table class="price-breakdown-table">
+        <thead><tr>
+          <th>Date</th><th>Tier</th><th>Detail</th>
+          <th style="text-align:right">Amount</th>
+        </tr></thead>
+        <tbody>
+          ${est.breakdown.map(n => `<tr>
+            <td>${esc(n.date)}</td>
+            <td><span class="tier-badge ${tc[n.tier]||''}">${esc(n.tierLabel)}</span></td>
+            <td style="color:var(--muted)">${esc(n.detail)}</td>
+            <td style="text-align:right;font-weight:800">${esc(formatMoney(n.rate, est.currency))}</td>
+          </tr>`).join('')}
+        </tbody>
+        <tfoot><tr>
+          <td colspan="3">Total &mdash; ${esc(est.nights)} night${est.nights!==1?'s':''}</td>
+          <td style="text-align:right;color:var(--brand-d);font-size:13px">${esc(formatMoney(est.total, est.currency))}</td>
+        </tr></tfoot>
+      </table>
+    </div>`;
+}
+
+function isPublicHoliday(dateStr){
+  return !!APP.holidayByDate[dateStr];
+}
+function estimateRate(stand, dateStr){
+  const d=parseDateOnly(dateStr);
+  const day = d ? d.getUTCDay() : 1;
+  const isWeekend = day===0 || day===6;
+  if((isWeekend || isPublicHoliday(dateStr)) && stand.WeekendRate) return Number(stand.WeekendRate);
+  return Number(stand.BaseRate || 0);
+}
+function estimateTotal(stand, checkIn, checkOut){
+  const nightCount = nightsBetween(checkIn, checkOut);
+  if (!nightCount) return { nights:0, total:0, currency:currencyOf(stand), mode:'legacy', breakdown:null };
+
+  // Try dynamic pricing from the stand type
+  const standType = APP.standTypes.find(t => String(t.StandTypeID||'') === String(stand.StandTypeID||''));
+  if (standType && standType.PricingMode && standType.PricingJSON) {
+    const mode     = standType.PricingMode;
+    const currency = currencyOf(stand);
+    const adults   = APP.search.adults   || 1;
+    const children = APP.search.children || 0;
+    const toddlers = APP.search.toddlers || 0;
+    let pricing = {};
+    try { pricing = JSON.parse(standType.PricingJSON||'{}'); } catch(e) {}
+    const LABELS = { peak:'Peak', shoulder:'Shoulder', offPeak:'Off-Peak', weekend:'Weekend' };
+    let total = 0;
+    const breakdown = [];
+    for (let i = 0; i < nightCount; i++) {
+      const date = addDays(checkIn, i);
+      const tier = classifyNight(date);
+      const tr   = pricing[tier] || pricing['offPeak'] || {};
+      let rate = 0, detail = '';
+      if (mode === 'flat') {
+        rate   = Number(tr.rate||0);
+        detail = formatMoney(rate, currency) + '/night';
+      } else if (mode === 'pppn') {
+        rate   = Number(tr.adult||0)*adults + Number(tr.child||0)*children + Number(tr.toddler||0)*toddlers;
+        const p = [];
+        if (adults)   p.push(adults  +'A @ '+formatMoney(tr.adult  ||0, currency));
+        if (children) p.push(children+'C @ '+formatMoney(tr.child  ||0, currency));
+        if (toddlers) p.push(toddlers+'T @ '+formatMoney(tr.toddler||0, currency));
+        detail = p.join(', ');
+      } else if (mode === 'base_plus_pppn') {
+        const base = Number(tr.baseRate||0), incl = Number(tr.included||0);
+        let rem = incl, rA = adults, rC = children, rT = toddlers;
+        const iA = Math.min(rA,rem); rem-=iA; rA-=iA;
+        const iC = Math.min(rC,rem); rem-=iC; rC-=iC;
+        const iT = Math.min(rT,rem); rT-=iT;
+        const extra = rA*Number(tr.extraAdult||0) + rC*Number(tr.extraChild||0) + rT*Number(tr.extraToddler||0);
+        rate   = base + extra;
+        detail = 'Base '+formatMoney(base,currency)+'('+incl+' incl.)'
+               + (adults+children+toddlers > incl ? ' + '+formatMoney(extra,currency)+' extras' : '');
+      }
+      total += rate;
+      breakdown.push({ date, tier, tierLabel:LABELS[tier]||tier, rate, detail });
+    }
+    return { nights:nightCount, total, currency, mode, breakdown };
+  }
+
+  // Legacy fallback: BaseRate / WeekendRate
+  let total = 0;
+  for (let i = 0; i < nightCount; i++) total += estimateRate(stand, addDays(checkIn, i));
+  return { nights:nightCount, total, currency:currencyOf(stand), mode:'legacy', breakdown:null };
+}
+function depositAmount(stand, total){
+  const mode=String(stand.DepositMode || APP.defaults.DefaultDepositMode || 'percentage').toLowerCase();
+  const value=Number(stand.DepositValue ?? APP.defaults.DefaultDepositValue ?? 0);
+  if(mode==='fixed') return Math.min(value, total);
+  return Math.round(total * (value/100));
+}
+function currencyOf(stand){
+  return stand.Currency || APP.defaults.DefaultCurrency || 'ZAR';
+}
+function searchStorageKey(){
+  return 'kkSearch_' + APP.resortId;
+}
+function saveSearchState(){
+  try{ sessionStorage.setItem(searchStorageKey(), JSON.stringify(APP.search)); }catch(e){}
+}
+function loadSearchState(){
+  try{
+    const raw = sessionStorage.getItem(searchStorageKey());
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+function clearSearchState(){
+  try{ sessionStorage.removeItem(searchStorageKey()); }catch(e){}
+}
+function computeDefaultSearch(){
+  const leadDays = Number(APP.defaults.DefaultLeadTimeDays ?? 0);
+  const minNights = Number(APP.defaults.DefaultMinNights ?? 1);
+  const checkIn = addDays(todayStr(), leadDays);
+  const checkOut = addDays(checkIn, Math.max(1, minNights));
+  return { checkIn, checkOut, adults:2, children:0, toddlers:0, standType:'' };
+}
+
+// ── BRANDING ──
+// Reads CorpColour / SubColour from the resort row (already in APP.resort from getBootPayload)
+// and applies them as CSS variables so the page inherits the resort's brand palette.
+// Called once early in boot(), before renderApp(), so the hero and buttons are already
+// branded by the time the stands grid appears.
+function applyBranding() {
+  var corp = String((APP.resort && APP.resort['Resort - config/CorpColour']) || '').trim();
+  var sub  = String((APP.resort && APP.resort['Resort - config/SubColour'])  || '').trim();
+  if (!corp && !sub) return;
+  corp = corp || '#F97316';
+  sub  = sub  || '#16A34A';
+  document.documentElement.style.setProperty('--brand',   corp);
+  document.documentElement.style.setProperty('--brand-d', shadeColour_(corp, -15));
+  document.documentElement.style.setProperty('--brand-l', hexToRgba_(corp, 0.12));
+  // Topbar logo pill
+  var logo = document.querySelector('.logo');
+  if (logo) logo.style.background = corp;
+  // Subtle topbar bottom border accent in brand colour
+  var topbar = document.querySelector('.topbar');
+  if (topbar) topbar.style.borderBottom = '2px solid ' + hexToRgba_(corp, 0.25);
+}
+function hexToRgba_(hex, alpha) {
+  hex = String(hex || '').replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(function(h) { return h + h; }).join('');
+  var r = parseInt(hex.substring(0, 2), 16);
+  var g = parseInt(hex.substring(2, 4), 16);
+  var b = parseInt(hex.substring(4, 6), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+function shadeColour_(hex, percent) {
+  hex = String(hex || '').replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(function(h) { return h + h; }).join('');
+  var r = Math.min(255, Math.max(0, parseInt(hex.substring(0, 2), 16) + percent));
+  var g = Math.min(255, Math.max(0, parseInt(hex.substring(2, 4), 16) + percent));
+  var b = Math.min(255, Math.max(0, parseInt(hex.substring(4, 6), 16) + percent));
+  return '#' + [r, g, b].map(function(v) { return ('0' + v.toString(16)).slice(-2); }).join('');
+}
+
+function truthy_(v){ var s=String(v||'').trim().toLowerCase(); return s==='true'||s==='1'||s==='yes'; }
+async function boot(){
+  APP.resortId = getQueryParam('resort') || '1';
+  const cfg = await loadConfig();
+  if(cfg.adminbackend_script) window.__KK_API_URL = cfg.adminbackend_script;
+  if(cfg.resort_information_sheet_id) window.__KK_RESORT_INFO_ID = extractSheetId(cfg.resort_information_sheet_id);
+  if(!apiUrl()){
+    renderError('Booking system is not configured yet.', 'Please check back shortly, or contact the resort directly.');
+    return;
+  }
+  try{
+    const boot = await apiCall('getBootPayload', {}, 'GET');
+    if(!boot.success || !boot.payload || !boot.payload.resort){
+      renderError('We could not find this resort.', 'Please check the link you used to get here, or contact the resort directly.');
+      return;
+    }
+    APP.resort = boot.payload.resort;
+    APP.resortActive = isResortActive(APP.resort);
+    // Read from explicit payload fields OR fall back to resort object (no redeploy needed)
+    APP.kkbookMode = String(
+      boot.payload.kkbookMode ||
+      (APP.resort && APP.resort['Resort - KKBook/BookingMode']) ||
+      'live'
+    ).toLowerCase().trim();
+    var rawOnBoard = boot.payload.onBoard !== undefined
+      ? boot.payload.onBoard
+      : truthy_((APP.resort && APP.resort['Resort- Owner/OnBoard']) || '');
+    APP.onBoard = rawOnBoard !== false && rawOnBoard !== 'false';
+    const resortName = resortDisplayName(APP.resort, boot.payload.resortName);
+    document.getElementById('resortNameTop').textContent = resortName;
+    applyBranding();
+
+    const backLink = document.getElementById('backToResortLink');
+    if(backLink){
+      backLink.href = 'resort.html?id=' + encodeURIComponent(APP.resortId);
+      backLink.textContent = '\u2190 Back to ' + resortName;
+      backLink.classList.remove('hidden');
+    }
+    if(!APP.resortActive){
+      renderError('This resort is not accepting online bookings yet.', 'Please contact the resort directly to check availability.');
+      return;
+    }
+    // Phase 1: render the search form immediately \u2014 no data needed
+    APP.search = loadSearchState() || computeDefaultSearch();
+    renderSearchForm();
+    // Phase 2: load all stand/availability data silently in the background
+    loadDataInBackground();
+  }catch(err){
+    console.warn(err);
+    renderError('We could not load the booking system.', String(err.message || err));
+  }
+}
+function renderError(title, sub){
+  document.getElementById('app').innerHTML = `
+    <div class="card center">
+      <div class="notice bad" style="width:100%">${esc(title)}</div>
+      <div class="small">${esc(sub || '')}</div>
+    </div>
+  `;
+}
+function renderSearchForm(){
+  const app=document.getElementById('app');
+  var modeNotice = '';
+  if (!APP.onBoard) {
+    modeNotice = '<div style="background:#FEF3C7;color:#92400E;font-size:13px;font-weight:700;text-align:center;padding:12px 20px;border-radius:12px;margin-bottom:14px;border:1.5px solid #F59E0B;">&#9888;&#65039; <strong>Sandbox Mode</strong> &mdash; This resort is testing their booking system. Bookings placed here may not be processed. Live bookings coming soon.</div>';
+  } else if (APP.kkbookMode === 'indirect') {
+    modeNotice = '<div style="background:#EFF6FF;color:#1E40AF;font-size:13px;font-weight:700;text-align:center;padding:12px 20px;border-radius:12px;margin-bottom:14px;border:1.5px solid #BFDBFE;">&#128232; <strong>Enquiry Mode</strong> &mdash; This resort manages bookings in their own system. Submit your request and they will contact you to confirm.</div>';
+  }
+  app.innerHTML = modeNotice + `
+    <div class="hero">
+      <h1>${esc(resortDisplayName(APP.resort))}</h1>
+      <p>${esc(resortAddress(APP.resort) || 'Find your stand and send a booking request in a couple of minutes.')}</p>
+    </div>
+    <div class="card">
+      <div class="searchgrid">
+        <div class="field"><label>Check-in</label><input class="input" type="date" id="searchCheckIn" min="${esc(todayStr())}" value="${esc(APP.search.checkIn)}"></div>
+        <div class="field"><label>Check-out</label><input class="input" type="date" id="searchCheckOut" min="${esc(addDays(APP.search.checkIn,1))}" value="${esc(APP.search.checkOut)}"></div>
+        <div class="field"><label>Adults</label>
+          <div class="stepper">
+            <button onclick="stepSearch('adults',-1)">\u2212</button>
+            <span id="searchAdultsLabel">${APP.search.adults}</span>
+            <button onclick="stepSearch('adults',1)">+</button>
+          </div>
+        </div>
+        <div class="field"><label>Children</label>
+          <div class="stepper">
+            <button onclick="stepSearch('children',-1)">\u2212</button>
+            <span id="searchChildrenLabel">${APP.search.children}</span>
+            <button onclick="stepSearch('children',1)">+</button>
+          </div>
+        </div>
+        <div class="field"><label>Stand Type</label>
+          <select class="select" id="searchStandType">
+            <option value="">All types</option>
+          </select>
+        </div>
+        <div class="field" style="justify-content:flex-end">
+          <button class="btn btn-brand btn-block" id="searchBtn" onclick="runSearchFresh()">
+            Search Stands
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="resultsWrap"></div>
+    <div id="matrixWrap" class="hidden"></div>
+    <div class="footer-gap"></div>
+  `;
+  document.getElementById('searchCheckIn').addEventListener('change', e=>{
+    APP.search.checkIn = e.target.value;
+    const minNights = Number((APP.defaults && APP.defaults.DefaultMinNights) || 1);
+    const minCheckout = addDays(APP.search.checkIn, Math.max(1,minNights));
+    const checkOutEl = document.getElementById('searchCheckOut');
+    checkOutEl.min = minCheckout;
+    if(displayDate(checkOutEl.value) < minCheckout){
+      checkOutEl.value = minCheckout;
+      APP.search.checkOut = minCheckout;
+    }
+    saveSearchState();
+    // Dates changed — stale results are misleading, clear them
+    const rw = document.getElementById('resultsWrap');
+    if(rw) rw.innerHTML = '';
+  });
+  document.getElementById('searchCheckOut').addEventListener('change', e=>{
+    APP.search.checkOut = e.target.value;
+    saveSearchState();
+    // Dates changed — stale results are misleading, clear them
+    const rw = document.getElementById('resultsWrap');
+    if(rw) rw.innerHTML = '';
+  });
+  // Stand type change: instant re-filter if results already shown
+  document.getElementById('searchStandType').addEventListener('change', e=>{
+    APP.search.standType = e.target.value;
+    saveSearchState();
+    const rw = document.getElementById('resultsWrap');
+    if(rw && rw.innerHTML.trim()) runSearch();
+  });
+}
+// Keep renderApp as alias for backwards compatibility
+function renderApp(){ renderSearchForm(); }
+
+async function loadDataInBackground(){
+  const bootKey = 'kkC_boot_' + APP.resortId;
+  const cached  = kkGet(bootKey);
+
+  const applyStatic = function(d){
+    APP.defaults       = d.defaults    || {};
+    APP.stands         = d.stands      || [];
+    APP.standTypes     = d.standTypes  || [];
+    APP.publicHolidays = APP.defaults.PublicHolidaysList || [];
+    APP.holidayByDate  = {};
+    APP.publicHolidays.forEach(function(h){
+      const same = h.date === h.observedDate;
+      if(h.date)         APP.holidayByDate[h.date]         = same ? h.name : h.name+' (actual date)';
+      if(h.observedDate && !same) APP.holidayByDate[h.observedDate] = h.name+' (observed)';
+    });
+  };
+
+  const refreshUI = function(){
+    const stSel = document.getElementById('searchStandType');
+    if(stSel){
+      const types=[...new Set(activeStands().map(s=>String(s.StandTypeID||'')).filter(Boolean))];
+      stSel.innerHTML='<option value="">All types</option>'+types.map(id=>optionHtml(id,standTypeName(id))).join('');
+      if(APP.search.standType) stSel.value=APP.search.standType;
+    }
+    const minNights=Number((APP.defaults&&APP.defaults.DefaultMinNights)||1);
+    const checkOutEl=document.getElementById('searchCheckOut');
+    if(checkOutEl){
+      const minOut=addDays(APP.search.checkIn,Math.max(1,minNights));
+      checkOutEl.min=minOut;
+      if(displayDate(checkOutEl.value)<minOut){checkOutEl.value=minOut;APP.search.checkOut=minOut;}
+    }
+  };
+
+  const enableBtn = function(){
+    // button already active — no re-enable needed
+  };
+
+  try{
+    if(cached){
+      // Cache hit: apply immediately so button enables without any API wait
+      applyStatic(cached);
+      refreshUI();
+      enableBtn();
+
+      // Fetch live availability + matrix in parallel (always fresh)
+      const [availability, matrix] = await Promise.all([
+        apiCall('getPublicAvailability',       {}, 'GET'),
+        apiCall('getPublicAvailabilityMatrix', {}, 'GET')
+      ]);
+      APP.bookings     = availability.bookings || [];
+      APP.blocks       = availability.blocks   || [];
+      APP.matrixMonths = matrix.months         || [];
+      APP.matrixStands = matrix.stands         || [];
+      renderAvailabilityMatrix();
+
+      // Background: silently refresh statics and update cache
+      Promise.all([
+        apiCall('getResortDefaults', {}, 'GET'),
+        apiCall('listStands',        {}, 'GET'),
+        apiCall('listStandTypes',    {}, 'GET')
+      ]).then(function(results){
+        const fresh={defaults:results[0].defaults||{},stands:results[1].stands||[],standTypes:results[2].standTypes||[]};
+        kkSet(bootKey, fresh, _KK_H4, true);
+        applyStatic(fresh);
+        refreshUI();
+      }).catch(function(){});
+
+    }else{
+      // No cache: fetch everything in parallel and wait
+      const [defaults, stands, standTypes, availability, matrix] = await Promise.all([
+        apiCall('getResortDefaults',           {}, 'GET'),
+        apiCall('listStands',                  {}, 'GET'),
+        apiCall('listStandTypes',              {}, 'GET'),
+        apiCall('getPublicAvailability',       {}, 'GET'),
+        apiCall('getPublicAvailabilityMatrix', {}, 'GET')
+      ]);
+      const fresh={defaults:defaults.defaults||{},stands:stands.stands||[],standTypes:standTypes.standTypes||[]};
+      kkSet(bootKey, fresh, _KK_H4, true);
+      applyStatic(fresh);
+      APP.bookings     = availability.bookings || [];
+      APP.blocks       = availability.blocks   || [];
+      APP.matrixMonths = matrix.months         || [];
+      APP.matrixStands = matrix.stands         || [];
+      refreshUI();
+      enableBtn();
+      renderAvailabilityMatrix();
+    }
+  }catch(err){
+    console.warn('[KK] Background load error:',err);
+    const mw=document.getElementById('matrixWrap');
+    if(mw) mw.innerHTML='';
+    enableBtn();
+  }
+}
+
+// ── Week-view helpers ─────────────────────────────────────────────────────────
+function currentSunday(){
+  var d=new Date();
+  d.setUTCDate(d.getUTCDate()-d.getUTCDay()); // Sunday = day 0, so subtract day index
+  return d.toISOString().slice(0,10);
+}
+function weekDayHdrHtml(dayStr){
+  var d=new Date(dayStr+'T00:00:00Z');
+  var wd=d.toLocaleDateString('en-ZA',{weekday:'short',timeZone:'UTC'});
+  var dt=d.toLocaleDateString('en-ZA',{day:'numeric',month:'short',timeZone:'UTC'});
+  return wd+'<br>'+dt;
+}
+function getMatrixDayStatus(matrixStand,dayStr){
+  var mk=dayStr.slice(0,7);
+  var md=matrixStand.months[mk]||{status:{}};
+  return (md.status&&md.status[dayStr])||'available';
+}
+function goToToday(){
+  if(APP.matrixView==='week'){
+    APP.matrixWeekStart=currentSunday();
+  }else{
+    var mk=todayStr().slice(0,7);
+    var idx=APP.matrixMonths.indexOf(mk);
+    APP.matrixMonthIndex=idx>=0?idx:0;
+  }
+  renderAvailabilityMatrix();
+}
+function setMatrixView(view){
+  APP.matrixView=view;
+  if(view==='week'&&!APP.matrixWeekStart) APP.matrixWeekStart=currentSunday();
+  renderAvailabilityMatrix();
+}
+function stepMatrixWeek(delta){
+  if(!APP.matrixWeekStart) APP.matrixWeekStart=currentSunday();
+  APP.matrixWeekStart=addDays(APP.matrixWeekStart,delta*7);
+  renderAvailabilityMatrix();
+}
+function renderWeekRow(ms,days,today){
+  var full=APP.stands.find(function(s){return String(s.StandID)===String(ms.StandID);});
+  var TL={peak:'Peak',shoulder:'Shoulder',offPeak:'Off-Peak',weekend:'Weekend'};
+  var cells=days.map(function(day){
+    var status=getMatrixDayStatus(ms,day);
+    var isPast=day<today;
+    var isToday=day===today;
+    var iWknd=isWeekendDay(day);
+    var hol=APP.holidayByDate[day]||'';
+    if(isPast) return '<td><div class="wcell past'+(isToday?' today':'')+'"></div></td>';
+    if(status==='available'){
+      var priceInner='';
+      if(full){
+        var est=estimateTotal(full,day,addDays(day,1));
+        var cur=currencyOf(full);
+        var tier=classifyNight(day);
+        if(est.total>0){
+          priceInner='<div class="w-price">'+esc(formatMoney(est.total,cur))+'</div>'+
+            '<div class="w-tier '+tier+'">'+esc(TL[tier]||tier)+'</div>';
+        }
+      }
+      if(hol) priceInner+='<div class="w-hol">'+esc(hol.split(' ')[0]+'…')+'</div>';
+      return '<td><div class="wcell available'+(iWknd?' weekend':'')+(isToday?' today':'')+'">'+priceInner+'</div></td>';
+    }
+    var lbl={reserved:'Reserved',booked:'Booked',maintenance:'Maintenance'}[status]||(status.charAt(0).toUpperCase()+status.slice(1));
+    return '<td><div class="wcell '+status+(isToday?' today':'')+'"><div class="w-label">'+esc(lbl)+'</div></div></td>';
+  }).join('');
+  return '<tr><td class="week-standcol" title="'+esc([ms.StandNumber,ms.StandName].filter(Boolean).join(' - '))+'">'+esc([ms.StandNumber,ms.StandName].filter(Boolean).join(' - '))+'</td>'+cells+'</tr>';
+}
+function renderAvailabilityMatrix(){
+  if(!APP.matrixWeekStart) APP.matrixWeekStart=currentSunday();
+  if(APP.matrixView==='week'){ renderAvailabilityMatrixWeek(); return; }
+  const wrap = document.getElementById('matrixWrap');
+  if(!wrap) return;
+  wrap.classList.remove('hidden');
+  const filteredStands = APP.search.standType ? APP.matrixStands.filter(s => String(s.StandTypeID||'') === APP.search.standType) : APP.matrixStands;
+  if(!APP.matrixMonths.length || !filteredStands.length){
+    wrap.innerHTML = '';
+    return;
+  }
+  const idx = Math.min(APP.matrixMonthIndex, APP.matrixMonths.length - 1);
+  const monthKey = APP.matrixMonths[idx];
+  const sampleStand = filteredStands.find(s => s.months[monthKey] && s.months[monthKey].days.length) || filteredStands[0];
+  const cutoff = addDays(todayStr(), -7);
+  const days = ((sampleStand.months[monthKey] && sampleStand.months[monthKey].days) || []).filter(d => d >= cutoff);
+  wrap.innerHTML = `
+    <div class="card">
+      <div class="resultsHead">
+        <h2 style="font-size:14px">${esc(monthLabel(monthKey))}</h2>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn btn-soft" onclick="goToToday()" style="height:28px;padding:0 12px;font-size:11px;font-weight:800;border-radius:8px">Today</button>
+          <div class="matrix-toggle">
+            <button class="mtog active" onclick="setMatrixView('month')">Month</button>
+            <button class="mtog" onclick="setMatrixView('week')">Week</button>
+          </div>
+          <div class="matrix-nav">
+            <button class="btn btn-soft" onclick="stepMatrixMonth(-1)" ${idx===0?'disabled':''} style="height:28px;padding:0 10px;font-size:11px">← Prev</button>
+            <button class="btn btn-soft" onclick="stepMatrixMonth(1)" ${idx===APP.matrixMonths.length-1?'disabled':''} style="height:28px;padding:0 10px;font-size:11px">Next →</button>
+          </div>
+        </div>
+      </div>
+      <div class="matrix-scroll">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="matrix-standcol">Stand</th>
+              ${days.map(d=>`<th class="${isWeekendDay(d)?'weekend':''} ${APP.holidayByDate[d]?'holiday-col':''}" title="${APP.holidayByDate[d]?esc(APP.holidayByDate[d]):''}">${esc(d.slice(8,10))}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredStands.map(s=>renderMatrixRow(s, monthKey)).join('')}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th class="matrix-standcol"></th>
+              ${days.map(d=>`<th class="${isWeekendDay(d)?'weekend':''}">${esc(weekdayLetter(d))}</th>`).join('')}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="matrix-legend">
+        <span><span class="dot available"></span>Available</span>
+        <span><span class="dot reserved"></span>Reserved</span>
+        <span><span class="dot booked"></span>Booked / Maintenance</span>
+        <span><span class="dot past"></span>Past date</span>
+        <span><span class="dot" style="background:#F97316;border-color:#F97316"></span>Public holiday</span>
+      </div>
+    </div>
+  `;
+}
+function isWeekendDay(dayStr){
+  const d = parseDateOnly(dayStr);
+  if(!d) return false;
+  const day = d.getUTCDay();
+  return day===0 || day===6;
+}
+function weekdayLetter(dayStr){
+  const letters = ['S','M','T','W','T','F','S'];
+  const d = parseDateOnly(dayStr);
+  return d ? letters[d.getUTCDay()] : '';
+}
+
+function renderAvailabilityMatrixWeek(){
+  var wrap=document.getElementById('matrixWrap');
+  if(!wrap) return;
+  wrap.classList.remove('hidden');
+  if(!APP.matrixWeekStart) APP.matrixWeekStart=currentSunday();
+  var filteredStands=APP.search.standType
+    ?APP.matrixStands.filter(function(s){return String(s.StandTypeID||'')===APP.search.standType;})
+    :APP.matrixStands;
+  if(!filteredStands.length){wrap.innerHTML='';return;}
+  var days=[];for(var i=0;i<7;i++) days.push(addDays(APP.matrixWeekStart,i));
+  var today=todayStr();
+  var weekEnd=days[6];
+  var startFmt=new Date(APP.matrixWeekStart+'T00:00:00Z').toLocaleDateString('en-ZA',{day:'numeric',month:'short',timeZone:'UTC'});
+  var endFmt=new Date(weekEnd+'T00:00:00Z').toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+  var thead='<tr><th class="week-standcol">Stand</th>'+days.map(function(d){
+    var isWknd=isWeekendDay(d);
+    var isHol=!!APP.holidayByDate[d];
+    var isTod=d===today;
+    return '<th class="week-dayhdr'+(isWknd?' weekend':'')+(isHol?' holiday-col':'')+(isTod?' today-col':'')+'" title="'+esc(APP.holidayByDate[d]||'')+'">'+weekDayHdrHtml(d)+'</th>';
+  }).join('')+'</tr>';
+  var tbody=filteredStands.map(function(ms){return renderWeekRow(ms,days,today);}).join('');
+  var legend='<div class="matrix-legend">'+
+    '<span><span class="dot available"></span>Available</span>'+
+    '<span><span class="dot reserved"></span>Reserved</span>'+
+    '<span><span class="dot booked"></span>Booked / Maintenance</span>'+
+    '<span><span class="dot past"></span>Past date</span>'+
+    '</div>';
+  wrap.innerHTML='<div class="card">'+
+    '<div class="resultsHead">'+
+      '<h2 style="font-size:14px">'+esc(startFmt+' – '+endFmt)+'</h2>'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+        '<button class="btn btn-soft" onclick="goToToday()" style="height:28px;padding:0 12px;font-size:11px;font-weight:800;border-radius:8px">Today</button>'+
+        '<div class="matrix-toggle">'+
+          '<button class="mtog" onclick="setMatrixView(&#39;month&#39;)">Month</button>'+
+          '<button class="mtog active" onclick="setMatrixView(&#39;week&#39;)">Week</button>'+
+        '</div>'+
+        '<div class="matrix-nav">'+
+          '<button class="btn btn-soft" onclick="stepMatrixWeek(-1)" style="height:28px;padding:0 10px;font-size:11px">← Prev</button>'+
+          '<button class="btn btn-soft" onclick="stepMatrixWeek(1)" style="height:28px;padding:0 10px;font-size:11px">Next →</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="matrix-scroll"><table class="week-table"><thead>'+thead+'</thead><tbody>'+tbody+'</tbody></table></div>'+
+    legend+
+  '</div>';
+}
+function stepMatrixMonth(delta){
+  const next = APP.matrixMonthIndex + delta;
+  if(next < 0 || next >= APP.matrixMonths.length) return;
+  APP.matrixMonthIndex = next;
+  renderAvailabilityMatrix();
+}
+function renderMatrixRow(stand, monthKey){
+  const monthData = stand.months[monthKey] || { days:[], status:{} };
+  const today = todayStr();
+  const cutoff = addDays(today, -7);
+  const rowDays = monthData.days.filter(d => d >= cutoff);
+  return `
+    <tr>
+      <td class="matrix-standcol">${esc([stand.StandNumber, stand.StandName].filter(Boolean).join(' - '))}</td>
+      ${rowDays.map(day=>{
+        const status = (monthData.status && monthData.status[day]) || 'available';
+        const isPast = day < today;
+        const isWeekend = isWeekendDay(day);
+        const holidayName = APP.holidayByDate[day];
+        const displayClass = isPast ? 'past' : status;
+        const label = (status.charAt(0).toUpperCase() + status.slice(1)) + (isPast ? ' (past)' : '') + (holidayName ? ' · ' + holidayName : '');
+        return `<span class="daycell ${displayClass} ${isWeekend?'weekend':''} ${holidayName?'holiday':''}" data-stand-id="${esc(stand.StandID)}" data-date="${esc(day)}"></span>`;
+      }).map(cell=>`<td>${cell}</td>`).join('')}
+    </tr>
+  `;
+}
+function stepSearch(field, delta){
+  const min = field==='adults' ? 1 : 0;
+  APP.search[field] = Math.max(min, (APP.search[field]||0) + delta);
+  document.getElementById('search'+field.charAt(0).toUpperCase()+field.slice(1)+'Label').textContent = APP.search[field];
+  saveSearchState();
+  // Guest count changed — re-filter current results instantly (no API call needed)
+  const rw = document.getElementById('resultsWrap');
+  if(rw && rw.innerHTML.trim()) runSearch();
+}
+async function runSearchFresh(){
+  APP.search.standType = document.getElementById('searchStandType')?.value || '';
+  saveSearchState();
+  const wrap = document.getElementById('resultsWrap');
+  if(wrap) wrap.innerHTML = `<div class="card"><div class="notice info">Checking latest availability…</div></div>`;
+  try{
+    const [availability, matrix] = await Promise.all([
+      apiCall('getPublicAvailability', {}, 'GET'),
+      apiCall('getPublicAvailabilityMatrix', {}, 'GET')
+    ]);
+    APP.bookings = availability.bookings || APP.bookings;
+    APP.blocks = availability.blocks || APP.blocks;
+    APP.matrixMonths = matrix.months || APP.matrixMonths;
+    APP.matrixStands = matrix.stands || APP.matrixStands;
+    APP.lastChecked = new Date();
+  }catch(err){
+    console.warn('Could not refresh availability, using last known data:', err);
+  }
+  runSearch();
+  renderAvailabilityMatrix();
+}
+function runSearch(){
+  const checkIn = APP.search.checkIn, checkOut = APP.search.checkOut;
+  const wrap = document.getElementById('resultsWrap');
+  const nights = nightsBetween(checkIn, checkOut);
+  if(!nights || nights < 1){
+    wrap.innerHTML = `<div class="card"><div class="notice warn">Please choose a check-out date after your check-in date.</div></div>`;
+    return;
+  }
+  const matches = activeStands().filter(s=>{
+    if(APP.search.standType && String(s.StandTypeID||'') !== APP.search.standType) return false;
+    if(Number(s.MaxAdults||0) + Number(s.MaxChildren||0) < 1) return true;
+    if(APP.search.adults > Number(s.MaxAdults ?? 99)) return false;
+    if(APP.search.children > Number(s.MaxChildren ?? 99)) return false;
+    return isStandAvailable(s.StandID, checkIn, checkOut);
+  });
+  const checkedNote = APP.lastChecked ? ` · Checked ${esc(APP.lastChecked.toLocaleTimeString())}` : '';
+  wrap.innerHTML = `
+    <div class="resultsHead">
+      <h2>${matches.length ? matches.length + ' stand' + (matches.length===1?'':'s') + ' available' : 'No stands available'}</h2>
+      <span class="pill">${esc(nights)} night${nights===1?'':'s'} · ${esc(displayDate(checkIn))} → ${esc(displayDate(checkOut))}${checkedNote}</span>
+    </div>
+    ${matches.length ? `<div class="standgrid">${matches.map(renderStandCard).join('')}</div>` : `
+      <div class="card center">
+        <div class="notice info" style="width:100%">No stands match those dates or party size right now.</div>
+        <div class="small">Try adjusting your dates or lowering your guest count, or contact the resort directly for options.</div>
+      </div>
+    `}
+  `;
+}
+
+// Group a night-by-night breakdown into per-tier buckets for compact card display.
+// Returns [{tier, tierLabel, count, rateEach, subtotal}] sorted by first occurrence.
+function summarizeBreakdown(breakdown) {
+  const order = [], map = {};
+  (breakdown || []).forEach(n => {
+    if (!map[n.tier]) {
+      map[n.tier] = { tier:n.tier, tierLabel:n.tierLabel, count:0, rateEach:n.rate, subtotal:0 };
+      order.push(n.tier);
+    }
+    map[n.tier].count++;
+    map[n.tier].subtotal += n.rate;
+    // If rates differ within the same tier (shouldn't happen but guard anyway)
+    if (n.rate !== map[n.tier].rateEach) map[n.tier].rateEach = null;
+  });
+  return order.map(t => map[t]);
+}
+
+function renderStandCard(s){
+  const est = estimateTotal(s, APP.search.checkIn, APP.search.checkOut);
+  const currency = currencyOf(s);
+  return `
+    <div class="standcard" onclick="openStandDetails('${esc(s.StandID)}')">
+      <div class="thumb" style="padding:0;overflow:hidden">
+        ${s.StandImageURL
+          ? `<img src="${esc(s.StandImageURL)}" alt="${esc(standLabel(s))}"
+                  style="width:100%;height:100%;object-fit:cover;display:block"
+                  onerror="this.style.display='none';this.parentElement.innerHTML='&#127957;&#65039;'">`
+          : '&#127957;&#65039;'}
+      </div>
+      <div class="body">
+        <div class="type">${esc(standTypeName(s.StandTypeID))}</div>
+        <h3>${esc(standLabel(s))}</h3>
+        <div class="desc">${esc(String(s.Description||'').slice(0,110))}${String(s.Description||'').length>110?'…':''}</div>
+        <div class="meta">
+          <span class="chip">👤 ${esc(s.MaxAdults||0)}A ${esc(s.MaxChildren||0)}C</span>
+          ${s.MaxVehicles ? `<span class="chip">🚗 ${esc(s.MaxVehicles)}</span>` : ''}
+        </div>
+        <div class="pricerow">
+          <div>
+            <div class="price">${esc(formatMoney(est.total, currency))}</div>
+            <div class="pricesub">${est.breakdown ? 'Dynamic &middot; ' : 'Est. '}${esc(est.nights)} night${est.nights===1?'':'s'}</div>
+          </div>
+          <button class="btn btn-brand" onclick="event.stopPropagation(); openStandDetails('${esc(s.StandID)}')">Show Detail</button>
+        </div>
+        ${est.breakdown && summarizeBreakdown(est.breakdown).length > 0 ? `
+        <div style="border-top:1px solid var(--border);padding:8px 14px 4px;display:flex;flex-direction:column;gap:3px">
+          ${summarizeBreakdown(est.breakdown).map(b => `
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+              <span style="display:flex;align-items:center;gap:5px">
+                <span class="tier-badge ${b.tier}" style="font-size:9px">${esc(b.tierLabel)}</span>
+                <span style="color:var(--muted);font-weight:700">${esc(b.count)} night${b.count!==1?'s':''}${b.rateEach!==null?' @ '+esc(formatMoney(b.rateEach,est.currency)):''}</span>
+              </span>
+              <span style="font-weight:800">${esc(formatMoney(b.subtotal,est.currency))}</span>
+            </div>`).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+  `;
+}
+function parseJsonList(v){
+  const s = String(v||'').trim();
+  if (!s) return [];
+  try {
+    const p = JSON.parse(s);
+    return Array.isArray(p) ? p.filter(Boolean) : [];
+  } catch(e) {
+    // Fallback: treat as comma-separated plain text
+    return s.split(',').map(x => x.trim()).filter(Boolean);
+  }
+}
+function openModal(id){ document.getElementById(id)?.classList.add('on'); }
+function closeModal(id){ document.getElementById(id)?.classList.remove('on'); }
+function modalBackdrop(e,id){ if(e.target.id===id) closeModal(id); }
+function closeBookingModalAndReset(){
+  closeModal('bookModal');
+  clearSearchState();
+  APP.search = computeDefaultSearch();
+  renderSearchForm();        // reset the UI
+  loadDataInBackground();    // re-enable button + re-render matrix from cache/memory
+}
+function openStandDetails(standId){
+  const s = APP.stands.find(x=>x.StandID===standId);
+  if(!s) return;
+  APP.selectedStandId = standId;
+  const amenities = parseJsonList(s.AmenitiesJSON);
+  const features = parseJsonList(s.FeaturesJSON);
+  const extras    = parseJsonList(s.ExtrasJSON);
+  const est = estimateTotal(s, APP.search.checkIn, APP.search.checkOut);
+  const currency = currencyOf(s);
+  const deposit = depositAmount(s, est.total);
+  document.getElementById('standModalTitle').textContent = standLabel(s);
+  document.getElementById('standModalBody').innerHTML = `
+    ${s.StandImageURL ? `<img src="${esc(s.StandImageURL)}" alt="${esc(standLabel(s))}"
+       style="width:100%;max-height:240px;object-fit:cover;border-radius:10px;margin-bottom:14px;display:block"
+       onerror="this.style.display='none'">` : ''}
+    <div class="notice info">${esc(standTypeName(s.StandTypeID))} · Sleeps up to ${esc(s.MaxAdults||0)} adults, ${esc(s.MaxChildren||0)} children</div>
+    <p class="small" style="margin-top:12px;font-size:13px;color:var(--text)">${esc(s.Description || 'No description provided yet.')}</p>
+        ${amenities.length ? `
+      <div class="small" style="margin-top:16px;font-weight:800;text-transform:uppercase;letter-spacing:.4px">Amenities</div>
+      <div class="amenities" style="margin-top:6px">${amenities.map(a=>`<span class="chip">${esc(a)}</span>`).join('')}</div>` : ''}
+    ${features.length ? `
+      <div class="small" style="margin-top:14px;font-weight:800;text-transform:uppercase;letter-spacing:.4px">Features</div>
+      <div class="amenities" style="margin-top:6px">${features.map(a=>`<span class="chip">${esc(a)}</span>`).join('')}</div>` : ''}
+    ${extras.length ? `
+      <div class="small" style="margin-top:14px;font-weight:800;text-transform:uppercase;letter-spacing:.4px">Extras Available</div>
+      <div class="amenities" style="margin-top:6px">${extras.map(a=>`<span class="chip">${esc(a)}</span>`).join('')}</div>` : ''}
+    <div class="card" style="margin-top:16px;box-shadow:none;border:1.5px solid var(--border)">
+      <div class="small">Estimated total for ${esc(est.nights)} night${est.nights===1?'':'s'}</div>
+      <div style="font-family:'Poppins',sans-serif;font-size:24px;font-weight:800;color:var(--brand-d);margin-top:4px">${esc(formatMoney(est.total, currency))}</div>
+      <div class="small" style="margin-top:6px">${est.breakdown ? renderPriceBreakdown(est) : ''}
+      <div class="small" style="margin-top:6px">Estimated deposit to hold: ${esc(formatMoney(deposit, currency))}. Final pricing and any extras are confirmed by the resort.</div>
+    </div>
+    <button class="btn btn-brand btn-block" style="margin-top:16px" onclick="closeModal('standModal'); openBookingForm('${esc(standId)}')">Request this stand</button>
+  `;
+  openModal('standModal');
+}
+function openBookingForm(standId){
+  const s = APP.stands.find(x=>x.StandID===standId);
+  if(!s) return;
+  if(!isStandAvailable(standId, APP.search.checkIn, APP.search.checkOut)){
+    alert('Sorry, this stand was just booked for those dates. Please search again.');
+    runSearch();
+    return;
+  }
+  const est = estimateTotal(s, APP.search.checkIn, APP.search.checkOut);
+  const currency = currencyOf(s);
+  const deposit = depositAmount(s, est.total);
+  document.getElementById('bookModalBody').innerHTML = `
+    <div class="notice info">${esc(standLabel(s))} · ${esc(displayDate(APP.search.checkIn))} → ${esc(displayDate(APP.search.checkOut))} · ${esc(est.nights)} night${est.nights===1?'':'s'}</div>
+    <div class="formgrid" style="margin-top:14px">
+      <div class="field"><label>First name</label><input class="input" id="bfFirstName"></div>
+      <div class="field"><label>Last name</label><input class="input" id="bfLastName"></div>
+      <div class="field"><label>Email</label><input class="input" type="email" id="bfEmail"></div>
+      <div class="field"><label>Phone</label><input class="input" id="bfPhone"></div>
+      <div class="field full"><label>Notes for the resort (optional)</label><input class="input" id="bfNotes" placeholder="Arrival time, special requests, etc."></div>
+    </div>
+    <div class="card" style="margin-top:16px;box-shadow:none;border:1.5px solid var(--border)">
+      <div class="small">Estimated total</div>
+      <div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--brand-d)">${esc(formatMoney(est.total, currency))}</div>
+      ${est.breakdown ? renderPriceBreakdown(est) : ''}
+      <div class="small" style="margin-top:4px">Estimated deposit: ${esc(formatMoney(deposit, currency))}. This is a request to reserve a booking — the resort will confirm booking and payment arrangements.</div>
+    </div>
+    <div id="bookFormMsg" style="margin-top:12px"></div>
+    ${!APP.onBoard ? '<div style="background:#FEF3C7;color:#92400E;font-size:12px;font-weight:700;padding:8px 12px;border-radius:8px;margin-bottom:10px;">&#9888; Sandbox Mode &#8212; booking may not be processed</div>' : APP.kkbookMode === 'indirect' ? '<div style="background:#EFF6FF;color:#1E40AF;font-size:12px;font-weight:700;padding:8px 12px;border-radius:8px;margin-bottom:10px;">&#128232; Enquiry &#8212; the resort will contact you to confirm in their own system</div>' : ''}
+  <button class="btn btn-brand btn-block" id="sendBookingBtn" style="margin-top:12px" onclick="submitBooking('${esc(standId)}')">` + (APP.kkbookMode === 'indirect' ? 'Send Enquiry' : 'Send booking request') + `</button>
+  `;
+  openModal('bookModal');
+}
+async function submitBooking(standId){
+  const s = APP.stands.find(x=>x.StandID===standId);
+  if(!s) return;
+  const firstName = document.getElementById('bfFirstName').value.trim();
+  const lastName = document.getElementById('bfLastName').value.trim();
+  const email = document.getElementById('bfEmail').value.trim();
+  const phone = document.getElementById('bfPhone').value.trim();
+  const notes = document.getElementById('bfNotes').value.trim();
+  const msg = document.getElementById('bookFormMsg');
+  const sendBtn = document.getElementById('sendBookingBtn');
+  if(!firstName || !email){
+    msg.innerHTML = `<div class="notice warn">Please enter at least your first name and email.</div>`;
+    return;
+  }
+  const est = estimateTotal(s, APP.search.checkIn, APP.search.checkOut);
+  const deposit = depositAmount(s, est.total);
+  msg.innerHTML = `<div class="notice info">Sending your request…</div>`;
+  if(sendBtn) sendBtn.style.display = 'none';
+  try{
+    const res = await apiCall('createPublicBooking', {
+      ResortID: APP.resortId,
+      StandID: standId,
+      CheckInDate: APP.search.checkIn,
+      CheckOutDate: APP.search.checkOut,
+      GuestFirstName: firstName,
+      GuestLastName: lastName,
+      GuestEmail: email,
+      GuestPhone: phone,
+      Adults: APP.search.adults,
+      Children: APP.search.children,
+      Toddlers: APP.search.toddlers,
+      GuestNotes: notes,
+      TotalSnapshot: est.total,
+      DepositRequiredSnapshot: deposit,
+      PricingSnapshotJSON: JSON.stringify({ nights:est.nights, total:est.total, currency:est.currency, mode:est.mode, breakdown:est.breakdown||[] }),
+      skipScoring: (function(){ try { return localStorage.getItem('kkIsResortStaff') === 'true'; } catch(e){ return false; } })()
+    }, 'POST');
+    if(!res.success){
+      msg.innerHTML = `<div class="notice bad">${esc(res.error || 'Could not send your request. Please try again.')}</div>`;
+      if(sendBtn) sendBtn.style.display = '';
+      return;
+    }
+    const holdMins = Number(res.holdMinutes) || 0;
+    const holdTime = holdMins >= 60
+      ? Math.round(holdMins / 60) + (Math.round(holdMins / 60) === 1 ? ' hour' : ' hours')
+      : holdMins + (holdMins === 1 ? ' minute' : ' minutes');
+    const holdNote = holdMins
+      ? `Your stand is held for about ${esc(holdTime)} while the resort reviews your request.`
+      : `The resort will review your request shortly.`;
+    const resortInRecipients = Array.isArray(res.emailRecipients) && res.emailRecipients.length > 1;
+    const resortMailNote = res.emailSent && !resortInRecipients ? `<div class="notice warn" style="margin-top:10px">We couldn't email the resort automatically — please also reach out to them directly to confirm.</div>` : '';
+    document.getElementById('bookModalBody').innerHTML = `
+      <div class="notice ok">Request sent! Reference <strong>${esc(res.bookingRef || res.key || '')}</strong></div>
+      <p class="small" style="margin-top:12px">${APP.kkbookMode === 'indirect' ? 'Your enquiry has been received. The resort will review it and contact you directly to confirm and finalise the booking in their own system.' : holdNote + " You'll hear from the resort at " + esc(email) + (phone ? ' or ' + esc(phone) : '') + ' to confirm and arrange your deposit.'}</p>
+      ${APP.kkbookMode === 'indirect' ? '<p class="small" style="margin-top:8px;color:#92400E;background:#FEF3C7;padding:8px 12px;border-radius:8px;">&#128232; <strong>Indirect Booking:</strong> The resort manages this booking in their own system. KampKiepie has forwarded your request.</p>' : ''}
+      ${resortMailNote}
+      <button class="btn btn-soft btn-block" style="margin-top:14px" onclick="closeBookingModalAndReset()">Close</button>
+    `;
+    try{
+      const availability = await apiCall('getPublicAvailability', {}, 'GET');
+      APP.bookings = availability.bookings || APP.bookings;
+      APP.blocks = availability.blocks || APP.blocks;
+      runSearch();
+    }catch(e){ /* non-fatal */ }
+  }catch(err){
+    msg.innerHTML = `<div class="notice bad">${esc(err.message || String(err))}</div>`;
+    if(sendBtn) sendBtn.style.display = '';
+  }
+}
+
+// ── Day-cell price tooltip ────────────────────────────────────────────────────
+(function(){
+  var tip = document.createElement('div');
+  tip.id = 'kkTip';
+  document.body.appendChild(tip);
+
+  var TIER_COLORS = {
+    peak:'#DC2626', shoulder:'#D97706', offPeak:'#16A34A', weekend:'#2563EB'
+  };
+  var TIER_LABELS = {
+    peak:'Peak', shoulder:'Shoulder', offPeak:'Off-Peak', weekend:'Weekend'
+  };
+
+  function showTip(cell) {
+    var standId = cell.dataset.standId;
+    var date    = cell.dataset.date;
+    if (!standId || !date) return;
+    // Price info only for available cells
+    if (!cell.classList.contains('available')) return;
+    // String coercion on both sides — GAS can return numeric IDs
+    var stand = APP.stands.find(function(s){ return String(s.StandID) === String(standId); });
+    if (!stand) return;
+    // Single-night estimate using existing engine
+    var est      = estimateTotal(stand, date, addDays(date, 1));
+    var currency = currencyOf(stand);
+    var tier     = classifyNight(date);
+    var color    = TIER_COLORS[tier] || '#6B7280';
+    var label    = TIER_LABELS[tier] || tier;
+    var dateFmt  = new Date(date + 'T00:00:00Z')
+      .toLocaleDateString('en-ZA', { weekday:'short', day:'numeric', month:'short', timeZone:'UTC' });
+    var priceHtml = est.total > 0
+      ? '<div class="tip-price">' + esc(formatMoney(est.total, currency)) + '</div><div class="tip-sub">per night</div>'
+      : '<div class="tip-sub" style="color:rgba(255,255,255,.5)">Rate not set</div>';
+    tip.innerHTML =
+      '<div class="tip-date">' + esc(dateFmt) + '</div>' +
+      '<div style="margin-bottom:4px"><span style="background:' + color + '33;color:' + color +
+        ';font-size:9px;font-weight:800;border-radius:999px;padding:1px 7px">' + esc(label) + '</span></div>' +
+      priceHtml;
+    // Position centred above the cell, clamped inside viewport
+    var r  = cell.getBoundingClientRect();
+    tip.style.left = '0px'; tip.style.top = '0px';
+    tip.classList.add('on');
+    var tw   = tip.offsetWidth;
+    var left = r.left + r.width / 2 - tw / 2;
+    var top  = r.top - 10;
+    left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+    if (top < 8) top = r.bottom + 8; // flip below if near top
+    tip.style.left = left + 'px';
+    tip.style.top  = top  + 'px';
+  }
+
+  // Single delegated listener — works after matrix re-renders
+  document.addEventListener('mouseover', function(e) {
+    var cell = e.target.closest('.daycell');
+    if (!cell) { tip.classList.remove('on'); return; }
+    showTip(cell);
+  });
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.closest('.daycell')) tip.classList.remove('on');
+  });
+  document.addEventListener('scroll', function() {
+    tip.classList.remove('on');
+  }, { passive: true });
+})();
+
+boot();
+</script>
+</body>
+</html>

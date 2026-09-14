@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<title>KampKiepie &#8211; Resort Profile</title>
+<meta name="description" content="Discover and book camping, glamping, chalets, lodges and more across South Africa on KampKiepie.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://kampkiepie.co.za/resort.html">
+<link rel="alternate" hreflang="en-ZA" href="https://kampkiepie.co.za/resort.html">
+<link rel="alternate" hreflang="x-default" href="https://kampkiepie.co.za/resort.html">
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="KampKiepie">
+<meta property="og:type" content="place">
+<meta property="og:title" content="KampKiepie &#8211; South African Resort Directory">
+<meta property="og:description" content="Discover and book camping, glamping, chalets, lodges and more across South Africa.">
+<meta property="og:image" content="https://kampkiepie.co.za/og-default.jpg">
+<meta property="og:url" content="https://kampkiepie.co.za/resort.html">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@kampkiepie">
+<meta name="twitter:title" content="KampKiepie &#8211; South African Resort Directory">
+<meta name="twitter:description" content="Discover and book camping, glamping, chalets, lodges and more across South Africa.">
+<meta name="twitter:image" content="https://kampkiepie.co.za/og-default.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#F97316;--brand-l:#FFF7ED;--brand-d:#EA580C;
+  --sub:#16A34A;--sub-l:#F0FDF4;
+  --green:#173B2C;--green-2:#0F2B20;--green-l:#F0FDF4;
+  --blue:#3B82F6;--blue-l:#EFF6FF;
+  --bg:#FBF6EC;--card:#FFFFFF;--text:#18181B;
+  --muted:#6B7280;--subtle:#9CA3AF;--border:#E7E2D6;
+  --r:16px;--sh:0 4px 18px rgba(23,59,44,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+h1,h2,h3{font-family:'Poppins',sans-serif;}
+.hdr{background:var(--green);border-bottom:none;padding:12px 20px;
+  display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);}
+.hdr-logo{width:30px;height:30px;border-radius:8px;background:var(--brand);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.back-btn{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:20px;
+  padding:8px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;}
+.back-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-title{display:none;}
+.admin-btn{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:8px;
+  padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;
+  text-decoration:none;white-space:nowrap;flex-shrink:0;margin-left:auto;}
+.admin-btn:hover{background:rgba(255,255,255,.22);}
+.page{max-width:1180px;margin:0 auto;padding:0 0 60px;}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--brand-l),#FDE68A);}
+.hero-img{width:100%;height:400px;object-fit:cover;display:block;}
+.hero-ph{width:100%;height:280px;display:flex;align-items:center;justify-content:center;font-size:80px;}
+.hero-logo{position:absolute;bottom:16px;right:20px;max-width:110px;max-height:84px;
+  border-radius:12px;border:3px solid rgba(255,255,255,.95);background:#fff;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;align-items:center;
+  justify-content:center;overflow:hidden;padding:4px;}
+.hero-logo img{width:auto;height:auto;max-width:100px;max-height:76px;object-fit:contain;}
+.hero-badges{position:absolute;top:16px;left:20px;display:flex;gap:6px;flex-wrap:wrap;}
+.bdg{padding:5px 11px;border-radius:20px;font-size:11px;font-weight:800;backdrop-filter:blur(8px);}
+.bdg-b{background:rgba(22,163,74,.9);color:#fff;}
+.bdg-pet{background:rgba(99,102,241,.9);color:#fff;}
+.bdg-kk{background:rgba(59,130,246,.9);color:#fff;}
+.bdg-mem{background:rgba(124,58,237,.9);color:#fff;}
+.bdg-niche{background:rgba(20,184,166,.9);color:#fff;}
+.bdg-wed{background:rgba(219,39,119,.9);color:#fff;}
+.bdg-conf{background:rgba(71,85,105,.9);color:#fff;}
+.bdg-func{background:rgba(217,119,6,.9);color:#fff;}
+.bdg-hunt{background:rgba(120,53,15,.9);color:#fff;}
+@media(max-width:720px){.hero-img{height:220px;}.hero-ph{height:180px;font-size:56px;}
+  .hero-logo{max-width:74px;max-height:56px;bottom:10px;right:12px;}
+  .hero-logo img{max-width:64px;max-height:48px;}}
+.title-wrap{max-width:1180px;margin:0 auto;padding:24px 24px 0;}
+.title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:14px;}
+.title-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.resort-name{font-family:'Poppins',sans-serif;font-weight:800;font-size:28px;line-height:1.15;color:var(--text);}
+.verified-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green);color:#fff;
+  border-radius:20px;padding:6px 13px;font-size:12px;font-weight:800;white-space:nowrap;}
+.title-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.save-btn{display:inline-flex;align-items:center;gap:7px;background:#fff;color:var(--text);
+  border:1.5px solid var(--border);border-radius:12px;padding:0 18px;height:46px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.save-btn:hover{border-color:var(--brand);}
+.save-btn.saved{background:#FEF2F2;border-color:#FCA5A5;color:#DC2626;}
+.check-avail-btn{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;
+  border:none;border-radius:12px;padding:0 22px;height:46px;font-family:'Nunito',sans-serif;
+  font-size:14.5px;font-weight:800;cursor:pointer;text-decoration:none;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(249,115,22,.3);}
+.check-avail-btn:hover{background:var(--brand-d);}
+.loc-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:22px;}
+.loc-pill{display:inline-flex;align-items:center;gap:5px;background:var(--bg);
+  color:var(--muted);border-radius:20px;padding:7px 13px;font-size:12.5px;font-weight:700;}
+.loc-pill.grey{background:var(--bg);color:var(--muted);}
+.map-link{display:inline-flex;align-items:center;gap:5px;background:var(--bg);color:var(--muted);
+  border-radius:20px;padding:7px 13px;font-size:12.5px;font-weight:700;text-decoration:none;}
+.map-link:hover{background:var(--border);}
+@media(max-width:720px){.resort-name{font-size:21px;}.title-row{flex-direction:column;}
+  .title-actions{width:100%;} .save-btn,.check-avail-btn{flex:1;}}
+.main-wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+.two-col-grid{display:grid;grid-template-columns:1fr;gap:18px;align-items:start;}
+@media(min-width:900px){.two-col-grid{grid-template-columns:1.15fr 1fr;}}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0;}
+.sec{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:22px;}
+.sec-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;
+  color:var(--text);margin-bottom:15px;display:flex;align-items:center;gap:9px;}
+.sec-title span:first-child{font-size:18px;}
+.desc{font-size:14px;font-weight:600;color:var(--muted);line-height:1.85;white-space:pre-wrap;}
+.read-more-btn{background:none;border:none;color:var(--brand-d);font-weight:800;font-size:13px;
+  cursor:pointer;margin-top:10px;display:inline-flex;align-items:center;gap:4px;padding:0;font-family:'Nunito',sans-serif;}
+.desc.clamped{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.tag{padding:8px 15px;border-radius:20px;font-size:13px;font-weight:800;
+  background:var(--bg);color:var(--muted);display:inline-flex;align-items:center;gap:6px;}
+.tag-btn{border:none;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .15s,color .15s;}
+.tag-btn:hover{opacity:.85;}
+.tag-btn.active{background:var(--green);color:#fff;}
+.acc-detail{margin-top:2px;}
+.acc-detail-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:0;}
+.acc-detail-divider{border:none;border-top:1.5px solid var(--border);margin:14px 0 12px;}
+.acc-item-row{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:var(--text);}
+.acc-item-ico{width:20px;text-align:center;flex-shrink:0;color:var(--brand-d);}
+.acc-detail-txt{font-size:13px;font-weight:600;color:#1F5138;line-height:1.75;white-space:pre-wrap;
+  background:var(--green-l);border-radius:10px;padding:14px 16px;}
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;}
+.cta-btn{flex:1;min-width:120px;height:46px;border-radius:11px;border:none;
+  font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  text-decoration:none;transition:opacity .13s;}
+.cta-btn:hover{opacity:.88;}
+.cb-wa{background:#25D366;color:#fff;}
+.cb-book{background:var(--brand);color:#fff;}
+.book-top-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;
+  height:48px;border-radius:12px;background:var(--brand);color:#fff;text-decoration:none;
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px;
+  box-shadow:0 4px 14px rgba(249,115,22,.35);transition:opacity .13s;}
+.book-top-btn:hover{opacity:.9;}
+.cb-s{background:var(--bg);color:var(--text);border:1.5px solid var(--border);}
+.cb-sub{background:var(--brand-d);color:#fff;}
+.cb-map{background:#fff;color:var(--brand-d);border:2px solid var(--brand-d) !important;font-weight:800;}
+.cta-sub{font-size:12.5px;color:var(--subtle);font-weight:700;margin-bottom:15px;margin-top:-8px;}
+.contact-list{display:flex;flex-direction:column;gap:12px;}
+.contact-row{display:flex;align-items:center;gap:11px;font-size:13.5px;font-weight:700;}
+.cico{width:36px;height:36px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;}
+.cico-o{background:var(--brand-l);} .cico-g{background:var(--green-l);}
+.cico-b{background:var(--blue-l);}
+.clink{color:var(--text);font-weight:700;text-decoration:none;word-break:break-all;}
+.clink:hover{color:var(--brand-d);}
+.amen-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:4px;}
+@media(min-width:520px){.amen-grid{grid-template-columns:1fr 1fr;}}
+.amen-group-title{font-size:11px;font-weight:900;color:var(--subtle);
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:11px;}
+.amen-item{display:flex;align-items:center;gap:9px;font-size:13.5px;
+  font-weight:700;color:var(--text);margin-bottom:10px;}
+.amen-item-ico{width:20px;text-align:center;flex-shrink:0;color:var(--brand-d);font-size:15px;}
+.info-box{margin-top:12px;background:var(--bg);border-radius:10px;padding:13px 15px;
+  font-size:13px;font-weight:600;color:var(--muted);line-height:1.7;}
+.pets-box{margin-top:10px;background:var(--green-l);border-radius:10px;padding:11px 14px;
+  font-size:13px;font-weight:700;color:var(--green);}
+.gallery-sec{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:22px;margin-top:18px;}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(min-width:600px){.gallery{grid-template-columns:repeat(4,1fr);}}
+.gal-img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:11px;
+  cursor:pointer;transition:transform .15s;}
+.gal-img:hover{transform:scale(1.03);}
+.faq-item{border-bottom:1px solid var(--border);padding:12px 0;}
+.faq-item:last-child{border-bottom:none;}
+.faq-q{font-size:13.5px;font-weight:800;color:var(--text);cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.faq-a{font-size:13px;font-weight:600;color:var(--muted);line-height:1.75;
+  margin-top:8px;display:none;}
+.faq-a.on{display:block;}
+.host-msg{background:var(--bg);border-left:4px solid var(--brand);
+  border-radius:0 10px 10px 0;padding:14px 16px;font-size:13.5px;font-weight:600;
+  color:var(--text);line-height:1.8;font-style:italic;margin-bottom:16px;}
+.members-banner{background:linear-gradient(135deg,#7C3AED,#6D28D9);color:#fff;
+  padding:11px 24px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;
+  justify-content:center;}
+.disclaimer{max-width:1180px;margin:22px auto 0;padding:0 24px;}
+.disclaimer-box{background:var(--green-l);border-radius:12px;padding:14px 20px;
+  text-align:center;font-size:12.5px;font-weight:700;color:#1F5138;line-height:1.6;}
+.map-ovl{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;
+  display:none;align-items:center;justify-content:center;}
+.map-ovl.on{display:flex;}
+.map-box{background:#fff;border-radius:16px;overflow:hidden;
+  width:92vw;max-width:700px;max-height:85vh;display:flex;flex-direction:column;}
+.map-hdr{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);}
+.map-hdr span{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;}
+.map-close{background:var(--bg);border:none;border-radius:50%;width:30px;height:30px;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.map-img{width:100%;flex:1;object-fit:contain;max-height:calc(85vh - 60px);}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;
+  display:none;align-items:center;justify-content:center;flex-direction:column;}
+.lb.on{display:flex;}
+.lb-img{max-width:94vw;max-height:80vh;object-fit:contain;border-radius:10px;}
+.lb-close{position:absolute;top:14px;right:18px;color:#fff;font-size:28px;
+  cursor:pointer;background:none;border:none;}
+.lb-counter{color:rgba(255,255,255,.65);font-size:12px;font-weight:700;margin-top:10px;}
+.lb-nav{display:flex;gap:16px;margin-top:10px;}
+.lb-nav button{background:rgba(255,255,255,.15);color:#fff;border:none;
+  border-radius:8px;padding:7px 18px;font-family:'Nunito',sans-serif;
+  font-size:13px;font-weight:800;cursor:pointer;}
+.lb-nav button:hover{background:rgba(255,255,255,.28);}
+.txt-block{font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.8;white-space:pre-wrap;word-break:break-word;}
+.loading{text-align:center;padding:80px 20px;color:var(--muted);font-weight:700;font-size:14px;}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--brand);
+  border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.err{background:#FEF2F2;border:1.5px solid #FECACA;border-radius:12px;
+  padding:18px;margin:16px;color:#B91C1C;font-size:13px;font-weight:600;text-align:center;}
+/* ── EXTERNAL BOOKING REDIRECT MODAL ── */
+.ext-modal-ovl{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:450;
+  display:none;align-items:center;justify-content:center;padding:16px;}
+.ext-modal-ovl.on{display:flex;}
+.ext-modal-box{background:var(--card);border-radius:20px;max-width:460px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;}
+.ext-modal-hdr{background:var(--brand);padding:20px 22px 18px;
+  display:flex;align-items:center;gap:12px;}
+.ext-modal-icon{font-size:28px;flex-shrink:0;}
+.ext-modal-hdr-text{color:#fff;}
+.ext-modal-hdr-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;margin-bottom:3px;}
+.ext-modal-hdr-sub{font-size:12px;font-weight:700;opacity:.88;}
+.ext-modal-body{padding:22px;}
+.ext-modal-notice{background:#FEF3C7;border:1.5px solid #FCD34D;border-radius:12px;
+  padding:14px 16px;font-size:13px;font-weight:700;color:#92400E;line-height:1.65;
+  margin-bottom:18px;}
+.ext-modal-notice strong{display:block;margin-bottom:5px;font-size:13.5px;}
+.ext-modal-actions{display:flex;gap:10px;}
+.ext-modal-go{flex:1;height:46px;border:none;border-radius:11px;background:var(--brand);
+  color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.ext-modal-go:hover{background:var(--brand-d);}
+.ext-modal-cancel{height:46px;border:1.5px solid var(--border);border-radius:11px;
+  background:var(--bg);color:var(--muted);font-family:'Nunito',sans-serif;
+  font-size:13px;font-weight:800;cursor:pointer;padding:0 18px;white-space:nowrap;}
+.ext-modal-cancel:hover{border-color:var(--muted);}
+
+/* ── SHARE SHEET ── */
+.share-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);color:var(--text);
+  border:1.5px solid var(--border);border-radius:12px;padding:0 18px;height:46px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.share-btn:hover{border-color:var(--brand);}
+.share-ovl{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:500;
+  display:none;align-items:flex-end;justify-content:center;padding:0;}
+.share-ovl.on{display:flex;}
+@media(min-width:600px){.share-ovl{align-items:center;padding:16px;}}
+.share-box{width:100%;max-width:520px;background:#fff;border-radius:20px 20px 0 0;
+  box-shadow:0 -8px 40px rgba(0,0,0,.18);overflow:hidden;}
+@media(min-width:600px){.share-box{border-radius:18px;}}
+.share-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--border);}
+.share-hdr-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;}
+.share-close{background:var(--bg);border:none;border-radius:50%;width:30px;height:30px;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.share-body{padding:20px;}
+.share-qr-row{display:flex;gap:16px;justify-content:center;margin-bottom:20px;}
+.share-qr-item{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1;max-width:200px;}
+.share-qr-item img{width:100%;max-width:180px;border:1.5px solid var(--border);border-radius:12px;display:block;}
+.share-qr-label{font-size:12px;font-weight:800;color:var(--muted);text-align:center;}
+.share-qr-sub{font-size:10.5px;color:var(--subtle);font-weight:700;text-align:center;word-break:break-all;}
+.share-actions{display:flex;gap:10px;}
+.share-act{flex:1;height:44px;border-radius:10px;border:none;font-family:'Nunito',sans-serif;
+  font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;gap:6px;transition:opacity .13s;}
+.share-act:hover{opacity:.85;}
+.sa-copy{background:var(--bg);color:var(--text);border:1.5px solid var(--border);}
+.sa-wa{background:#25D366;color:#fff;}
+.sa-print{background:var(--bg);color:var(--muted);border:1.5px solid var(--border);}
+/* ── Mobile portrait overflow fixes ── */
+@media(max-width:720px){
+  /* All title action buttons share width equally */
+  .save-btn,.share-btn,.check-avail-btn{flex:1;min-width:0;}
+
+  /* Location pills: truncate long addresses rather than overflowing */
+  .loc-row{flex-wrap:wrap;width:100%;}
+  .loc-pill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .map-link{flex-shrink:0;white-space:nowrap;}
+
+  /* CTA buttons: 2 per row max, never overflow */
+  .cta-btn{flex:1 1 calc(50% - 5px);min-width:0;}
+
+  /* Prevent any stray wide element from scrolling the page horizontally */
+  .page,.main-wrap,.title-wrap,.disclaimer{overflow-x:hidden;max-width:100vw;}
+}
+/* ── Shorten Check Availability label on mobile portrait ── */
+@media(max-width:720px){
+  .check-avail-btn{font-size:0!important;}
+  .check-avail-btn::after{
+    content:'📅 Check';
+    font-size:14px;
+    font-weight:800;
+    font-family:'Nunito',sans-serif;
+  }
+}
+.share-qr-heading{
+  font-size:12px;font-weight:800;color:var(--muted);text-align:center;
+  margin-bottom:12px;padding:8px 12px;background:var(--bg);
+  border-radius:8px;
+}	
+</style>
+</head>
+<body>
+<header class="hdr">
+  <img src="KampKiepieLogo.png" alt="KampKiepie" style="height:36px;width:auto;display:block;border-radius:7px;flex-shrink:0;">
+  <a class="back-btn" href="index2.html">&#8592; All Resorts</a>
+  <div class="hdr-title" id="hdr-title">Loading...</div>
+  <a class="admin-btn" href="admin.html">&#9881;&#65039;</a>
+</header>
+<div class="page" id="page">
+  <div class="loading"><div class="spin"></div>Loading resort...</div>
+</div>
+<!-- CAMP MAP OVERLAY -->
+<div class="map-ovl" id="mapOvl" onclick="closeMap()">
+  <div class="map-box" onclick="event.stopPropagation()">
+    <div class="map-hdr">
+      <span>&#128506;&#65039; Camp Map</span>
+      <button class="map-close" onclick="closeMap()">&#10005;</button>
+    </div>
+    <img class="map-img" id="mapImg" src="" alt="Camp Map">
+  </div>
+</div>
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLb()">
+  <button class="lb-close" onclick="closeLb()">&#10005;</button>
+  <img class="lb-img" id="lb-img" src="" alt="">
+  <div class="lb-counter" id="lb-counter"></div>
+  <div class="lb-nav" onclick="event.stopPropagation()">
+    <button onclick="lbNav(-1)">&#8249; Prev</button>
+    <button onclick="lbNav(1)">Next &#8250;</button>
+  </div>
+</div>
+<!-- EXTERNAL BOOKING REDIRECT MODAL -->
+<div class="ext-modal-ovl" id="extBookingModal" onclick="if(event.target===this)closeExtBookingModal()">
+  <div class="ext-modal-box">
+    <div class="ext-modal-hdr">
+      <div class="ext-modal-icon">&#128279;</div>
+      <div class="ext-modal-hdr-text">
+        <div class="ext-modal-hdr-title">Leaving KampKiepie</div>
+        <div class="ext-modal-hdr-sub">You&#8217;re about to visit an external booking site</div>
+      </div>
+    </div>
+    <div class="ext-modal-body">
+      <div class="ext-modal-notice">
+        <strong>&#9888;&#65039; Not affiliated with KampKiepie</strong>
+        This resort manages its own booking system, which is not operated by or
+        affiliated with KampKiepie. We have no involvement in the booking process,
+        pricing, availability or experience on the external site. You proceed at your
+        own discretion.
+      </div>
+      <div class="ext-modal-actions">
+        <button class="ext-modal-go" onclick="confirmExtBooking()">
+          Continue to booking site &#8599;
+        </button>
+        <button class="ext-modal-cancel" onclick="closeExtBookingModal()">Stay here</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ── KampKiepie localStorage cache ─────────────────────────────────────────────
+// kkGet: returns cached value or null if missing/expired/busted
+// kkSet: stores value with TTL (ms) and optional bust-flag
+// kkBust: admin calls this on save to invalidate all bustable entries
+const _KK_BUST = 'kkC_bust';
+const _KK_D30  = 30*24*60*60*1000;   // Province & City CSVs
+const _KK_D7   =  8*60*60*1000;   // Resort CSV   // 30 days in ms
+const _KK_H4   =  4*60*60*1000;      //  4 hours in ms
+function kkGet(key) {
+  try {
+    const e = JSON.parse(localStorage.getItem(key) || 'null');
+    if (!e || !e.v || !e.ts || !e.ttl) return null;
+    if (e.bustable && Number(localStorage.getItem(_KK_BUST)||0) > e.ts) return null;
+    if (Date.now() - e.ts > e.ttl) return null;
+    return e.v;
+  } catch(_) { return null; }
+}
+function kkSet(key, val, ttlMs, bustable) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ v:val, ts:Date.now(), ttl:ttlMs, bustable:!!bustable }));
+  } catch(_) {}  // quota exceeded — just skip caching
+}
+function kkBust() {
+  try { localStorage.setItem(_KK_BUST, String(Date.now())); } catch(_) {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function fetchCsvCached(cacheKey, url, ttlMs, bustable) {
+  const hit = kkGet(cacheKey);
+  if (hit !== null) return hit;
+  const text = await fetchCsv(url);
+  kkSet(cacheKey, text, ttlMs, bustable);
+  return text;
+}
+const SHEET_RESORT   = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
+const SHEET_PROVINCE = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Province';
+const SHEET_CITY     = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=City';
+const PLACEHOLDER_ID = '1DTvWTjU8nYUrhD-dt_aYPpk2JFt6jU6r';
+const ADMIN_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMNA6rK5e_RZqk5KP2MwYNLjVXEkuiyGNycfERuK2vGfSGbslvTrwpaOz0kJ2GqlgzNQ/exec';
+const OL = {
+  'POP':'POP','Camp':'Camp','Lankstaan':'Lankstaan','Glamp':'Glamp',
+  'Chalet':'Chalet','Cottage':'Cottage','Lodge':'Lodge','Room':'Room',
+  'BackPack':'Backpack','B&B':'B&B','Guesthouse':'Guesthouse',
+  'FamilyHome':'Family Home','LankSlaap':'LankSlaap','Niche':'Niche',
+  'Wedding':'Weddings','Conference':'Conference','Functions':'Functions',
+  'Hunting':'Hunting','Pets':'Pets Welcome','Excursions':'Excursions','OffGrid':'Off-Grid'
+};
+const ACC_AMENITY_COLUMNS = {
+  POP:        { list: 'Resort - Amenities/POP',       txt: 'Resort - Amenities/POPTXT' },
+  Camp:       { list: 'Resort - Amenities/Camp',       txt: 'Resort - Amenities/CampTXT' },
+  Lankstaan:  { list: 'Resort - Amenities/LankStaan',  txt: 'Resort - Amenities/LankStaanTXT' },
+  Glamp:      { list: 'Resort - Amenities/Glamp',      txt: 'Resort - Amenities/GlampTXT' },
+  Chalet:     { list: 'Resort - Amenities/Chalet',     txt: 'Resort - Amenities/ChaletTXT' },
+  Cottage:    { list: 'Resort - Amenities/Cottage',    txt: 'Resort - Amenities/CottageTXT' },
+  Lodge:      { list: 'Resort - Amenities/Lodge',      txt: 'Resort - Amenities/LodgeTXT' },
+  Room:       { list: 'Resort - Amenities/Room',       txt: 'Resort - Amenities/RoomTXT' },
+  BackPack:   { list: 'Resort - Amenities/BackPack',   txt: 'Resort - Amenities/BackPackTXT' },
+  'B&B':      { list: 'Resort - Amenities/B&B',        txt: 'Resort - Amenities/B&BTXT' },
+  Guesthouse: { list: 'Resort - Amenities/GuestHouse', txt: 'Resort - Amenities/GuestHouseTXT' },
+  FamilyHome: { list: 'Resort - Amenities/FamilyHome', txt: 'Resort - Amenities/FamilyHomeTXT' },
+  LankSlaap:  { list: 'Resort - Amenities/LankSlaap',  txt: 'Resort - Amenities/LankSlaapTXT' },
+  Niche:      { list: 'Resort - Amenities/Niche',      txt: 'Resort - Amenities/NicheTXT' }
+};
+let galleryUrls = [], lbIdx = 0;
+let RESORT = null; // current resort — used by share sheet
+let currentAccTags = [], currentAccActiveKey = null;
+function safeAccId(key) { return String(key).replace(/[^a-zA-Z0-9]/g, '_'); }
+function pickAmenityIcon_(text) {
+  const t = text.toLowerCase();
+  if (t.includes('ablution') || t.includes('shower')) return '&#x1F6BF;';
+  if (t.includes('electric') || t.includes('power'))  return '&#x26A1;';
+  if (t.includes('scullery'))  return '&#x1F37D;';
+  if (t.includes('water'))     return '&#x1F4A7;';
+  if (t.includes('braai') || t.includes('fire')) return '&#x1F525;';
+  if (t.includes('wifi') || t.includes('wi-fi')) return '&#x1F4F6;';
+  if (t.includes('shade') || t.includes('tree')) return '&#x1F333;';
+  if (t.includes('pool'))      return '&#x1F3CA;';
+  if (t.includes('security') || t.includes('gate') || t.includes('fenc')) return '&#x1F512;';
+  return '&#x2713;';
+}
+function renderAccTagDetails(key) {
+  const t = currentAccTags.find(x => x.key === key);
+  if (!t) return '';
+  const listItems = t.list.split(',').map(i => i.trim()).filter(Boolean);
+  return `<div class="acc-detail">
+    ${listItems.length ? `<div class="acc-detail-list">${listItems.map(i => `<div class="acc-item-row"><span class="acc-item-ico">${pickAmenityIcon_(i)}</span>${esc(i)}</div>`).join('')}</div>` : ''}
+    ${listItems.length && t.txt.trim() ? `<hr class="acc-detail-divider">` : ''}
+    ${t.txt.trim() ? `<div class="acc-detail-txt">${esc(t.txt.trim())}</div>` : ''}
+  </div>`;
+}
+function selectAccType(key) {
+  currentAccActiveKey = key;
+  document.querySelectorAll('#accTagsRow .tag-btn').forEach(btn => btn.classList.remove('active'));
+  const btn = document.getElementById('accTagBtn-' + safeAccId(key));
+  if (btn) btn.classList.add('active');
+  const detailsEl = document.getElementById('accTagDetails');
+  if (detailsEl) detailsEl.innerHTML = renderAccTagDetails(key);
+}
+
+// ── Silent warm-up ping so KKAdminBackend.gs is warm when guest clicks Book ──
+(function() {
+  fetch('config.txt', { cache:'no-store' })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      var line = text.split('\n').find(function(l){ return l.trim().startsWith('adminbackend_script'); });
+      if (!line) return;
+      var url = line.split('=').slice(1).join('=').trim();
+      if (!url) return;
+      fetch(url + '?action=ping&_ts=' + Date.now(), { cache:'no-store' }).catch(function(){});
+    }).catch(function(){});
+})();
+window.addEventListener('DOMContentLoaded', async () => {
+  const id = new URLSearchParams(location.search).get('id');
+  if (!id) { showErr('No resort specified.'); return; }
+  try {
+    const r = await loadResort(decodeURIComponent(id));
+    if (!r) { showErr('Resort not found. ID: ' + id); return; }
+    renderResort(r);
+    applyBranding(r);
+    incrementResortView(r.resortId);
+	fetchResortViews(r.resortId);
+    console.log('[KK Resort Data]', JSON.stringify(r, null, 2));
+  } catch(e) {
+    showErr('Could not load data: ' + e.message);
+  }
+});
+async function fetchCsv(url) {
+  const bustUrl = url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now();
+  const res = await fetch(bustUrl, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.text();
+}
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let cur = '';
+  let inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { cur += '"'; i++; }
+        else { inQ = false; }
+      } else { cur += c; }
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cur); cur = ''; }
+      else if (c === '\r') { /* skip */ }
+      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
+      else cur += c;
+    }
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+async function loadResort(id) {
+  const [provCsv, cityCsv, resortCsv] = await Promise.all([
+    fetchCsvCached('kkC_prov',    SHEET_PROVINCE, _KK_D30, false), fetchCsvCached('kkC_city',    SHEET_CITY,     _KK_D30, false), fetchCsvCached('kkC_resorts', SHEET_RESORT,   _KK_D7,  true)
+  ]);
+  const PROV = {}, CITY = {};
+  parseCsv(provCsv).slice(1).forEach(r => { if (r[0] && r[1]) PROV[r[0].trim()] = r[1].trim(); });
+  parseCsv(cityCsv).slice(1).forEach(r => {
+    if (r[0] && r[1]) CITY[r[0].trim()] = { name: r[1].trim(), provId: (r[2]||'').trim() };
+  });
+  const rows    = parseCsv(resortCsv);
+  const headers = rows[0].map(h => (h||'').trim());
+  function ci(name) { return headers.indexOf(name); }
+  function g(row, name) {
+    const i = ci(name);
+    return (i >= 0 && i < row.length) ? String(row[i] || '').trim() : '';
+  }
+  function gb(row, name) {
+    const v = g(row, name).toLowerCase();
+    return v === 'true' || v === '1' || v === 'yes';
+  }
+  const iID = ci('ResortID');
+  for (const row of rows.slice(1)) {
+    const rowId = (iID >= 0 ? String(row[iID]||'') : '').trim();
+    if (!rowId) continue;
+    if (rowId !== id && rowId.toLowerCase() !== id.toLowerCase()) continue;
+    const cityRef  = g(row,'Resort- Header/CityRowID');
+    const cityObj  = CITY[cityRef] || {};
+    let   province = g(row,'Resort- Header/ProvinceRel');
+    if (province && PROV[province]) province = PROV[province];
+    else if (!province && cityObj.provId) province = PROV[cityObj.provId] || '';
+    const galleryRaw = g(row,'Resort- Gallery/GalleryLinksArray') ||
+                       g(row,'Resort- Header/GalleryLinksArray');
+    const faqRaw = g(row,'Resort - FAQ/FAQArray');
+    const faq = [];
+    if (faqRaw) {
+      faqRaw.split('||').forEach(pair => {
+        const parts = pair.split('|');
+        if (parts.length >= 2 && parts[0].trim()) {
+          faq.push({ q: parts[0].trim(), a: parts.slice(1).join('|').trim() });
+        }
+      });
+    }
+    return {
+      resortId:        rowId,
+      name:            g(row,'Resort- Header/ResortName'),
+      city:            cityObj.name || '',
+      province,
+      address:         g(row,'Resort- Header/Address'),
+      coordinates:     g(row,'Resort- Header/Coordinates'),
+      photo:           photoUrl(g(row,'Resort- Header/ResortExtraPhoto')),
+      logo:            photoUrl(g(row,'Resort- Header/ResortProfilePhoto')),
+      gallery:         parseGallery(galleryRaw),
+      campMap:         photoUrl(g(row,'Resort- Map/CampMap')),
+      description:     cleanDesc(g(row,'Resort- Header/ResortDescription')),
+      contactName:     g(row,'Resort- Header/ContactPersonName'),
+      contactEmail:    g(row,'Resort- Header/ContactPersonEmail'),
+      contactPhone:    g(row,'Resort- Header/ContactPersonPhoneNumber').replace(/\.0$/,''),
+      email:           g(row,'Resort- Header/email'),
+      phone:           g(row,'Resort- Header/WhatsappPhone').replace(/\.0$/,''),
+      website:         g(row,'Resort- Header/Website'),
+      facebook:        g(row,'Resort- Socials/Facebook'),
+      instagram:       g(row,'Resort- Socials/Instagram'),
+      tiktok:          g(row,'Resort- Socials/TikTok'),
+      hasBookings:     gb(row,'Resorts - Bookings/HasBookings'),
+      bookingLink:     g(row,'Resorts - Bookings/BookingLink'),
+      popNights:       g(row,'Resort- POP/POPMaxNights').replace(/\.0$/,''),
+      membersOnly:     gb(row,'Resorts - Switches/MembersOnly?'),
+      kkBook:          gb(row,'Resort - KKBook/Active'),
+      kkBookLevel:     g(row,'Resort - KKBook/Level'),
+      corpColour:      g(row,'Resort - config/CorpColour'),
+      subColour:       g(row,'Resort - config/SubColour'),
+      options: {
+        POP:         gb(row,'Resort - BookingOptions/POP?'),
+        Camp:        gb(row,'Resort - BookingOptions/Camp?'),
+        Lankstaan:   gb(row,'Resort - BookingOptions/Lankstaan?'),
+        Glamp:       gb(row,'Resort - BookingOptions/Glamp'),
+        Chalet:      gb(row,'Resort - BookingOptions/Chalet'),
+        Cottage:     gb(row,'Resort - BookingOptions/Cottage'),
+        Lodge:       gb(row,'Resort - BookingOptions/Lodge'),
+        Room:        gb(row,'Resort - BookingOptions/Room?'),
+        BackPack:    gb(row,'Resort - BookingOptions/BackPack'),
+        'B&B':       gb(row,'Resort - BookingOptions/B&B'),
+        Guesthouse:  gb(row,'Resort - BookingOptions/Guesthouse'),
+        FamilyHome:  gb(row,'Resort - BookingOptions/FamilyHome'),
+        LankSlaap:   gb(row,'Resort - BookingOptions/LankSlaap'),
+        Niche:       gb(row,'Resort - BookingOptions/Niche'),
+        Wedding:     gb(row,'Resort - BookingOptions/Wedding'),
+        Conference:  gb(row,'Resort - BookingOptions/Conference'),
+        Functions:   gb(row,'Resort - BookingOptions/Functions'),
+        Hunting:     gb(row,'Resort - BookingOptions/Hunting'),
+        Pets:        gb(row,'Resort - BookingOptions/Pets'),
+        Excursions:  gb(row,'Resort - BookingOptions/Excursions'),
+      },
+      amenBasic:     g(row,'Resort - Amenities/AmenitiesBasic'),
+      amenWork:      g(row,'Resort - Amenities/AmenitiesWork'),
+      amenComfort:   g(row,'Resort - Amenities/AmenitiesComfort'),
+      amenRec:       g(row,'Resort - Amenities/AmenitiesRecreational'),
+      amenSafety:    g(row,'Resort - Amenities/AmenitiesSafety'),
+      amenAdd:       g(row,'Resort - Amenities/AmenitiesAdditional'),
+      amenPets:      g(row,'Resort - Amenities/Pets'),
+      amenNearby:    g(row,'Resort - Amenities/Nearby'),
+      accAmenities: (() => {
+        const out = {};
+        Object.entries(ACC_AMENITY_COLUMNS).forEach(([key, cols]) => {
+          out[key] = { list: g(row, cols.list), txt: g(row, cols.txt) };
+        });
+        return out;
+      })(),
+      rules:         g(row,'Resort - Rules/RulesTXT'),
+      faq,
+      more:          g(row,'Resort - More/MoreTXT'),
+      hostMsg:       g(row,'Resort - Host/MessageTXT'),
+      totalViews:    Number(g(row,'Scoring/TotalViews')) || 0,
+      qrResort:      g(row,'Resort/QRCode'),
+      qrBooking:     g(row,'KKBook/QRCode'),
+    };
+  }
+  return null;
+}
+function applyBranding(r) {
+  if (!r.corpColour && !r.subColour) return;
+  const corp = r.corpColour || '#F97316';
+  const sub  = r.subColour  || '#16A34A';
+  document.documentElement.style.setProperty('--brand',   corp);
+  document.documentElement.style.setProperty('--brand-d', shadeColour(corp, -15));
+  document.documentElement.style.setProperty('--brand-l', hexToRgba(corp, 0.12));
+  document.documentElement.style.setProperty('--sub',     sub);
+  document.documentElement.style.setProperty('--sub-l',   hexToRgba(sub, 0.12));
+  var hdr = document.querySelector('.hdr');
+  if (hdr) { hdr.style.background = corp; hdr.style.borderBottom = 'none'; hdr.style.boxShadow = '0 2px 12px ' + hexToRgba(corp, 0.4); }
+  var hdrTitle = document.querySelector('.hdr-title');
+  if (hdrTitle) { hdrTitle.style.color = '#fff'; hdrTitle.querySelectorAll('em').forEach(function(e){e.style.color='rgba(255,255,255,.75)';}); }
+  var backBtn = document.querySelector('.back-btn');
+  if (backBtn) { backBtn.style.background = hexToRgba('#fff', 0.2); backBtn.style.color = '#fff'; }
+  var adminBtn = document.querySelector('.admin-btn');
+  if (adminBtn) { adminBtn.style.background = hexToRgba('#000', 0.2); adminBtn.style.color = '#fff'; }
+  var hdrLogo = document.querySelector('.hdr-logo');
+  if (hdrLogo) { hdrLogo.style.background = hexToRgba('#fff', 0.2); }
+  var hero = document.querySelector('.hero');
+  if (hero) hero.style.background = 'linear-gradient(135deg,' + hexToRgba(corp,0.15) + ',' + hexToRgba(sub,0.15) + ')';
+  var name = document.querySelector('.resort-name');
+  if (name) name.style.color = corp;
+  document.querySelectorAll('.sec-title').forEach(function(el) {
+    el.style.color = corp;
+    el.style.borderBottom = '2px solid ' + hexToRgba(corp, 0.15);
+    el.style.paddingBottom = '8px';
+    el.style.marginBottom = '12px';
+  });
+  document.querySelectorAll('.cb-book').forEach(function(el) { el.style.background = corp; });
+  document.querySelectorAll('.cb-sub').forEach(function(el) { el.style.background = sub; });
+  var hostMsg = document.querySelector('.host-msg');
+  if (hostMsg) hostMsg.style.borderLeftColor = corp;
+  var memBanner = document.querySelector('.members-banner');
+  if (memBanner) memBanner.style.background = 'linear-gradient(135deg,' + corp + ',' + sub + ')';
+  document.querySelectorAll('.loc-pill:not(.grey)').forEach(function(el) {
+    el.style.background = hexToRgba(corp, 0.12);
+    el.style.color = corp;
+  });
+  // Keep external booking modal header in brand colour
+  var extHdr = document.querySelector('.ext-modal-hdr');
+  if (extHdr) extHdr.style.background = corp;
+}
+function hexToRgba(hex, alpha) {
+  hex = hex.replace('#','');
+  if (hex.length === 3) hex = hex.split('').map(function(h){return h+h;}).join('');
+  var r = parseInt(hex.substring(0,2),16);
+  var g = parseInt(hex.substring(2,4),16);
+  var b = parseInt(hex.substring(4,6),16);
+  return 'rgba('+r+','+g+','+b+','+alpha+')';
+}
+function shadeColour(hex, percent) {
+  hex = hex.replace('#','');
+  if (hex.length === 3) hex = hex.split('').map(function(h){return h+h;}).join('');
+  var r = Math.min(255, Math.max(0, parseInt(hex.substring(0,2),16) + percent));
+  var g = Math.min(255, Math.max(0, parseInt(hex.substring(2,4),16) + percent));
+  var b = Math.min(255, Math.max(0, parseInt(hex.substring(4,6),16) + percent));
+  return '#' + [r,g,b].map(function(v){ return ('0'+v.toString(16)).slice(-2); }).join('');
+}
+function isValidLatLng(str) {
+  if (!str) return false;
+  return /^-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/.test(String(str).trim());
+}
+function bookingUrl(r) {
+  if (r.kkBook) return 'bookings.html?resort=' + encodeURIComponent(r.resortId);
+  if (r.hasBookings && r.bookingLink) return r.bookingLink;
+  return null;
+}
+// ── EXTERNAL BOOKING MODAL ────────────────────────────────────────────────────
+let _extBookingUrl = '';
+function openExternalBooking(url) {
+  _extBookingUrl = url;
+  document.getElementById('extBookingModal').classList.add('on');
+}
+function closeExtBookingModal() {
+  document.getElementById('extBookingModal').classList.remove('on');
+  _extBookingUrl = '';
+}
+function confirmExtBooking() {
+  if (_extBookingUrl) window.open(_extBookingUrl, '_blank', 'noopener,noreferrer');
+  closeExtBookingModal();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── SEO: meta tags, Open Graph, Twitter card, JSON-LD ────────────────────────
+// Called from renderResort() after resort data is available.
+// Dynamically updates the static fallback tags added in <head>.
+function injectSEO(r) {
+  const BASE = 'https://kampkiepie.co.za';
+  const url  = BASE + '/resort.html?id=' + encodeURIComponent(r.resortId);
+  const loc  = [r.city, r.province].filter(Boolean).join(', ');
+
+  // ── English booking type labels ───────────────────────────────────────────
+  const TYPE_EN = {
+    POP:'POP Caravan Park', Camp:'Camping', Lankstaan:'Lankstaan',
+    Glamp:'Glamping', Chalet:'Chalet', Cottage:'Self-Catering Cottage',
+    Lodge:'Lodge', Room:'Hotel Rooms', BackPack:'Backpackers',
+    'B&B':'Bed and Breakfast', Guesthouse:'Guesthouse',
+    FamilyHome:'Family Home', LankSlaap:'LankSlaap',
+    Niche:'Niche Accommodation', Wedding:'Wedding Venue',
+    Conference:'Conference Facility', Functions:'Function Venue',
+    Hunting:'Hunting', Pets:'Pet Friendly', Excursions:'Excursions'
+  };
+  // ── Afrikaans booking type labels ─────────────────────────────────────────
+  const TYPE_AF = {
+    POP:'POP Karavanpark', Camp:'Kampeer', Lankstaan:'Lankstaan',
+    Glamp:'Glampeer', Chalet:'Chalet', Cottage:'Selfversorging',
+    Lodge:'Jaghuis', Room:'Hotelkamer', BackPack:'Rugsakkers',
+    'B&B':'Bed en Ontbyt', Guesthouse:'Gastehuis',
+    FamilyHome:'Familiewoning', LankSlaap:'LankSlaap',
+    Niche:'Nisbehuising', Wedding:'Troulokaliteit',
+    Conference:'Konferensiefasiliteit', Functions:'Funksiegebou',
+    Hunting:'Jagplaas', Pets:'Troeteldier Vriendelik', Excursions:'Uitstappies'
+  };
+  // ── Afrikaans province name map ──────────────────────────────────────────
+  const PROV_AF = {
+    'Western Cape':   'Wes-Kaap',
+    'Eastern Cape':   'Oos-Kaap',
+    'Northern Cape':  'Noord-Kaap',
+    'North West':     'Noordwes',
+    'Free State':     'Vrystaat',
+    'KwaZulu-Natal':  'KwaZulu-Natal',
+    'Limpopo':        'Limpopo',
+    'Mpumalanga':     'Mpumalanga',
+    'Gauteng':        'Gauteng'
+  };
+  var provAF = r.province ? (PROV_AF[r.province] || '') : '';
+
+  // ── Common Afrikaans city aliases ─────────────────────────────────────────
+  const CITY_AF = {
+    'Cape Town':       'Kaapstad',
+    'Bloemfontein':    'Bloemfontein',
+    'Johannesburg':    'Johannesburg',
+    'Pretoria':        'Pretoria',
+    'Durban':          'Durban',
+    'Port Elizabeth':  'Gqeberha',
+    'George':          'George',
+    'Paarl':           'Paarl',
+    'Stellenbosch':    'Stellenbosch',
+    'Hermanus':        'Hermanus',
+    'Knysna':          'Knysna',
+    'Oudtshoorn':      'Oudtshoorn',
+    'Kimberley':       'Kimberley',
+    'Polokwane':       'Polokwane',
+    'Nelspruit':       'Mbombela',
+    'Rustenburg':      'Rustenburg',
+    'Potchefstroom':   'Potchefstroom',
+    'Klerksdorp':      'Klerksdorp',
+    'Hartbeespoort':   'Hartbeespoort'
+  };
+  var cityAF = r.city ? (CITY_AF[r.city] || '') : '';
+
+  const activeKeys = Object.keys(TYPE_EN).filter(function(k){ return r.options && r.options[k]; });
+  const activeTypesEN = activeKeys.map(function(k){ return TYPE_EN[k]; });
+  const activeTypesAF = activeKeys.map(function(k){ return TYPE_AF[k]; });
+
+  // ── All amenities across every group ─────────────────────────────────────
+  var allAmenities = [];
+  ['amenBasic','amenWork','amenComfort','amenRec','amenSafety','amenAdd'].forEach(function(g){
+    if (r[g]) r[g].split(',').forEach(function(a){ var t=a.trim(); if(t) allAmenities.push(t); });
+  });
+  if (r.amenPets)   allAmenities.push(r.amenPets.trim());
+  if (r.amenNearby) allAmenities.push('Nearby: ' + r.amenNearby.trim());
+
+  // ── Title ─────────────────────────────────────────────────────────────────
+  const title = r.name + (loc ? ' \u2013 ' + loc : '') + ' | KampKiepie';
+
+  // ── Meta description: location + types + excerpt (capped at 155) ─────────
+  var excerpt = '';
+  if (r.description) {
+    excerpt = r.description.replace(/\n/g,' ').trim();
+    if (excerpt.length > 90) excerpt = excerpt.slice(0,87) + '\u2026';
+  }
+  var typeStr = activeTypesEN.slice(0, 5).join(', ');
+  var descParts = [];
+  if (loc)     descParts.push(r.name + ' in ' + loc);
+  if (typeStr) descParts.push(typeStr);
+  if (excerpt) descParts.push(excerpt);
+  descParts.push(r.kkBook ? 'Book online on KampKiepie.' : 'Contact the resort to book.');
+  var desc = descParts.join('. ').replace(/\.\./g,'.').slice(0, 155);
+
+  // ── Keywords: English + Afrikaans terms ───────────────────────────────────
+  var kwParts = [r.name];
+  if (r.city)     kwParts.push(r.city);
+  if (r.province) kwParts.push(r.province);
+  activeTypesEN.forEach(function(t){ kwParts.push(t); });
+  activeTypesAF.forEach(function(t){ kwParts.push(t); });
+  if (provAF && provAF !== r.province) kwParts.push(provAF);
+  if (cityAF && cityAF !== r.city)     kwParts.push(cityAF);
+  kwParts.push('South Africa', 'Suid-Afrika', 'accommodation', 'verblyf',
+               'kampeer Suid-Afrika', 'KampKiepie');
+  var keywords = kwParts.join(', ');
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function setMeta(sel, attr, val) {
+    var el = document.querySelector(sel);
+    if (!el) {
+      el = document.createElement('meta');
+      var m = sel.match(/\[([^\]=]+)="([^"]+)"\]/);
+      if (m) el.setAttribute(m[1], m[2]);
+      document.head.appendChild(el);
+    }
+    el.setAttribute(attr, val);
+  }
+  function setLink(rel, href, extra) {
+    // extra = {attr: val} to set additional attributes (e.g. hreflang)
+    var sel = 'link[rel="' + rel + '"]' + (extra && extra.hreflang ? '[hreflang="' + extra.hreflang + '"]' : '');
+    var el = document.querySelector(sel);
+    if (!el) {
+      el = document.createElement('link');
+      el.rel = rel;
+      if (extra) Object.keys(extra).forEach(function(k){ el.setAttribute(k, extra[k]); });
+      document.head.appendChild(el);
+    }
+    el.href = href;
+  }
+
+  // ── Apply ─────────────────────────────────────────────────────────────────
+  document.title = title;
+  document.documentElement.lang = 'en-ZA';
+
+  setLink('canonical',  url);
+  setLink('alternate',  url, { hreflang: 'en-ZA' });
+  setLink('alternate',  url, { hreflang: 'af-ZA' });
+  setLink('alternate',  BASE + '/resort.html', { hreflang: 'x-default' });
+
+  setMeta('meta[name="description"]', 'content', desc);
+  setMeta('meta[name="keywords"]',    'content', keywords);
+  setMeta('meta[name="robots"]',      'content', 'index, follow');
+
+  // Open Graph (en_ZA primary, af_ZA alternate locale)
+  setMeta('meta[property="og:type"]',             'content', 'place');
+  setMeta('meta[property="og:site_name"]',        'content', 'KampKiepie');
+  setMeta('meta[property="og:locale"]',           'content', 'en_ZA');
+  setMeta('meta[property="og:locale:alternate"]', 'content', 'af_ZA');
+  setMeta('meta[property="og:title"]',            'content', title);
+  setMeta('meta[property="og:description"]',      'content', desc);
+  setMeta('meta[property="og:url"]',              'content', url);
+  if (r.photo) setMeta('meta[property="og:image"]', 'content', r.photo);
+  if (r.city)     setMeta('meta[property="place:location:city"]',   'content', r.city);
+  if (r.province) setMeta('meta[property="place:location:region"]', 'content', r.province);
+  setMeta('meta[property="place:location:country-name"]', 'content', 'South Africa');
+
+  // Twitter Card
+  setMeta('meta[name="twitter:card"]',        'content', r.photo ? 'summary_large_image' : 'summary');
+  setMeta('meta[name="twitter:title"]',       'content', title);
+  setMeta('meta[name="twitter:description"]', 'content', desc);
+  if (r.photo) setMeta('meta[name="twitter:image"]', 'content', r.photo);
+
+  // ── JSON-LD ───────────────────────────────────────────────────────────────
+  var schemaTypes = ['LodgingBusiness'];
+  if (r.options && (r.options.Camp || r.options.POP || r.options.Glamp || r.options.Lankstaan))
+    schemaTypes.push('Campground');
+  if (r.options && r.options['B&B'])     schemaTypes.push('BedAndBreakfast');
+  if (r.options && r.options.Guesthouse) schemaTypes.push('GuestHouse');
+
+  var coords = null;
+  if (r.coordinates && isValidLatLng(r.coordinates)) {
+    var pts = r.coordinates.split(',').map(function(s){ return s.trim(); });
+    coords = { lat: pts[0], lng: pts[1] };
+  }
+
+  var sameAs = [];
+  if (r.facebook)  sameAs.push('https://www.facebook.com/' + r.facebook);
+  if (r.instagram) sameAs.push('https://www.instagram.com/' + r.instagram);
+  if (r.website)   sameAs.push(r.website);
+
+  // amenityFeature: physical amenities + English booking types + Afrikaans booking types
+  var amenFeatures = [];
+  allAmenities.forEach(function(a){
+    amenFeatures.push({ '@type':'LocationFeatureSpecification', 'name':a, 'value':true });
+  });
+  activeTypesEN.forEach(function(t){
+    amenFeatures.push({ '@type':'LocationFeatureSpecification', 'name':t, 'value':true });
+  });
+  activeTypesAF.forEach(function(t){
+    amenFeatures.push({ '@type':'LocationFeatureSpecification', 'name':t, 'value':true });
+  });
+
+  var ld = {
+    '@context': 'https://schema.org',
+    '@type': schemaTypes.length === 1 ? schemaTypes[0] : schemaTypes,
+    'name':        r.name,
+    'description': desc,
+    'url':         url,
+    'inLanguage':  ['en-ZA', 'af-ZA'],
+    'address': {
+      '@type':           'PostalAddress',
+      'streetAddress':   r.address  || undefined,
+      'addressLocality': r.city     || undefined,
+      'addressRegion':   r.province || undefined,
+      'addressCountry':  'ZA'
+    },
+    // Afrikaans province/city added as alternateName for bilingual discoverability
+    'alternateName': [r.name].concat(
+      provAF && provAF !== r.province ? [r.name + ' ' + provAF] : []
+    ).concat(
+      cityAF && cityAF !== r.city ? [r.name + ' ' + cityAF] : []
+    ).filter(function(v,i,a){ return a.indexOf(v)===i && v !== r.name; }),
+    'petsAllowed': !!(r.options && r.options.Pets)
+  };
+
+  if (r.photo)  ld['image']     = r.photo;
+  if (r.phone)  ld['telephone'] = r.phone;
+  if (r.email)  ld['email']     = r.email;
+  if (sameAs.length)       ld['sameAs']        = sameAs;
+  if (amenFeatures.length) ld['amenityFeature'] = amenFeatures;
+  if (coords) ld['geo'] = {
+    '@type':'GeoCoordinates', 'latitude':coords.lat, 'longitude':coords.lng
+  };
+  if (r.kkBook) ld['potentialAction'] = {
+    '@type':  'ReserveAction',
+    'target': BASE + '/bookings.html?resort=' + encodeURIComponent(r.resortId),
+    'result': { '@type':'LodgingReservation', 'name':'Book at ' + r.name }
+  };
+
+  var cleanLd = JSON.parse(JSON.stringify(ld));
+  var existing = document.querySelector('script[type="application/ld+json"]');
+  if (existing) existing.remove();
+  var s = document.createElement('script');
+  s.type = 'application/ld+json';
+  s.textContent = JSON.stringify(cleanLd, null, 2);
+  document.head.appendChild(s);
+}
+
+
+
+function renderResort(r) {
+  RESORT = r;
+  injectSEO(r); // sets title, meta, OG, Twitter card, JSON-LD
+  document.getElementById('hdr-title').textContent = r.name;
+  galleryUrls = r.gallery || [];
+  const wa    = waNum(r.phone);
+  const waC   = waNum(r.contactPhone);
+  const coordsValid = isValidLatLng(r.coordinates);
+  const maps = coordsValid
+    ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(r.coordinates.trim().replace(/\s+/g,''))
+    : 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent((r.name + ' ' + r.address).trim());
+  const badges = [];
+  if (r.membersOnly) badges.push('<span class="bdg bdg-mem">🔒 Members Only</span>');
+  if (r.kkBook)      badges.push('<span class="bdg bdg-kk">\u2b50 KKBook</span>');
+  if (r.hasBookings) badges.push('<span class="bdg bdg-b">📅 Online Booking</span>');
+  if (r.options.Pets)badges.push('<span class="bdg bdg-pet">🐾 Pets Welcome</span>');
+  if (r.options.Niche)      badges.push('<span class="bdg bdg-niche">\u2726 Niche</span>');
+  if (r.options.Wedding)    badges.push('<span class="bdg bdg-wed">💍 Weddings</span>');
+  if (r.options.Conference) badges.push('<span class="bdg bdg-conf">🏢 Conference</span>');
+  if (r.options.Functions)  badges.push('<span class="bdg bdg-func">🎉 Functions</span>');
+  if (r.options.Hunting)    badges.push('<span class="bdg bdg-hunt">🏹 Hunting</span>');
+  if (r.options.OffGrid)    badges.push('<span class="bdg bdg-offgrid">☀️ Off-Grid</span>');
+  currentAccTags = Object.entries(OL)
+    .filter(([k]) => r.options[k])
+    .map(([k, label]) => {
+      const amen = r.accAmenities && r.accAmenities[k];
+      const hasDetails = !!(amen && (amen.list.trim() || amen.txt.trim()));
+      return { key: k, label, hasDetails, list: amen ? amen.list : '', txt: amen ? amen.txt : '' };
+    });
+  currentAccActiveKey = (currentAccTags.find(t => t.hasDetails) || {}).key || null;
+  const bUrl = bookingUrl(r);
+  // ── CTA buttons — non-KKBook external links go through the warning modal ──
+  let cta = '';
+  if (wa)      cta += `<a class="cta-btn cb-wa" href="https://wa.me/${wa}" target="_blank" onclick="trackResortWhatsapp('${esc(r.resortId)}')">💬 WhatsApp</a>`;
+  if (r.email) cta += `<a class="cta-btn cb-s" href="mailto:${esc(r.email)}" onclick="trackResortEmail('${esc(r.resortId)}')">\u2709\ufe0f Email</a>`;
+  if (bUrl)    cta += r.kkBook
+    ? `<a class="cta-btn cb-book" href="${esc(bUrl)}">📅 Book Now</a>`
+    : `<button class="cta-btn cb-book" onclick="openExternalBooking('${esc(bUrl)}')">📅 Book Now</button>`;
+  if (r.website) cta += `<a class="cta-btn cb-s" href="${esc(r.website)}" target="_blank">🌐 Website</a>`;
+  if (r.campMap) cta += `<button class="cta-btn cb-map" onclick="openMap()">🗺\ufe0f Camp Map</button>`;
+  // ── Contacts ──
+  let contacts = '';
+  if (r.contactName)  contacts += row('👤','cico-o', r.contactName);
+  if (wa)             contacts += rowLink('📱','cico-g', 'https://wa.me/'+wa, r.phone, "trackResortWhatsapp('" + esc(r.resortId) + "')");
+  if (waC && waC !== wa) contacts += rowLink('📱','cico-g', 'https://wa.me/'+waC, r.contactPhone + ' (contact)', "trackResortWhatsapp('" + esc(r.resortId) + "')");
+  if (r.email)        contacts += rowLink('\u2709\ufe0f','cico-o', 'mailto:'+r.email, r.email, "trackResortEmail('" + esc(r.resortId) + "')");
+  if (r.contactEmail) contacts += rowLink('\u2709\ufe0f','cico-o', 'mailto:'+r.contactEmail, r.contactEmail + ' (contact)', "trackResortEmail('" + esc(r.resortId) + "')");
+  if (r.website)      contacts += rowLink('🌐','cico-o', r.website, r.website);
+  if (r.facebook)     contacts += rowLink('📘','cico-o', 'https://facebook.com/'+r.facebook, 'Facebook');
+  if (r.instagram)    contacts += rowLink('📷','cico-o', 'https://instagram.com/'+r.instagram, '@'+r.instagram);
+  if (r.tiktok)       contacts += rowLink('🎵','cico-o', 'https://tiktok.com/@'+r.tiktok, '@'+r.tiktok);
+  const amenDefs = [
+    { icon:'🏠', title:'Basic Facilities',    raw: r.amenBasic },
+    { icon:'💼', title:'Work & Connectivity', raw: r.amenWork },
+    { icon:'🛋\ufe0f', title:'Comfort',       raw: r.amenComfort },
+    { icon:'🏔', title:'Recreation',          raw: r.amenRec },
+    { icon:'🔒', title:'Security',            raw: r.amenSafety },
+    { icon:'\u2795', title:'Additional',                raw: r.amenAdd },
+  ].filter(g => g.raw && g.raw.trim());
+  let amenHtml = '';
+  if (amenDefs.length || r.amenPets || r.amenNearby) {
+    amenHtml = `<div class="sec"><div class="sec-title"><span>🏷\ufe0f</span> Amenities</div>
+      <div class="amen-grid">
+        ${amenDefs.map(g => `<div>
+          <div class="amen-group-title">${esc(g.title.toUpperCase())}</div>
+          ${g.raw.split(',').map(i=>i.trim()).filter(Boolean).map(i=>`<div class="amen-item"><span class="amen-item-ico">${g.icon}</span>${esc(i)}</div>`).join('')}
+        </div>`).join('')}
+      </div>
+      ${r.amenPets   ? `<div class="pets-box">🐾 ${esc(r.amenPets)}</div>` : ''}
+      ${r.amenNearby ? `<div class="info-box"><strong>📍 Nearby:</strong> ${esc(r.amenNearby)}</div>` : ''}
+    </div>`;
+  }
+  let galleryHtml = '';
+  if (galleryUrls.length) {
+    galleryHtml = `<div class="gallery-sec">
+      <div class="sec-title"><span>📸</span> Gallery <span style="color:var(--subtle);font-weight:600;font-size:12px;">(${galleryUrls.length} photos)</span></div>
+      <div class="gallery">
+        ${galleryUrls.map((u,i) => `<img class="gal-img" src="${esc(u)}" loading="lazy" onclick="openLb(${i})" alt="Photo ${i+1}" onerror="this.style.display='none'">`).join('')}
+      </div>
+    </div>`;
+  }
+  let faqHtml = '';
+  if (r.faq && r.faq.length) {
+    faqHtml = `<div class="sec"><div class="sec-title"><span>\u2753</span> FAQ</div>
+      ${r.faq.map((f,i) => `<div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(${i})">
+          <span>${esc(f.q)}</span><span id="faq-arrow-${i}">\u25be</span>
+        </div>
+        <div class="faq-a" id="faq-a-${i}">${esc(f.a)}</div>
+      </div>`).join('')}
+    </div>`;
+  }
+  const descLong = r.description && r.description.length > 320;
+  document.getElementById('page').innerHTML = `
+    ${r.membersOnly ? `<div class="members-banner">🔒 <strong>Members Only Resort</strong> \u2014 Access restricted to KampKiepie members.</div>` : ''}
+    <div class="hero">
+      ${r.photo ? `<img class="hero-img" src="${esc(r.photo)}" alt="${esc(r.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
+      <div class="hero-ph" style="${r.photo ? 'display:none' : ''}">&#127957;&#65039;</div>
+      <div class="hero-badges">${badges.join('')}</div>
+      ${r.logo ? `<div class="hero-logo"><img src="${esc(r.logo)}" alt="logo" onerror="this.parentElement.style.display='none'"></div>` : ''}
+    </div>
+    <div class="title-wrap">
+      <div class="title-row">
+        <div class="title-left">
+          <div class="resort-name">${esc(r.name)}</div>
+          ${r.kkBook ? `<span class="verified-badge">\u2713 Verified Listing</span>` : ''}
+        </div>
+        <div class="title-actions">
+          <button class="save-btn" id="saveBtn" onclick="toggleFavorite('${esc(r.resortId)}')">🤍 Save</button>
+          <button class="share-btn" onclick="openShareSheet()">Share &#8599;</button>
+          ${bUrl ? (r.kkBook
+            ? `<a class="check-avail-btn" href="${esc(bUrl)}">📅 Check Availability</a>`
+            : `<button class="check-avail-btn" onclick="openExternalBooking('${esc(bUrl)}')">📅 Check Availability</button>`
+          ) : ''}
+        </div>
+      </div>
+      <div class="loc-row">
+        <span class="loc-pill">📍 ${esc([r.city, r.province].filter(Boolean).join(', '))}</span>
+        ${r.address ? `<span class="loc-pill grey">🏠 ${esc(r.address)}</span>` : ''}
+        <a class="map-link" href="${maps}" target="_blank">🗺\ufe0f Google Maps</a>
+      </div>
+    </div>
+    <div class="main-wrap">
+      <div class="two-col-grid">
+        <div class="col">
+          ${r.hostMsg || r.description ? `<div class="sec"><div class="sec-title"><span>💬</span> About ${esc(r.name)}</div>
+            ${r.hostMsg ? `<div class="host-msg">"${esc(r.hostMsg)}"</div>` : ''}
+            ${r.description ? `<div class="desc${descLong ? ' clamped' : ''}" id="descText">${esc(r.description)}</div>
+            ${descLong ? `<button class="read-more-btn" id="readMoreBtn" onclick="toggleDescClamp()">Read more <span id="readMoreArrow">\u2304</span></button>` : ''}` : ''}
+          </div>` : ''}
+          ${amenHtml}
+          ${cta ? `<div class="sec"><div class="sec-title"><span>🤝</span> Get in touch</div>
+            <div class="cta-sub">Quick and easy ways to contact the host</div>
+            <div class="cta-row">${cta}</div></div>` : ''}
+        </div>
+        <div class="col">
+          ${currentAccTags.length ? `<div class="sec"><div class="sec-title"><span>&#127957;&#65039;</span> Accommodation Types</div>
+            <div class="tags" id="accTagsRow">${currentAccTags.map(t => t.hasDetails
+              ? `<button type="button" class="tag tag-btn${t.key === currentAccActiveKey ? ' active' : ''}" id="accTagBtn-${safeAccId(t.key)}" onclick="selectAccType('${esc(t.key)}')">${t.label}</button>`
+              : `<span class="tag">${t.label}</span>`
+            ).join('')}</div>
+            <div id="accTagDetails">${currentAccActiveKey ? renderAccTagDetails(currentAccActiveKey) : ''}</div>
+          </div>` : ''}
+          ${contacts ? `<div class="sec"><div class="sec-title"><span>📞</span> Contact</div>
+            <div class="contact-list">${contacts}</div></div>` : ''}
+          ${faqHtml}
+          ${r.rules ? `<div class="sec"><div class="sec-title"><span>📋</span> Rules</div>
+            <div class="txt-block">${esc(r.rules)}</div></div>` : ''}
+          ${r.more ? `<div class="sec"><div class="sec-title"><span>\u2139\ufe0f</span> More Information</div>
+            <div class="txt-block">${esc(r.more)}</div></div>` : ''}
+        </div>
+      </div>
+      ${galleryHtml}
+    </div>
+    <div class="disclaimer"><div class="disclaimer-box">Please note: Information, images and facilities shown are provided by the property and may be subject to change.</div></div>
+    <div class="small" id="resortViewCount" style="text-align:center;margin-top:16px;color:var(--subtle);">👁\ufe0f ${esc(r.totalViews.toLocaleString())} views</div>
+  `;
+  updateSaveButton(r.resortId);
+  if (r.campMap) document.getElementById('mapImg').src = r.campMap;
+
+}
+function row(ico, cls, text) {
+  return `<div class="contact-row"><div class="cico ${cls}">${ico}</div><span>${esc(text)}</span></div>`;
+}
+function rowLink(ico, cls, href, label, onclickAttr) {
+  return `<div class="contact-row"><div class="cico ${cls}">${ico}</div><a class="clink" href="${esc(href)}" target="_blank"${onclickAttr ? ' onclick="' + onclickAttr + '"' : ''}>${esc(label)}</a></div>`;
+}
+function toggleFaq(i) {
+  const a = document.getElementById('faq-a-'+i);
+  const arrow = document.getElementById('faq-arrow-'+i);
+  a.classList.toggle('on');
+  arrow.textContent = a.classList.contains('on') ? '\u25b4' : '\u25be';
+}
+function hasQrPayload(url) {
+  if (!url) return false;
+  try {
+    const match = url.match(/[?&]data=([^&]*)/);
+    return !!(match && decodeURIComponent(match[1]).trim());
+  } catch(e) { return false; }
+}
+// ── SHARE SHEET ───────────────────────────────────────────────────────────────
+function getQrLink(qrUrl) {
+  // Extracts the destination URL encoded in the QR image API call
+  if (!qrUrl) return '';
+  try {
+    const match = qrUrl.match(/[?&]data=([^&]*)/);
+    return match ? decodeURIComponent(match[1]).trim() : '';
+  } catch(e) { return ''; }
+}
+function copyQrLink(url, labelElId) {
+  if (!url) return;
+  const copy = function(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() { flashQrLabel(labelElId); }).catch(function() { fallbackCopy(text); flashQrLabel(labelElId); });
+    } else { fallbackCopy(text); flashQrLabel(labelElId); }
+  };
+  copy(url);
+}
+function flashQrLabel(elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const orig = el.textContent;
+  el.textContent = '✓ Copied!';
+  el.style.color = 'var(--sub)';
+  setTimeout(function() { el.textContent = orig; el.style.color = ''; }, 2000);
+}
+function openShareSheet() {
+  if (!RESORT) return;
+  const qrRow = document.getElementById('shareQrRow');
+  if (!qrRow) return;
+  const resortUrl   = 'https://kampkiepie.co.za/resort.html?id=' + encodeURIComponent(RESORT.resortId);
+  const bookingsUrl = 'https://kampkiepie.co.za/bookings.html?resort=' + encodeURIComponent(RESORT.resortId);
+  const resortQrHtml = RESORT.qrResort
+    ? `<div class="share-qr-item" onclick="copyQrLink('${resortUrl}','qr-label-resort')"
+          style="cursor:pointer" title="Click to copy resort link">
+        <img src="${esc(RESORT.qrResort)}" alt="Resort QR"
+             style="transition:transform .15s" onmouseover="this.style.transform='scale(1.04)'"
+             onmouseout="this.style.transform=''">
+        <div class="share-qr-label" id="qr-label-resort">Resort page</div>
+        <div class="share-qr-sub">tap to copy link</div>
+       </div>`
+    : '';
+  const bookingQrHtml = RESORT.qrBooking && hasQrPayload(RESORT.qrBooking)
+    ? `<div class="share-qr-item" onclick="copyQrLink('${bookingsUrl}','qr-label-book')"
+          style="cursor:pointer" title="Click to copy bookings link">
+        <img src="${esc(RESORT.qrBooking)}" alt="Booking QR"
+             style="transition:transform .15s" onmouseover="this.style.transform='scale(1.04)'"
+             onmouseout="this.style.transform=''">
+        <div class="share-qr-label" id="qr-label-book">Live Bookings</div>
+        <div class="share-qr-sub">tap to copy link</div>
+       </div>`
+    : '';
+  qrRow.innerHTML = resortQrHtml + bookingQrHtml;
+  qrRow.style.display = (resortQrHtml || bookingQrHtml) ? '' : 'none';
+  document.getElementById('shareOvl').classList.add('on');
+}
+function closeShareSheet() {
+  document.getElementById('shareOvl').classList.remove('on');
+}
+function copyResortLink() {
+  if (!RESORT) return;
+  const url = 'https://kampkiepie.co.za/resort.html?id=' + encodeURIComponent(RESORT.resortId);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => { flashCopyBtn(); trackResortShare(RESORT.resortId); }).catch(() => fallbackCopy(url));
+  } else {
+    fallbackCopy(url);
+    trackResortShare(RESORT.resortId);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta); ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  flashCopyBtn();
+}
+function flashCopyBtn() {
+  const btn = document.querySelector('.sa-copy');
+  if (!btn) return;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '&#10003; Copied!';
+  btn.style.background = 'var(--green-l)';
+  btn.style.color = 'var(--sub)';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
+}
+function shareWhatsApp() {
+  if (!RESORT) return;
+  const resortUrl   = 'https://kampkiepie.co.za/resort.html?id=' + encodeURIComponent(RESORT.resortId);
+  const bookingsUrl = 'https://kampkiepie.co.za/bookings.html?resort=' + encodeURIComponent(RESORT.resortId);
+  const lines = [
+    'Check out ' + RESORT.name + ' on KampKiepie:',
+    'Resort View: ' + resortUrl,
+  ];
+  if (RESORT.kkBook) lines.push('Live Bookings: ' + bookingsUrl);
+  window.open('https://wa.me/?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+  trackResortShare(RESORT.resortId);
+}
+function trackResortShare(resortId) {
+  // Increments Scoring/TotalShares when a user copies the link or shares via WhatsApp.
+  // Uses a separate 'share' engagement key (once per device per month per resort).
+  if (!resortId || !shouldCountEngagement('share', resortId)) return;
+  const url = ADMIN_SCRIPT_URL + '?action=incrementResortShare&resortId=' + encodeURIComponent(resortId);
+  fetch(url).catch(() => {});
+}
+	
+function printQR() {
+  if (!RESORT) return;
+  const imgs = [RESORT.qrResort, RESORT.qrBooking].filter(Boolean);
+  const labels = [RESORT.name + ' — Resort page', RESORT.name + ' — Book now'];
+  const html = `<!DOCTYPE html><html><head><title>QR Codes — ${RESORT.name}</title>
+    <style>body{font-family:sans-serif;text-align:center;padding:40px}
+    .qr-wrap{display:inline-block;margin:20px;vertical-align:top}
+    img{width:220px;height:220px;border:1px solid #ccc;border-radius:8px;display:block}
+    p{font-size:14px;font-weight:700;margin-top:10px;color:#333}</style></head><body>
+    ${imgs.map((url,i)=>`<div class="qr-wrap"><img src="${url}"><p>${labels[i]||''}</p></div>`).join('')}
+    <script>window.onload=function(){window.print();}<\/script></body></html>`;
+  const w = window.open('','_blank','width=600,height=500');
+  if (w) { w.document.write(html); w.document.close(); }
+}
+
+function openMap()  { document.getElementById('mapOvl').classList.add('on'); }
+function closeMap() { document.getElementById('mapOvl').classList.remove('on'); }
+function photoUrl(raw) {
+  if (!raw || !raw.trim()) return null;
+  const url = raw.trim();
+  if (url.includes(PLACEHOLDER_ID)) return null;
+  // /file/d/ID format
+  let m = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w800';
+  // thumbnail?id=ID or open?id=ID format
+  m = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w800';
+  if (/\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(url)) return url;
+  if (/pexels|fbcdn|unsplash|imgix|cloudinary|amazonaws|googleusercontent/i.test(url)) return url;
+  return null;
+}
+function parseGallery(raw) {
+  if (!raw) return [];
+  return raw.split('|').map(u => photoUrl(u.trim())).filter(Boolean);
+}
+function cleanDesc(raw) {
+  if (!raw) return '';
+  return raw.replace(/\+\+\w+\+\+/g,'').replace(/%%\w+%%/g,'')
+    .replace(/\|\/?(center|right|left)\|/g,'').replace(/##\s*/g,'')
+    .replace(/\*\*|__/g,'').replace(/\\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+function waNum(phone) {
+  if (!phone) return '';
+  const p = String(phone).replace(/\s/g,'').replace(/\.0$/,'');
+  if (!p) return '';
+  return '27' + p.replace(/^\+27/,'').replace(/^27/,'').replace(/^0/,'');
+}
+function isResortStaff() {
+  try { return localStorage.getItem('kkIsResortStaff') === 'true'; } catch(e) { return false; }
+}
+function currentYearMonth() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+function shouldCountEngagement(metricType, resortId) {
+  if (isResortStaff()) return false;
+  let store;
+  try { store = JSON.parse(localStorage.getItem('kkEngagement') || '{}'); } catch(e) { store = {}; }
+  const key = metricType + '_' + resortId;
+  const month = currentYearMonth();
+  if (store[key] === month) return false;
+  store[key] = month;
+  try { localStorage.setItem('kkEngagement', JSON.stringify(store)); } catch(e) {}
+  return true;
+}
+function incrementResortView(resortId) {
+  if (!resortId || !shouldCountEngagement('views', resortId)) return;
+  const url = ADMIN_SCRIPT_URL + '?action=incrementResortView&resortId=' + encodeURIComponent(resortId);
+  fetch(url).then(r => r.json()).then(res => {
+    if (res && res.success) {
+      const el = document.getElementById('resortViewCount');
+      if (el) el.textContent = '👁\ufe0f ' + Number(res.views).toLocaleString() + ' views';
+    }
+  }).catch(() => {});
+}
+function trackResortWhatsapp(resortId) {
+  if (!resortId || !shouldCountEngagement('whatsapp', resortId)) return;
+  const url = ADMIN_SCRIPT_URL + '?action=incrementResortWhatsapp&resortId=' + encodeURIComponent(resortId);
+  fetch(url).catch(() => {});
+}
+function trackResortEmail(resortId) {
+  if (!resortId || !shouldCountEngagement('email', resortId)) return;
+  const url = ADMIN_SCRIPT_URL + '?action=incrementResortEmail&resortId=' + encodeURIComponent(resortId);
+  fetch(url).catch(() => {});
+}
+function isFavorited(resortId) {
+  try { return JSON.parse(localStorage.getItem('kkFavorites') || '[]').includes(resortId); } catch (e) { return false; }
+}
+function toggleFavorite(resortId) {
+  try {
+    let favs = JSON.parse(localStorage.getItem('kkFavorites') || '[]');
+    favs = favs.includes(resortId) ? favs.filter(id => id !== resortId) : favs.concat([resortId]);
+    localStorage.setItem('kkFavorites', JSON.stringify(favs));
+  } catch (e) {}
+  updateSaveButton(resortId);
+}
+function updateSaveButton(resortId) {
+  const btn = document.getElementById('saveBtn');
+  if (!btn) return;
+  const fav = isFavorited(resortId);
+  btn.innerHTML = fav ? '\u2764\ufe0f Saved' : '🤍 Save';
+  btn.classList.toggle('saved', fav);
+}
+function toggleDescClamp() {
+  const desc = document.getElementById('descText');
+  const arrow = document.getElementById('readMoreArrow');
+  const btn = document.getElementById('readMoreBtn');
+  if (!desc) return;
+  const collapsed = desc.classList.toggle('clamped');
+  if (arrow) arrow.textContent = collapsed ? '\u2304' : '\u2303';
+  if (btn) btn.childNodes[0].textContent = collapsed ? 'Read more ' : 'Read less ';
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function openLb(i) {
+  lbIdx = i;
+  document.getElementById('lb-img').src = galleryUrls[i];
+  document.getElementById('lb-counter').textContent = (i+1) + ' / ' + galleryUrls.length;
+  document.getElementById('lb').classList.add('on');
+}
+function closeLb() { document.getElementById('lb').classList.remove('on'); }
+function lbNav(dir) {
+  lbIdx = (lbIdx + dir + galleryUrls.length) % galleryUrls.length;
+  document.getElementById('lb-img').src = galleryUrls[lbIdx];
+  document.getElementById('lb-counter').textContent = (lbIdx+1) + ' / ' + galleryUrls.length;
+}
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lb').classList.contains('on')) {
+    if (e.key==='Escape') closeLb();
+    if (e.key==='ArrowLeft') lbNav(-1);
+    if (e.key==='ArrowRight') lbNav(1);
+  }
+  if (document.getElementById('mapOvl').classList.contains('on') && e.key==='Escape') closeMap();
+  if (document.getElementById('shareOvl').classList.contains('on') && e.key==='Escape') closeShareSheet();
+  if (document.getElementById('extBookingModal').classList.contains('on') && e.key==='Escape') closeExtBookingModal();
+});
+function showErr(msg) {
+  document.getElementById('page').innerHTML =
+    `<div class="err">\u26a0\ufe0f ${msg}<br><br>
+     <a href="index2.html" style="color:var(--brand);font-weight:800;">\u2190 Back to resorts</a></div>`;
+}
+function fetchResortViews(resortId) {
+  fetch(ADMIN_SCRIPT_URL + '?action=getResortViews&resortId=' + encodeURIComponent(resortId))
+    .then(r => r.json())
+    .then(res => {
+      if (res && res.success) {
+        const el = document.getElementById('resortViewCount');
+        if (el) el.textContent = '\uD83D\uDC41\uFE0F '
+          + Number(res.views).toLocaleString() + ' views';
+      }
+    }).catch(() => {});
+}	
+</script>
+
+<!-- SHARE SHEET -->
+<div class="share-ovl" id="shareOvl" onclick="if(event.target===this)closeShareSheet()">
+  <div class="share-box">
+    <div class="share-hdr">
+      <div class="share-hdr-title">Share &#8599;</div>
+      <button class="share-close" onclick="closeShareSheet()">&#10005;</button>
+    </div>
+    <div class="share-body">
+      <div class="share-qr-heading">&#128073; Click a QR-Code to copy its link</div>
+      <div class="share-qr-row" id="shareQrRow"></div>
+      <div class="share-actions">
+        <button class="share-act sa-wa"    onclick="shareWhatsApp()">&#128172; WhatsApp</button>
+        <button class="share-act sa-print" onclick="printQR()">&#128424;&#65039; Print</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

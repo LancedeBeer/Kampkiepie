@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>KampKiepie - Admin Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#F97316;--brand-l:#FFF7ED;--brand-d:#EA580C;--ok:#16A34A;--ok-l:#F0FDF4;--warn:#D97706;--warn-l:#FFFBEB;--bad:#DC2626;--bad-l:#FEF2F2;--info:#2563EB;--info-l:#EFF6FF;--bg:#F4F4F6;--card:#FFFFFF;--text:#18181B;--muted:#6B7280;--subtle:#9CA3AF;--border:#E4E4E7;--r:12px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:radial-gradient(circle at top left,rgba(249,115,22,.10),transparent 24%),radial-gradient(circle at top right,rgba(22,163,74,.08),transparent 26%),var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:inherit}
+.topbar{position:sticky;top:0;z-index:100;min-height:48px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);flex-wrap:nowrap;overflow:hidden}
+@media(max-width:600px){#rolePill,#apiStatePill,#liveIndicator{display:none!important}.brand{font-size:13px;min-width:0}}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex:0 0 auto}
+.brand{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.brand em{font-style:normal;color:var(--brand)}
+.pill{background:var(--brand-l);color:var(--brand-d);font-size:11px;font-weight:800;border-radius:999px;padding:5px 10px;white-space:nowrap}
+.wrap{max-width:1380px;margin:0 auto;padding:16px 14px 56px;overflow-x:hidden}
+.btn{height:40px;border:none;border-radius:10px;padding:0 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn-brand{background:var(--brand);color:#fff}.btn-brand:hover{background:var(--brand-d)}
+.btn-soft{background:var(--bg);color:var(--text);border:1px solid var(--border)}.btn-soft:hover{background:#fff}
+.btn-ok{background:var(--ok);color:#fff}.btn-bad{background:var(--bad);color:#fff}
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:1100px){.grid{grid-template-columns:min-content minmax(0,1fr) 270px}}
+.side,.main,.right{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--sh);min-width:0;overflow:hidden}
+.panel-h{padding:14px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel-t{font-family:'Poppins',sans-serif;font-size:14px;font-weight:800}
+.panel-b{padding:14px;overflow-x:auto}
+.nav{display:flex;flex-direction:column;gap:8px}
+.nav button{width:100%;border:none;border-radius:10px;padding:7px 10px;text-align:left;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:10.4px;font-weight:800;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+.nav button.on{background:var(--brand-l);color:var(--brand-d);border-color:#FED7AA}
+.nav button:hover{border-color:var(--border);background:#fff}
+.stack{display:flex;flex-direction:column;gap:12px}
+.statgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:680px){.statgrid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.stat{background:linear-gradient(180deg,#fff,#fff8f0);border:1px solid var(--border);border-radius:14px;padding:12px}
+.stat label{display:block;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.stat strong{display:block;font-family:'Poppins',sans-serif;font-size:20px;line-height:1.1;margin-top:6px}
+.sub{font-size:12px;color:var(--subtle);font-weight:700;margin-top:4px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border)}
+.toolbar .left,.toolbar .right{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.input,.select,.textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;outline:none;transition:border-color .18s,background .18s}
+.input,.select{height:40px;padding:0 12px}
+.textarea{min-height:92px;padding:10px 12px;resize:vertical;line-height:1.5}
+.input:focus,.select:focus,.textarea:focus{background:#fff;border-color:var(--brand)}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top;text-align:left;font-size:12px}
+th{position:sticky;top:0;background:#fff;z-index:5;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+tr:hover td{background:#fffdfa}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;background:var(--bg);color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--ok-l);color:var(--ok)}.chip.warn{background:var(--warn-l);color:var(--warn)}
+.chip.bad{background:var(--bad-l);color:var(--bad)}.chip.info{background:var(--info-l);color:var(--info)}
+.form-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.section{padding:14px;border-top:1px solid var(--border)}.section:first-child{border-top:none}
+.section-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.section-t{font-family:'Poppins',sans-serif;font-size:14px;font-weight:800}
+.notice{border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;line-height:1.5}
+.notice.info{background:var(--info-l);color:#1D4ED8;border:1px solid #BFDBFE}
+.notice.warn{background:var(--warn-l);color:#92400E;border:1px solid #FCD34D}
+.notice.ok{background:var(--ok-l);color:#166534;border:1px solid #BBF7D0}
+.hidden{display:none !important}
+.connect-gate{position:fixed;left:0;right:0;top:62px;bottom:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.connect-box{max-width:380px;width:100%;background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px;text-align:center;box-shadow:var(--sh)}
+.chicken-stage{width:100%;height:112px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;margin-bottom:8px}
+.chicken-svg{width:130px;height:auto}
+.chicken-waddle{transform-box:fill-box;transform-origin:center;animation:chicken-waddle 2.2s ease-in-out infinite}
+.chicken-leg{transform-box:fill-box;transform-origin:top center}
+.chicken-leg-left{animation:leg-step-left .45s ease-in-out infinite}
+.chicken-leg-right{animation:leg-step-right .45s ease-in-out infinite}
+.chicken-head{transform-box:fill-box;transform-origin:bottom center;animation:chicken-peck 1.5s ease-in-out infinite}
+.chicken-wing{transform-box:fill-box;transform-origin:top center;animation:wing-flap .5s ease-in-out infinite}
+.chicken-tail{transform-box:fill-box;transform-origin:right center;animation:tail-wag .9s ease-in-out infinite}
+.chicken-shadow{fill:rgba(24,24,27,.12);transform-box:fill-box;transform-origin:center;animation:shadow-pulse 2.2s ease-in-out infinite}
+@keyframes chicken-waddle{0%,100%{transform:translateX(-16px) translateY(0) rotate(-4deg)}50%{transform:translateX(16px) translateY(-4px) rotate(4deg)}}
+@keyframes leg-step-left{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+@keyframes leg-step-right{0%,100%{transform:rotate(16deg)}50%{transform:rotate(-16deg)}}
+@keyframes chicken-peck{0%,75%,100%{transform:rotate(0deg)}88%{transform:rotate(20deg)}}
+@keyframes wing-flap{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-22deg)}}
+@keyframes tail-wag{0%,100%{transform:rotate(0deg)}50%{transform:rotate(8deg)}}
+@keyframes shadow-pulse{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.82)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.right .panel-b,.side .panel-b{display:flex;flex-direction:column;gap:12px}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:8px;font-size:13px;line-height:1.45}
+.kv span{color:var(--muted);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.kv strong{font-weight:800;color:var(--text)}
+.divider{height:1px;background:var(--border);margin:2px 0}
+.small{font-size:12px;color:var(--muted);font-weight:700;line-height:1.6}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.footer-gap{height:18px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:300;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.on{display:flex}
+.modal-box{width:min(920px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+.modal-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.modal-b{padding:16px}
+.bulkcell{max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.subtabs{display:flex;gap:6px;align-items:center}
+.toggle-sw{position:relative;display:inline-block;width:34px;height:18px;flex-shrink:0;cursor:pointer}
+.toggle-sw input{opacity:0;width:0;height:0;position:absolute}
+.toggle-sw .track{position:absolute;inset:0;background:var(--border);border-radius:20px;transition:.15s;cursor:pointer}
+.toggle-sw input:checked+.track{background:var(--brand)}
+.toggle-sw .thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.3);pointer-events:none}
+.toggle-sw input:checked~.thumb{left:18px}
+.toggle-label{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;color:var(--muted);cursor:pointer;white-space:nowrap;margin-right:6px}
+.subtab{border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:8px;padding:7px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer}
+.subtab.on{background:var(--brand-l);color:var(--brand-d);border-color:#FED7AA}
+.subtab:hover{background:#fff}
+.dashgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:640px){.dashgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dashtile{background:#fff;border:1px solid var(--border);border-radius:14px;padding:8px 12px;cursor:pointer;text-align:center;transition:transform .12s,box-shadow .12s}
+.dashtile:hover{transform:translateY(-2px);box-shadow:var(--sh)}
+.dashtile-warn{border-color:#FCD34D;background:var(--warn-l)}
+.dashtile-count{font-family:'Poppins',sans-serif;font-weight:800;font-size:26px;color:var(--brand-d);line-height:1.1}
+.dashtile-warn .dashtile-count{color:#92400E}
+.dashtile-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:6px}
+.matrix-scroll{overflow-x:auto}
+.matrix-table{border-collapse:collapse;width:100%;table-layout:fixed}
+.matrix-table th,.matrix-table td{padding:1px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle}
+.matrix-table th{font-size:9px;font-weight:800;color:var(--muted)}
+.matrix-table th.weekend{background:var(--bg)}
+.matrix-standcol{position:sticky;left:0;background:#fff;z-index:2;font-size:10.5px;font-weight:800;width:130px;min-width:130px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left !important;padding-left:8px !important}
+.matrix-table thead th.matrix-standcol{z-index:3}
+.matrix-typerow td{background:var(--brand-l)}
+.matrix-typerow td.matrix-standcol{color:var(--brand-d);font-weight:900}
+.matrix-daynum{width:11px;padding:2px 0 !important;border-right:1px solid rgba(24,24,27,.08)}
+.matrix-daynum:last-child{border-right:none}
+.matrix-daynum-t,.matrix-daynum-o{font-size:7.5px;font-weight:800;line-height:1.15}
+.matrix-nav{display:flex;gap:8px;align-items:center}
+.daycell{display:block;width:9px;height:15px;border-radius:2px;margin:0 auto;box-sizing:border-box}
+.daycell.available{background:var(--ok-l);border:1px solid var(--ok)}
+.daycell.reserved{background:#2563EB;border:1px solid #1D4ED8}
+.daycell.booked,.daycell.maintenance{background:var(--bad);border:1px solid #B91C1C}
+.daycell.past{background:var(--bg);border:1px solid var(--border);opacity:.55}
+.daycell.weekend{box-shadow:inset 0 0 0 1.5px rgba(24,24,27,.28)}
+.matrix-daynum.holiday .matrix-daynum-t,.matrix-daynum.holiday .matrix-daynum-o{color:var(--brand-d)}
+.daycell.holiday{position:relative}
+.daycell.holiday::after{content:'';position:absolute;top:-2px;right:-2px;width:5px;height:5px;border-radius:50%;background:var(--brand);border:1px solid #fff}
+.matrix-legend{display:flex;gap:14px;align-items:center;margin-top:12px;font-size:10.5px;font-weight:700;color:var(--muted);flex-wrap:wrap;padding:0 14px 14px}
+.matrix-dot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:middle}
+.matrix-dot.available{background:var(--ok-l);border:1px solid var(--ok)}
+.matrix-dot.reserved{background:#2563EB;border:1px solid #1D4ED8}
+.matrix-dot.booked{background:var(--bad);border:1px solid #B91C1C}
+.matrix-dot.past{background:var(--bg);border:1px solid var(--border)}
+.matrix-dot.holiday{background:var(--brand);border:1px solid var(--brand-d)}
+.snapgrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:760px){.snapgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1200px){.snapgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.weekstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.weekday-col{text-align:center;background:var(--bg);border-radius:8px;padding:6px 4px;cursor:pointer}
+.weekday-col:hover{background:#fff;border:1px solid var(--border)}
+.attn-row{padding:6px 0;border-top:1px solid var(--border);cursor:pointer}
+.attn-row:first-child{border-top:none}
+.attn-row:hover{background:#fffdfa}
+.section-divider{height:1px;background:var(--border);margin:16px 0 2px}
+.weekgrid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:900px){.weekgrid{grid-template-columns:1fr auto 1fr;align-items:stretch}}
+.week-vdivider{display:none}
+@media(min-width:900px){.week-vdivider{display:block;width:1px;background:var(--border)}}
+.dashtile-static{cursor:default}.dashtile-static:hover{transform:none;box-shadow:none}
+.main{font-size:90%}.main .panel-t{font-size:12.6px}.main .btn{font-size:11.7px}.main .pill{font-size:9.9px}
+.main th{font-size:9.9px}.main td{font-size:10.8px}.main .small{font-size:10.8px}.main .chip{font-size:9.9px}
+.main .subtab{font-size:11.7px}.main .input,.main .select{font-size:11.7px}.main .notice{font-size:11.7px}
+.main .section-t{font-size:12.6px}.main .stat label{font-size:9.9px}.main .stat strong{font-size:18px}
+.main .sub{font-size:10.8px}.main .dashtile-count{font-size:23.4px}.main .dashtile-label{font-size:9.9px}
+.img-pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px;max-height:58vh;overflow-y:auto;padding-right:4px}
+.img-pick-card{border:2px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s;background:#fff}
+.img-pick-card:hover{border-color:var(--brand);transform:translateY(-2px)}
+.img-pick-card.selected{border-color:var(--brand);box-shadow:0 0 0 3px rgba(249,115,22,.18)}
+.img-pick-card img{width:100%;height:110px;object-fit:cover;display:block;background:var(--bg)}
+.img-pick-card .img-label{font-size:10px;font-weight:800;color:var(--muted);padding:5px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid var(--border)}
+.stand-img-thumb{width:100%;max-height:130px;object-fit:cover;border-radius:8px;display:block;background:var(--bg)}
+.action-modal-ovl{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:800;display:none;align-items:center;justify-content:center}
+.action-modal-ovl.on{display:flex}
+.action-modal-box{background:#fff;border-radius:14px;padding:28px 32px;box-shadow:0 8px 40px rgba(0,0,0,.22);min-width:260px;max-width:360px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.action-modal-spin{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--brand);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.action-modal-msg{font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.5}
+.action-modal-err{font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#B91C1C;background:#FEF2F2;border-radius:8px;padding:10px 14px;width:100%}
+.action-modal-close{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:7px 20px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;width:100%}
+.action-modal-close:hover{background:var(--border)}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">&#127957;&#65039;</div>
+  <div class="brand">Kamp<em>Kiepie</em> Admin Setup</div>
+  <div class="pill" id="rolePill">Resort Super Admin</div>
+  <div class="pill" id="apiStatePill">Not connected</div>
+  <button class="btn btn-soft" id="manualRefreshBtn" onclick="livePoll()" style="height:32px;padding:0 12px;font-size:12px" title="Refresh now">&#x27F3; Refresh</button>
+  <span class="small" id="liveIndicator" style="white-space:nowrap"></span>
+  <button class="btn btn-soft" onclick="logout()" style="height:32px;padding:0 12px;font-size:12px">Logout</button>
+</header>
+<div class="connect-gate" id="connectGate">
+  <div class="connect-box">
+    <div class="chicken-stage">
+      <svg class="chicken-svg" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse class="chicken-shadow" cx="80" cy="104" rx="32" ry="6"/>
+        <g class="chicken-waddle">
+          <g class="chicken-leg chicken-leg-left"><line x1="72" y1="80" x2="68" y2="98" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/><path d="M60 98 L68 98 L76 98" stroke="#EA580C" stroke-width="4" stroke-linecap="round" fill="none"/></g>
+          <g class="chicken-leg chicken-leg-right"><line x1="90" y1="80" x2="94" y2="98" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/><path d="M86 98 L94 98 L102 98" stroke="#EA580C" stroke-width="4" stroke-linecap="round" fill="none"/></g>
+          <path class="chicken-tail" d="M52 52 Q30 38 42 58 Q26 54 40 70 Q28 68 42 80" fill="none" stroke="#C2410C" stroke-width="6" stroke-linecap="round"/>
+          <ellipse cx="80" cy="64" rx="34" ry="25" fill="#F97316"/>
+          <ellipse cx="87" cy="74" rx="19" ry="13" fill="#FFF7ED"/>
+          <g class="chicken-wing"><ellipse cx="68" cy="64" rx="13" ry="9" fill="#EA580C"/></g>
+          <g class="chicken-head">
+            <circle cx="110" cy="40" r="17" fill="#F97316"/>
+            <path d="M100 24 Q102 15 106 24 Q108 13 112 24 Q116 15 119 26" fill="#DC2626"/>
+            <path d="M115 46 Q120 53 113 55" fill="#DC2626"/>
+            <circle cx="116" cy="38" r="2.4" fill="#18181B"/>
+            <path d="M126 40 L138 43 L126 47 Z" fill="#FBBF24"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <div class="notice info" id="connectGateMsg">Connecting to the booking system…</div>
+    <div class="small" id="connectGateProgress" style="margin-top:8px;color:var(--muted);font-weight:800">Waking up the flock…</div>
+    <div id="connectGateRetry" class="hidden" style="margin-top:14px">
+      <input class="input" id="apiUrl" placeholder="config.txt or Apps Script /exec URL">
+      <button class="btn btn-brand" style="width:100%;margin-top:10px" onclick="connectApi()">Connect</button>
+    </div>
+    <a href="admin.html" id="connectGateReturnBtn" class="btn btn-brand hidden" style="width:100%;margin-top:14px;text-decoration:none;box-sizing:border-box">Return to Admin Portal</a>
+  </div>
+</div>
+<div class="wrap hidden" id="wrapMain">
+  <div class="statgrid" id="stats"></div>
+  <div class="grid">
+    <aside class="side">
+      <div class="panel-h"><div class="panel-t">Navigation</div></div>
+      <div class="panel-b">
+        <div class="nav">
+          <button class="on" data-view="stands" onclick="setView('stands',this)">Stands</button>
+          <button data-view="pricing" onclick="setView('pricing',this)">Pricing Rules</button>
+          <button data-view="settings" onclick="setView('settings',this)">Defaults &amp; Settings</button>
+          <button data-view="users" onclick="setView('users',this)">Users</button>
+          
+        </div>
+        <div class="divider"></div>
+        <div class="small"><span id="resortIdLabel" style="display:none">1</span></div>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="panel-h">
+        <div class="panel-t" id="mainTitle">Dashboard</div>
+        <div class="flex">
+          <input class="input" id="search" style="width:208px" placeholder="Search stands, bookings, refs..." oninput="clearDashboardFilterAndRender()">
+          <select class="select" id="dateFilter" style="width:auto;height:28px;padding:0 10px;font-size:11px" onchange="clearDashboardFilterAndRender()">
+            <option value="">Any date</option><option value="today" selected>Today</option>
+            <option value="tomorrow">Tomorrow</option><option value="lastWeek">Last week</option>
+            <option value="nextWeek">Next week</option><option value="lastMonth">Last month</option>
+            <option value="nextMonth">Next month</option><option value="lastYear">Last year</option>
+            <option value="nextYear">Next year</option>
+          </select>
+          <select class="select" id="filter" style="width:auto" onchange="clearDashboardFilterAndRender()">
+            <option value="">All records</option>
+          </select>
+        </div>
+      </div>
+      <div class="toolbar"><div class="left" id="toolbarLeft"></div><div class="right" id="toolbarRight"></div></div>
+      <div class="table-wrap" id="mainContent"></div>
+    </main>
+    <aside class="right">
+      <div class="panel-h"><div class="panel-t">Inspector</div></div>
+      <div class="panel-b" id="inspector">
+        <div class="notice warn">No record selected yet. Pick a stand or booking to inspect and edit details.</div>
+      </div>
+    </aside>
+  </div>
+  <div class="footer-gap"></div>
+</div>
+<div class="modal" id="sessionWarningModal"><div class="modal-box" style="max-width:380px"><div class="modal-h"><div class="panel-t">Session Expiring</div></div><div class="modal-b"><div class="notice warn">Session needs to be refreshed in <span id="sessionWarningCountdown">60</span> seconds</div><div class="flex" style="margin-top:14px;justify-content:flex-end"><button class="btn btn-soft" id="sessionExtendBtn" onclick="clickExtendSession()">Extend (+2 min)</button><button class="btn btn-brand" onclick="clickRefreshSession()">Refresh</button></div></div></div></div>
+<div class="modal" id="recordModal" onclick="modalBackdrop(event,'recordModal')"><div class="modal-box"><div class="modal-h"><div class="panel-t" id="recordModalTitle">Edit Record</div><button class="btn btn-soft" onclick="closeModal('recordModal')">Close</button></div><div class="modal-b" id="recordModalBody"></div></div></div>
+<div class="modal" id="standModal" onclick="modalBackdrop(event,'standModal')"><div class="modal-box"><div class="modal-h"><div class="panel-t" id="standModalTitle">New Stand</div><button class="btn btn-soft" onclick="closeModal('standModal')">Close</button></div><div class="modal-b" id="standModalBody"></div></div></div>
+<div class="modal" id="standTypeModal" onclick="modalBackdrop(event,'standTypeModal')"><div class="modal-box"><div class="modal-h"><div class="panel-t" id="standTypeModalTitle">New Stand Type</div><button class="btn btn-soft" onclick="closeModal('standTypeModal')">Close</button></div><div class="modal-b" id="standTypeModalBody"></div></div></div>
+<div class="modal" id="imagePickerModal" onclick="modalBackdrop(event,'imagePickerModal')"><div class="modal-box" style="max-width:900px"><div class="modal-h"><div><div class="panel-t">Pick Stand Image</div><div class="small" id="imagePickerFolderName"></div></div><button class="btn btn-soft" onclick="closeModal('imagePickerModal')">x Close</button></div><div class="modal-b" id="imagePickerBody"></div></div></div>
+<div class="modal" id="graphModal" onclick="if(event.target.id==='graphModal')closeModal('graphModal')" style="padding:20px"><div style="background:#fff;border-radius:18px;padding:24px 24px 16px;width:min(1200px,95vw);max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.28)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="panel-t" id="graphModalTitle">Chart</div><button class="btn btn-soft" onclick="closeModal('graphModal')">x Close</button></div><div id="graphModalBody" style="width:100%;min-height:320px"></div></div></div>
+<div class="modal" id="resetModal" onclick="modalBackdrop(event,'resetModal')"><div class="modal-box" style="max-width:500px"><div class="modal-h"><div class="panel-t" style="color:var(--bad)">Reset Resort Data</div><button class="btn btn-soft" onclick="closeModal('resetModal')">Cancel</button></div><div class="modal-b"><div class="notice bad" style="margin-bottom:14px">This permanently hard-deletes records. This cannot be undone.</div><div class="form-grid" style="margin-bottom:14px"><label class="check"><input type="checkbox" id="rst_Bookings"> Bookings</label><label class="check"><input type="checkbox" id="rst_Payments"> Payments</label><label class="check"><input type="checkbox" id="rst_BookingEvents"> Booking Events</label><label class="check"><input type="checkbox" id="rst_CalendarBlocks"> Calendar Blocks</label><label class="check"><input type="checkbox" id="rst_Stands" onchange="document.getElementById('rst_StandTypes').disabled=!this.checked"> Stands</label><label class="check"><input type="checkbox" id="rst_StandTypes" disabled> Stand Types</label><label class="check"><input type="checkbox" id="rst_ResortDefaults"> Resort Defaults</label><label class="check"><input type="checkbox" id="rst_AuditLog"> Audit Log</label><label class="check"><input type="checkbox" id="rst_NewsletterSignups"> Newsletter Signups</label></div><div class="field" style="margin-bottom:14px"><label>Type <strong>Delete Forever!</strong> to confirm</label><input class="input" id="resetConfirmInput" oninput="document.getElementById('resetConfirmBtn').disabled=this.value!=='Delete Forever!'"></div><button class="btn btn-bad" id="resetConfirmBtn" disabled style="width:100%" onclick="submitReset()">Delete Selected Data</button><div id="resetMsg" style="margin-top:10px"></div></div></div></div>
+<div class="action-modal-ovl" id="actionModal"><div class="action-modal-box"><div class="action-modal-spin" id="actionModalSpin"></div><div class="action-modal-msg" id="actionModalMsg">Processing…</div><div class="action-modal-err" id="actionModalErr" style="display:none"></div><button class="action-modal-close" id="actionModalClose" style="display:none" onclick="closeActionModal()">Close</button></div></div>
+<script>window.KK_PAGE="setup";</script>
+<script>
+// Show Commission Tiers nav only for KK Super Admin
+document.addEventListener('DOMContentLoaded',function(){
+  var orig=window.applyRoleToNav;
+  window.applyRoleToNav=function(){
+    if(orig)orig.apply(this,arguments);
+    var btn=document.getElementById('btnTiersNav');
+    if(btn&&typeof isKKSuperAdmin==='function'&&isKKSuperAdmin())btn.style.display='';
+  };
+});
+</script>
+<script src="adminbackend.js"></script>
+</body>
+</html>

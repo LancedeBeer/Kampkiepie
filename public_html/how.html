@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- ── SEO ── -->
+<title>How It Works – KampKiepie | Book SA Camping Online</title>
+<meta name="description" content="Learn how KampKiepie works — search 750+ South African resorts, view availability and book directly with the resort. Simple, fast and free for guests.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.kampkiepie.co.za/how.html">
+<link rel="alternate" hreflang="en-ZA" href="https://www.kampkiepie.co.za/how.html">
+<link rel="alternate" hreflang="x-default" href="https://www.kampkiepie.co.za/how.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KampKiepie">
+<meta property="og:url" content="https://www.kampkiepie.co.za/how.html">
+<meta property="og:title" content="How KampKiepie Works – Book SA Camping Online">
+<meta property="og:description" content="Search 750+ South African resorts, view availability and book directly with the resort. Simple, fast and free for guests.">
+<meta property="og:image" content="https://www.kampkiepie.co.za/og-default.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_ZA">
+<meta property="og:locale:alternate" content="af_ZA">
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How KampKiepie Works – Book SA Camping Online">
+<meta name="twitter:description" content="Search 750+ SA resorts, view availability and book directly. Free for guests.">
+<meta name="twitter:image" content="https://www.kampkiepie.co.za/og-default.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#F97316; --orange-d:#EA580C; --orange-l:#FFF7ED;
+  --green:#173B2C; --green-2:#0F2B20; --green-l:#F0FDF4;
+  --cream:#FBF6EC; --card:#FFFFFF; --text:#18181B;
+  --muted:#6B7280; --subtle:#9CA3AF; --border:#E7E2D6;
+  --r:16px; --sh:0 4px 18px rgba(23,59,44,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+a{color:inherit;}
+h1,h2,h3{font-family:'Poppins',sans-serif;}
+.topbar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:26px;padding:14px 32px;}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.topbar-logo-icon{width:40px;height:40px;border-radius:11px;background:var(--orange);
+  display:flex;align-items:center;justify-content:center;font-size:20px;}
+.topbar-logo-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;color:var(--green);}
+.topbar-logo-text em{font-style:normal;color:var(--orange);}
+.topbar-nav{display:flex;gap:26px;flex:1;}
+.topbar-nav a{font-size:14.5px;font-weight:700;color:var(--green);text-decoration:none;}
+.topbar-nav a:hover{color:var(--orange);}
+.topbar-nav a.current{color:var(--orange);border-bottom:2px solid var(--orange);padding-bottom:3px;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pill-count{background:var(--orange);color:#fff;font-size:13px;font-weight:800;border-radius:999px;padding:8px 16px;white-space:nowrap;}
+.pill-admin{display:flex;align-items:center;gap:6px;background:var(--green);color:#fff;font-size:13px;font-weight:800;
+  border-radius:999px;padding:8px 16px;text-decoration:none;white-space:nowrap;}
+@media(max-width:900px){.topbar-nav{display:none;}}
+@media(max-width:640px){
+  .topbar{padding:10px 14px;gap:8px;position:relative;}
+  .topbar-logo-icon{width:32px;height:32px;font-size:16px;border-radius:9px;}
+  .topbar-logo-text{font-size:15px;}
+  .pill-count{font-size:10.5px;padding:6px 10px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;}
+  .topbar-right{margin-left:auto;}
+  .pill-admin{padding:8px;border-radius:50%;}
+  .pill-admin-label{display:none;}
+}
+.pg-hero{background:linear-gradient(160deg,var(--green) 0%,var(--green-2) 100%);color:#fff;
+  padding:60px 32px 76px;text-align:center;}
+.pg-eyebrow{font-size:12.5px;font-weight:900;color:var(--orange);letter-spacing:1.4px;text-transform:uppercase;}
+.pg-hero h1{font-weight:800;font-size:clamp(28px,4.2vw,42px);margin-top:14px;line-height:1.15;}
+.pg-hero p{max-width:600px;margin:16px auto 0;font-size:15px;color:#D9E6DE;font-weight:600;line-height:1.7;}
+.wrap{max-width:1000px;margin:0 auto;padding:64px 32px;}
+
+.steps{display:grid;grid-template-columns:1fr;gap:22px;}
+@media(min-width:760px){.steps{grid-template-columns:repeat(2,1fr);}}
+.step-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:26px;box-shadow:var(--sh);position:relative;}
+.step-num{position:absolute;top:-14px;left:24px;width:32px;height:32px;border-radius:50%;background:var(--orange);
+  color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.step-icon{font-size:26px;margin-bottom:10px;margin-top:8px;}
+.step-h{font-family:'Poppins',sans-serif;font-weight:700;font-size:15.5px;color:var(--green);margin-bottom:8px;}
+.step-p{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.7;}
+
+.section-title{font-size:12.5px;font-weight:900;color:var(--orange);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;}
+.section-h{font-weight:800;font-size:26px;color:var(--green);margin-bottom:12px;}
+.section-p{font-size:14px;color:var(--muted);font-weight:600;line-height:1.75;max-width:720px;}
+
+.path-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-top:28px;}
+@media(min-width:760px){.path-grid{grid-template-columns:repeat(2,1fr);}}
+.path-card{background:var(--green-l);border:1px solid #CDE9D6;border-radius:16px;padding:22px;}
+.path-card.alt{background:var(--orange-l);border-color:#FEDCB0;}
+.path-h{font-family:'Poppins',sans-serif;font-weight:700;font-size:14.5px;color:var(--green);margin-bottom:8px;}
+.path-p{font-size:13px;color:var(--muted);font-weight:600;line-height:1.65;}
+
+.cta-banner{background:var(--green);color:#fff;}
+.cta-inner{max-width:1300px;margin:0 auto;padding:40px 32px;display:flex;align-items:center;
+  justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.cta-h{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;}
+.cta-p{margin-top:6px;font-size:14px;color:#CFE0D6;font-weight:600;}
+.cta-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-outline{background:transparent;border:1.5px solid #fff;color:#fff;border-radius:999px;padding:13px 22px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;}
+.btn-solid-orange{background:var(--orange);border:none;color:#fff;border-radius:999px;padding:13px 22px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;}
+
+.footer{background:var(--green-2);color:#D9E3DC;padding:56px 32px 26px;}
+.footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:36px;}
+@media(max-width:900px){.footer-inner{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.footer-inner{grid-template-columns:1fr;}}
+.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.footer-brand-icon{width:34px;height:34px;border-radius:9px;background:var(--orange);display:flex;
+  align-items:center;justify-content:center;font-size:16px;}
+.footer-brand-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+.footer-brand-text em{font-style:normal;color:var(--orange);}
+.footer-tag{font-size:13px;color:#9FB3A6;font-weight:600;margin-bottom:16px;}
+.footer-socials{display:flex;gap:10px;}
+.footer-social{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;text-decoration:none;}
+.footer-col-h{font-size:11.5px;font-weight:900;letter-spacing:1px;color:#fff;text-transform:uppercase;margin-bottom:16px;}
+.footer-col a{display:block;font-size:13.5px;font-weight:600;color:#B9C9BE;text-decoration:none;margin-bottom:11px;}
+.footer-col a:hover{color:#fff;}
+.footer-sub-p{font-size:13px;color:#9FB3A6;font-weight:600;margin-bottom:14px;line-height:1.6;}
+.footer-sub-form{display:flex;gap:0;border-radius:10px;overflow:hidden;}
+.footer-sub-form input{flex:1;border:none;padding:0 14px;height:42px;font-family:'Nunito',sans-serif;
+  font-size:13px;outline:none;}
+.footer-sub-form button{border:none;background:var(--orange);color:#fff;width:44px;height:42px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.footer-bottom{max-width:1300px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);
+  font-size:12.5px;color:#8FA398;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" style="display:contents;text-decoration:none;color:inherit;">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">🏕️</div>
+      <div class="topbar-logo-text">Kamp<em>Kiepie</em></div>
+    </div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index2.html">Resorts</a>
+    <a href="map.html">Map</a>
+    
+    <a href="about.html">About</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="pill-count">750+ resorts</span>
+    <a class="pill-admin" href="admin.html" target="_blank">⚙️<span class="pill-admin-label"> Admin</span></a>
+  </div>
+</header>
+
+<section class="pg-hero">
+  <div class="pg-eyebrow">How It Works</div>
+  <h1>Finding and booking a getaway, simplified</h1>
+  <p>Whether you're after a weekend POP stopover or a week-long family lodge booking, here's exactly how KampKiepie gets you there.</p>
+</section>
+
+<div class="wrap">
+  <div class="section-title">For Guests</div>
+  <div class="section-h">Four simple steps</div>
+  <div class="section-p" style="margin-bottom:32px;">No account needed to browse — just search, compare, and get in touch or book directly.</div>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-icon">🔍</div>
+      <div class="step-h">Search or browse</div>
+      <div class="step-p">Use the homepage search bar, filter by category (Camp, Chalet, Glamp, and more), or browse the full directory by area, name, or activity.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-icon">📄</div>
+      <div class="step-h">Check the details</div>
+      <div class="step-p">Every resort has its own page: photos, amenities, accommodation types, pricing hints, and direct contact details for the host.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-icon">📅</div>
+      <div class="step-h">Book or enquire</div>
+      <div class="step-p">Resorts with online booking let you pick your stand or unit and dates right there. Others, you'll contact directly via WhatsApp, email, or phone.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-icon">🎒</div>
+      <div class="step-h">Pack your bags</div>
+      <div class="step-p">Once confirmed, you're set. Keep your booking reference handy, and reach out to the host directly if your plans change.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:52px;">
+    <div class="section-title">Two Ways to Book</div>
+    <div class="section-h">Not every resort books the same way</div>
+    <div class="section-p">KampKiepie is a directory first — some resorts book instantly through us, others use their own systems. We're upfront about which is which on every resort page.</div>
+    <div class="path-grid">
+      <div class="path-card">
+        <div class="path-h">📅 Online Booking (KampKiepie)</div>
+        <div class="path-p">Look for the "Online Booking" badge and a "Book Now" button. You'll pick your stand, dates, and guest count, and submit your booking directly — no back-and-forth needed.</div>
+      </div>
+      <div class="path-card alt">
+        <div class="path-h">💬 Direct Contact</div>
+        <div class="path-p">Some resorts prefer WhatsApp, email, or a phone call, or use their own external booking platform. Their resort page will always show the fastest way to reach them.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:52px;">
+    <div class="section-title">For Resort Owners</div>
+    <div class="section-h">Want to list your resort?</div>
+    <div class="section-p">Getting listed on KampKiepie puts your resort in front of travellers actively searching for a place like yours. Reach out via the button below, or through the "List your resort" link at the bottom of any page.</div>
+  </div>
+
+  <div style="margin-top:52px;">
+    <div class="section-title">Still Have Questions?</div>
+    <div class="section-h">We've got a Help Centre for that</div>
+    <div class="section-p">Common questions about searching, booking, and using the site are answered in our <a href="help.html" style="color:var(--orange-d);font-weight:800;">Help Centre</a>.</div>
+  </div>
+</div>
+
+<div class="cta-banner">
+  <div class="cta-inner">
+    <div>
+      <div class="cta-h">READY FOR YOUR NEXT ADVENTURE?</div>
+      <div class="cta-p">Join the KampKiepie community and never miss a great getaway.</div>
+    </div>
+    <div class="cta-actions">
+      <a class="btn-outline" href="https://www.facebook.com/groups/kampkiepie" target="_blank">Join our community</a>
+      <a class="btn-solid-orange" href="contact.html">List your resort</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <div class="footer-brand-icon">🏕️</div>
+        <div class="footer-brand-text">Kamp<em>Kiepie</em></div>
+      </div>
+      <div class="footer-tag">Your adventure starts here.</div>
+      <div class="footer-socials">
+        <a class="footer-social" href="https://www.facebook.com/groups/kampkiepie" target="_blank" title="Facebook">📘</a>
+        <a class="footer-social" href="https://wa.me/27825614318" target="_blank" title="WhatsApp">💬</a>
+        <a class="footer-social" href="mailto:sales@kampkiepie.co.za" title="Email">✉️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Explore</div>
+      <a href="index2.html">All Resorts</a>
+      <a href="map.html">Map</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Support</div>
+      <a href="help.html">Help Centre</a>
+      <a href="how.html">How It Works</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Company</div>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="blog.html">Blog</a>
+    </div>
+    <div>
+      <div class="footer-col-h">Never Miss An Adventure</div>
+      <div class="footer-sub-p">Subscribe for updates and exclusive offers.</div>
+      <form class="footer-sub-form" onsubmit="return handleSubscribe(event)">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">→</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 KampKiepie. All rights reserved. &nbsp;·&nbsp; Website by <a href="https://www.binarybotany.co.za" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Binary Botany</a> &amp; <a href="https://www.facebook.com/swiftglideapps" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Swiftglide Apps</a></div>
+</footer>
+<script>
+async function fetchConfigValue_(key) {
+  try {
+    const res = await fetch('config.txt', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const text = await res.text();
+    const line = text.split(/\r?\n/).find(l => l.trim().startsWith(key + ':'));
+    if (!line) return null;
+    return line.split(':').slice(1).join(':').trim();
+  } catch (e) { return null; }
+}
+async function handleSubscribe(e) {
+  e.preventDefault();
+  const form = e.target;
+  const emailInput = form.querySelector('input[type="email"]');
+  const email = emailInput ? emailInput.value.trim() : '';
+  if (!email) return false;
+  const btn = form.querySelector('button');
+  const originalHtml = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    const apiUrl = await fetchConfigValue_('adminbackend_script');
+    if (!apiUrl) throw new Error('Newsletter service is not configured yet');
+    const body = new URLSearchParams({ action: 'subscribeNewsletter', email, sourcePage: location.pathname.split('/').pop() });
+    const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body: body.toString() });
+    const result = await res.json();
+    if (result.success) {
+      alert(result.alreadySubscribed ? 'You\u2019re already subscribed!' : 'Thanks for subscribing!');
+      form.reset();
+    } else {
+      alert('Could not subscribe: ' + (result.error || 'unknown error'));
+    }
+  } catch (err) {
+    alert('Could not subscribe right now: ' + (err.message || err));
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+  }
+  return false;
+}
+</script>
+</body>
+</html>

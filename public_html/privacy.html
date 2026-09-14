@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- ── SEO ── -->
+<title>Privacy Policy – KampKiepie</title>
+<meta name="description" content="KampKiepie privacy policy. How we handle your personal information in line with POPIA.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://www.kampkiepie.co.za/privacy.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#F97316; --orange-d:#EA580C; --orange-l:#FFF7ED;
+  --green:#173B2C; --green-2:#0F2B20; --green-l:#F0FDF4;
+  --cream:#FBF6EC; --card:#FFFFFF; --text:#18181B;
+  --muted:#6B7280; --subtle:#9CA3AF; --border:#E7E2D6;
+  --r:16px; --sh:0 4px 18px rgba(23,59,44,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+a{color:inherit;}
+h1,h2,h3{font-family:'Poppins',sans-serif;}
+.topbar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:26px;padding:14px 32px;}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.topbar-logo-icon{width:40px;height:40px;border-radius:11px;background:var(--orange);
+  display:flex;align-items:center;justify-content:center;font-size:20px;}
+.topbar-logo-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;color:var(--green);}
+.topbar-logo-text em{font-style:normal;color:var(--orange);}
+.topbar-nav{display:flex;gap:26px;flex:1;}
+.topbar-nav a{font-size:14.5px;font-weight:700;color:var(--green);text-decoration:none;}
+.topbar-nav a:hover{color:var(--orange);}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pill-count{background:var(--orange);color:#fff;font-size:13px;font-weight:800;border-radius:999px;padding:8px 16px;white-space:nowrap;}
+.pill-admin{display:flex;align-items:center;gap:6px;background:var(--green);color:#fff;font-size:13px;font-weight:800;
+  border-radius:999px;padding:8px 16px;text-decoration:none;white-space:nowrap;}
+@media(max-width:900px){.topbar-nav{display:none;}}
+@media(max-width:640px){
+  .topbar{padding:10px 14px;gap:8px;position:relative;}
+  .topbar-logo-icon{width:32px;height:32px;font-size:16px;border-radius:9px;}
+  .topbar-logo-text{font-size:15px;}
+  .pill-count{font-size:10.5px;padding:6px 10px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;}
+  .topbar-right{margin-left:auto;}
+  .pill-admin{padding:8px;border-radius:50%;}
+  .pill-admin-label{display:none;}
+}
+.legal-hero{background:var(--green);color:#fff;padding:44px 32px;text-align:center;}
+.legal-hero h1{font-weight:800;font-size:28px;}
+.legal-hero p{margin-top:8px;font-size:13px;color:#B9C9BE;font-weight:700;}
+.legal-wrap{max-width:780px;margin:0 auto;padding:56px 32px;}
+.legal-notice{background:var(--orange-l);border:1px solid #FEDCB0;border-radius:14px;padding:18px 20px;
+  font-size:13px;color:var(--orange-d);font-weight:700;line-height:1.6;margin-bottom:40px;}
+.legal-sec{margin-bottom:32px;}
+.legal-sec h2{font-size:17px;color:var(--green);margin-bottom:10px;}
+.legal-sec p, .legal-sec li{font-size:13.5px;color:var(--muted);font-weight:600;line-height:1.8;}
+.legal-sec ul{padding-left:20px;margin-top:8px;}
+.legal-sec li{margin-bottom:6px;}
+.footer{background:var(--green-2);color:#D9E3DC;padding:56px 32px 26px;}
+.footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:36px;}
+@media(max-width:900px){.footer-inner{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.footer-inner{grid-template-columns:1fr;}}
+.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.footer-brand-icon{width:34px;height:34px;border-radius:9px;background:var(--orange);display:flex;
+  align-items:center;justify-content:center;font-size:16px;}
+.footer-brand-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+.footer-brand-text em{font-style:normal;color:var(--orange);}
+.footer-tag{font-size:13px;color:#9FB3A6;font-weight:600;margin-bottom:16px;}
+.footer-socials{display:flex;gap:10px;}
+.footer-social{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;text-decoration:none;}
+.footer-col-h{font-size:11.5px;font-weight:900;letter-spacing:1px;color:#fff;text-transform:uppercase;margin-bottom:16px;}
+.footer-col a{display:block;font-size:13.5px;font-weight:600;color:#B9C9BE;text-decoration:none;margin-bottom:11px;}
+.footer-col a:hover{color:#fff;}
+.footer-sub-p{font-size:13px;color:#9FB3A6;font-weight:600;margin-bottom:14px;line-height:1.6;}
+.footer-sub-form{display:flex;gap:0;border-radius:10px;overflow:hidden;}
+.footer-sub-form input{flex:1;border:none;padding:0 14px;height:42px;font-family:'Nunito',sans-serif;
+  font-size:13px;outline:none;}
+.footer-sub-form button{border:none;background:var(--orange);color:#fff;width:44px;height:42px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.footer-bottom{max-width:1300px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);
+  font-size:12.5px;color:#8FA398;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" style="display:contents;text-decoration:none;color:inherit;">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">🏕️</div>
+      <div class="topbar-logo-text">Kamp<em>Kiepie</em></div>
+    </div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index2.html">Resorts</a>
+    <a href="map.html">Map</a>
+    
+    <a href="about.html">About</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="pill-count">750+ resorts</span>
+    <a class="pill-admin" href="admin.html" target="_blank">⚙️<span class="pill-admin-label"> Admin</span></a>
+  </div>
+</header>
+
+<section class="legal-hero">
+  <h1>Privacy Policy</h1>
+  <p>Last updated: July 2026</p>
+</section>
+
+<div class="legal-wrap">
+  <div class="legal-sec">
+    <h2>1. What This Policy Covers</h2>
+    <p>This Privacy Policy explains what information KampKiepie collects when you use our website, why we collect it, and how it's used. It applies to our public pages (homepage, resort directory, resort profiles, and booking pages).</p>
+  </div>
+
+  <div class="legal-sec">
+    <h2>2. Information We Collect</h2>
+    <ul>
+      <li><strong>Search and browsing activity</strong> — the searches and filters you use, and which resort pages you view, so we can show relevant results and understand which resorts are popular.</li>
+      <li><strong>Booking details</strong> — if you book through KampKiepie directly, we collect the details needed to process that booking (name, contact details, dates, guest count, and payment-related information where applicable).</li>
+      <li><strong>Contact form submissions</strong> — if you use our Contact page, we collect whatever details you provide in that form.</li>
+      <li><strong>Local browser storage</strong> — we use your browser's local storage (not cookies) to remember things like which categories you've filtered by, and to avoid counting the same visitor's page view more than once a month for a given resort.</li>
+    </ul>
+  </div>
+
+  <div class="legal-sec">
+    <h2>3. How We Use Your Information</h2>
+    <ul>
+      <li>To operate the directory and process bookings made through KampKiepie.</li>
+      <li>To give resort owners aggregate insight into how their listing is performing (e.g. total page views) — we do not share your individual identity with resort owners unless you submit a booking or enquiry directly to them.</li>
+      <li>To improve the Platform based on how it's actually used.</li>
+    </ul>
+  </div>
+
+  <div class="legal-sec">
+    <h2>4. Sharing With Resorts</h2>
+    <p>If you submit a booking or enquiry to a specific resort, the details you provide (name, contact information, dates, and any notes) are shared with that resort so they can fulfil your request. Resorts are independent operators and are responsible for how they handle your information once received.</p>
+  </div>
+
+  <div class="legal-sec">
+    <h2>5. Third-Party Services</h2>
+    <p>KampKiepie uses Google Sheets and Google Apps Script as part of its underlying infrastructure. Booking and contact data submitted through the Platform is processed through these services. Where a resort uses an external booking platform (such as NightsBridge or Q2B) instead of KampKiepie's own booking system, your information is submitted directly to that third party under their own privacy terms.</p>
+  </div>
+
+  <div class="legal-sec">
+    <h2>6. Data Retention</h2>
+    <p>We retain booking and enquiry records for as long as reasonably necessary for record-keeping and dispute-resolution purposes. Aggregate statistics (like total view counts) are retained indefinitely as they don't identify individual visitors.</p>
+  </div>
+
+  <div class="legal-sec">
+    <h2>7. Your Rights</h2>
+    <p>Under POPIA, you have the right to request access to, correction of, or deletion of your personal information held by us. To make such a request, please get in touch via our <a href="contact.html" style="color:var(--orange-d);font-weight:800;">Contact page</a>.</p>
+  </div>
+
+  <div class="legal-sec">
+    <h2>8. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. The "last updated" date at the top of this page will reflect the most recent revision.</p>
+  </div>
+
+  <div class="legal-sec">
+    <h2>9. Contact</h2>
+    <p>Questions about this Privacy Policy? Reach out via our <a href="contact.html" style="color:var(--orange-d);font-weight:800;">Contact page</a>.</p>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <div class="footer-brand-icon">🏕️</div>
+        <div class="footer-brand-text">Kamp<em>Kiepie</em></div>
+      </div>
+      <div class="footer-tag">Your adventure starts here.</div>
+      <div class="footer-socials">
+        <a class="footer-social" href="https://www.facebook.com/groups/kampkiepie" target="_blank" title="Facebook">📘</a>
+        <a class="footer-social" href="https://wa.me/27825614318" target="_blank" title="WhatsApp">💬</a>
+        <a class="footer-social" href="mailto:sales@kampkiepie.co.za" title="Email">✉️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Explore</div>
+      <a href="index2.html">All Resorts</a>
+      <a href="map.html">Map</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Support</div>
+      <a href="help.html">Help Centre</a>
+      <a href="how.html">How It Works</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Company</div>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="blog.html">Blog</a>
+    </div>
+    <div>
+      <div class="footer-col-h">Never Miss An Adventure</div>
+      <div class="footer-sub-p">Subscribe for updates and exclusive offers.</div>
+      <form class="footer-sub-form" onsubmit="return handleSubscribe(event)">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">→</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 KampKiepie. All rights reserved. &nbsp;·&nbsp; Website by <a href="https://www.binarybotany.co.za" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Binary Botany</a> &amp; <a href="https://www.facebook.com/swiftglideapps" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Swiftglide Apps</a></div>
+</footer>
+<script>
+async function fetchConfigValue_(key) {
+  try {
+    const res = await fetch('config.txt', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const text = await res.text();
+    const line = text.split(/\r?\n/).find(l => l.trim().startsWith(key + ':'));
+    if (!line) return null;
+    return line.split(':').slice(1).join(':').trim();
+  } catch (e) { return null; }
+}
+async function handleSubscribe(e) {
+  e.preventDefault();
+  const form = e.target;
+  const emailInput = form.querySelector('input[type="email"]');
+  const email = emailInput ? emailInput.value.trim() : '';
+  if (!email) return false;
+  const btn = form.querySelector('button');
+  const originalHtml = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    const apiUrl = await fetchConfigValue_('adminbackend_script');
+    if (!apiUrl) throw new Error('Newsletter service is not configured yet');
+    const body = new URLSearchParams({ action: 'subscribeNewsletter', email, sourcePage: location.pathname.split('/').pop() });
+    const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body: body.toString() });
+    const result = await res.json();
+    if (result.success) {
+      alert(result.alreadySubscribed ? 'You\u2019re already subscribed!' : 'Thanks for subscribing!');
+      form.reset();
+    } else {
+      alert('Could not subscribe: ' + (result.error || 'unknown error'));
+    }
+  } catch (err) {
+    alert('Could not subscribe right now: ' + (err.message || err));
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+  }
+  return false;
+}
+</script>
+</body>
+</html>

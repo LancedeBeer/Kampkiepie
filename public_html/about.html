@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- ── SEO ── -->
+<title>About KampKiepie – South Africa's Camping &amp; Accommodation Directory</title>
+<meta name="description" content="KampKiepie is a proudly South African, family-built platform connecting campers, caravanners and adventurers with 750+ resorts across the country. Built by people who actually camp.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.kampkiepie.co.za/about.html">
+<link rel="alternate" hreflang="en-ZA" href="https://www.kampkiepie.co.za/about.html">
+<link rel="alternate" hreflang="x-default" href="https://www.kampkiepie.co.za/about.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KampKiepie">
+<meta property="og:url" content="https://www.kampkiepie.co.za/about.html">
+<meta property="og:title" content="About KampKiepie – Built by people who actually camp">
+<meta property="og:description" content="A proudly South African, family-built platform connecting campers and adventurers with 750+ resorts nationwide.">
+<meta property="og:image" content="https://www.kampkiepie.co.za/og-default.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_ZA">
+<meta property="og:locale:alternate" content="af_ZA">
+<!-- Twitter/X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About KampKiepie – Built by people who actually camp">
+<meta name="twitter:description" content="A proudly South African, family-built platform for campers, caravanners and adventurers.">
+<meta name="twitter:image" content="https://www.kampkiepie.co.za/og-default.jpg">
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.kampkiepie.co.za/#organization",
+  "name": "KampKiepie",
+  "alternateName": "DyLuLaMi Progressive Investments (Pty) Ltd T/A KampKiepie",
+  "url": "https://www.kampkiepie.co.za/",
+  "logo": "https://www.kampkiepie.co.za/og-default.jpg",
+  "foundingDate": "2025",
+  "description": "South African camping, glamping and accommodation directory and booking platform.",
+  "areaServed": { "@type": "Country", "name": "South Africa" },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+27825614318",
+    "email": "sales@kampkiepie.co.za",
+    "contactType": "customer service",
+    "availableLanguage": ["English", "Afrikaans"]
+  },
+  "sameAs": ["https://www.facebook.com/groups/kampkiepie"],
+  "member": [
+    { "@type": "Person", "name": "David de Beer", "jobTitle": "Founder & Developer" },
+    { "@type": "Person", "name": "Lance de Beer", "jobTitle": "Support & Co-Developer" },
+    { "@type": "Person", "name": "Mariska de Beer", "jobTitle": "Admin & Resort Partnerships" }
+  ]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#F97316; --orange-d:#EA580C; --orange-l:#FFF7ED;
+  --green:#173B2C; --green-2:#0F2B20; --green-l:#F0FDF4;
+  --cream:#FBF6EC; --card:#FFFFFF; --text:#18181B;
+  --muted:#6B7280; --subtle:#9CA3AF; --border:#E7E2D6;
+  --r:16px; --sh:0 4px 18px rgba(23,59,44,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden;}
+a{color:inherit;}
+h1,h2,h3{font-family:'Poppins',sans-serif;}
+
+/* ===== TOPBAR (shared with index.html) ===== */
+.topbar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:26px;padding:14px 32px;}
+.topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.topbar-logo-icon{width:40px;height:40px;border-radius:11px;background:var(--orange);
+  display:flex;align-items:center;justify-content:center;font-size:20px;}
+.topbar-logo-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:19px;color:var(--green);}
+.topbar-logo-text em{font-style:normal;color:var(--orange);}
+.topbar-nav{display:flex;gap:26px;flex:1;}
+.topbar-nav a{font-size:14.5px;font-weight:700;color:var(--green);text-decoration:none;}
+.topbar-nav a:hover{color:var(--orange);}
+.topbar-nav a.current{color:var(--orange);border-bottom:2px solid var(--orange);padding-bottom:3px;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.pill-count{background:var(--orange);color:#fff;font-size:13px;font-weight:800;border-radius:999px;padding:8px 16px;white-space:nowrap;}
+.pill-admin{display:flex;align-items:center;gap:6px;background:var(--green);color:#fff;font-size:13px;font-weight:800;
+  border-radius:999px;padding:8px 16px;text-decoration:none;white-space:nowrap;}
+@media(max-width:900px){.topbar-nav{display:none;}}
+@media(max-width:640px){
+  .topbar{padding:10px 14px;gap:8px;position:relative;}
+  .topbar-logo-icon{width:32px;height:32px;font-size:16px;border-radius:9px;}
+  .topbar-logo-text{font-size:15px;}
+  .pill-count{font-size:10.5px;padding:6px 10px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;}
+  .topbar-right{margin-left:auto;}
+  .pill-admin{padding:8px;border-radius:50%;}
+  .pill-admin-label{display:none;}
+}
+
+/* ===== ABOUT HERO ===== */
+.about-hero{background:linear-gradient(160deg,var(--green) 0%,var(--green-2) 100%);color:#fff;
+  padding:70px 32px 90px;text-align:center;position:relative;overflow:hidden;}
+.about-hero::before{content:'';position:absolute;inset:0;opacity:.08;
+  background-image:radial-gradient(circle,#fff 1.5px,transparent 1.5px);background-size:26px 26px;}
+.about-eyebrow{position:relative;font-size:12.5px;font-weight:900;color:var(--orange);letter-spacing:1.4px;text-transform:uppercase;}
+.about-hero h1{position:relative;font-weight:800;font-size:clamp(30px,4.6vw,46px);margin-top:14px;line-height:1.15;}
+.about-hero p{position:relative;max-width:620px;margin:18px auto 0;font-size:15.5px;color:#D9E6DE;font-weight:600;line-height:1.7;}
+
+/* ===== SHARED SECTION WRAP ===== */
+.about-wrap{max-width:1100px;margin:0 auto;padding:64px 32px;}
+.about-wrap.tight{padding-top:0;}
+
+/* ===== STORY (two column) ===== */
+.story-grid{display:grid;grid-template-columns:1fr;gap:36px;align-items:center;}
+@media(min-width:860px){.story-grid{grid-template-columns:1fr 1fr;}}
+.story-eyebrow{font-size:12.5px;font-weight:900;color:var(--orange);letter-spacing:1.2px;text-transform:uppercase;}
+.story-h{font-weight:800;font-size:30px;color:var(--green);margin-top:10px;line-height:1.2;}
+.story-rule{width:52px;height:4px;background:var(--orange);border-radius:2px;margin:18px 0;}
+.story-p{font-size:14.5px;color:var(--muted);font-weight:600;line-height:1.8;margin-bottom:14px;}
+.story-card{background:#fff;border-radius:20px;box-shadow:var(--sh);padding:30px;border:1px solid var(--border);}
+.story-quote{font-family:'Poppins',sans-serif;font-weight:700;font-size:17px;color:var(--green);line-height:1.5;font-style:italic;}
+.story-quote-by{margin-top:16px;font-size:12.5px;font-weight:800;color:var(--muted);}
+.placeholder-tag{display:inline-block;margin-top:14px;background:var(--orange-l);color:var(--orange-d);
+  font-size:10.5px;font-weight:800;padding:5px 10px;border-radius:999px;}
+
+/* ===== STATS STRIP ===== */
+.stats-strip{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stats-inner{max-width:1100px;margin:0 auto;padding:44px 32px;display:grid;grid-template-columns:repeat(2,1fr);gap:28px;text-align:center;}
+@media(min-width:760px){.stats-inner{grid-template-columns:repeat(4,1fr);}}
+.stat-num{font-family:'Poppins',sans-serif;font-weight:800;font-size:32px;color:var(--green);}
+.stat-lbl{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:6px;}
+
+/* ===== VALUES (reused from homepage's Why Choose section) ===== */
+.values-title{text-align:center;font-size:12.5px;font-weight:900;color:var(--green);letter-spacing:1.2px;
+  text-transform:uppercase;margin-bottom:8px;}
+.values-h{text-align:center;font-weight:800;font-size:28px;color:var(--green);margin-bottom:38px;}
+.values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;}
+@media(min-width:720px){.values-grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1000px){.values-grid{grid-template-columns:repeat(5,1fr);}}
+.value-item{text-align:center;}
+.value-icon{width:56px;height:56px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;
+  justify-content:center;font-size:24px;}
+.value-icon.g{background:var(--green-l);color:var(--green);}
+.value-icon.o{background:var(--orange-l);color:var(--orange);}
+.value-h{font-family:'Poppins',sans-serif;font-weight:800;font-size:14.5px;color:var(--text);margin-bottom:7px;}
+.value-p{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.55;}
+
+/* ===== TEAM ===== */
+.team-grid{display:grid;grid-template-columns:1fr;gap:22px;}
+@media(min-width:640px){.team-grid{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:960px){.team-grid{grid-template-columns:repeat(3,1fr);}}
+.team-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:26px;text-align:center;box-shadow:var(--sh);}
+.team-avatar{width:76px;height:76px;border-radius:50%;margin:0 auto 14px;background:var(--green-l);
+  display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--green);}
+.team-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--text);}
+.team-role{font-size:12px;font-weight:800;color:var(--orange-d);margin-top:3px;}
+.team-p{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:10px;line-height:1.6;}
+
+/* ===== CTA BANNER (shared) ===== */
+.cta-banner{background:var(--green);color:#fff;}
+.cta-inner{max-width:1300px;margin:0 auto;padding:40px 32px;display:flex;align-items:center;
+  justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.cta-h{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;}
+.cta-p{margin-top:6px;font-size:14px;color:#CFE0D6;font-weight:600;}
+.cta-actions{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-outline{background:transparent;border:1.5px solid #fff;color:#fff;border-radius:999px;padding:13px 22px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;}
+.btn-solid-orange{background:var(--orange);border:none;color:#fff;border-radius:999px;padding:13px 22px;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;}
+
+/* ===== FOOTER (shared) ===== */
+.footer{background:var(--green-2);color:#D9E3DC;padding:56px 32px 26px;}
+.footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:36px;}
+@media(max-width:900px){.footer-inner{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.footer-inner{grid-template-columns:1fr;}}
+.footer-brand{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.footer-brand-icon{width:34px;height:34px;border-radius:9px;background:var(--orange);display:flex;
+  align-items:center;justify-content:center;font-size:16px;}
+.footer-brand-text{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+.footer-brand-text em{font-style:normal;color:var(--orange);}
+.footer-tag{font-size:13px;color:#9FB3A6;font-weight:600;margin-bottom:16px;}
+.footer-socials{display:flex;gap:10px;}
+.footer-social{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;text-decoration:none;}
+.footer-col-h{font-size:11.5px;font-weight:900;letter-spacing:1px;color:#fff;text-transform:uppercase;margin-bottom:16px;}
+.footer-col a{display:block;font-size:13.5px;font-weight:600;color:#B9C9BE;text-decoration:none;margin-bottom:11px;}
+.footer-col a:hover{color:#fff;}
+.footer-sub-p{font-size:13px;color:#9FB3A6;font-weight:600;margin-bottom:14px;line-height:1.6;}
+.footer-sub-form{display:flex;gap:0;border-radius:10px;overflow:hidden;}
+.footer-sub-form input{flex:1;border:none;padding:0 14px;height:42px;font-family:'Nunito',sans-serif;
+  font-size:13px;outline:none;}
+.footer-sub-form button{border:none;background:var(--orange);color:#fff;width:44px;height:42px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.footer-bottom{max-width:1300px;margin:40px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);
+  font-size:12.5px;color:#8FA398;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" style="display:contents;text-decoration:none;color:inherit;">
+    <div class="topbar-logo">
+      <img src="KampKiepieLogo.png" alt="KampKiepie" style="height:40px;width:auto;display:block;border-radius:8px;">
+      <div class="topbar-logo-text">Kamp<em>Kiepie</em></div>
+    </div>
+  </a>
+  <nav class="topbar-nav">
+    <a href="index2.html">Resorts</a>
+    <a href="map.html">Map</a>
+    <a href="about.html" class="current">About</a>
+    <a href="blog.html">Blog</a>
+    <a href="contact.html">Contact</a>
+    <a href="list-your-resort.html">List Your Resort</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="pill-count" id="resortCountPill">Loading…</span>
+    <a class="pill-admin" href="admin.html" target="_blank">⚙️<span class="pill-admin-label"> Admin</span></a>
+  </div>
+</header>
+
+<section class="about-hero">
+  <div class="about-eyebrow">About KampKiepie</div>
+  <h1>Helping South Africans find their perfect getaway</h1>
+  <p>We built KampKiepie because finding a good campsite, cabin, or getaway shouldn't mean scrolling through ten different websites and Facebook groups. One place, every kind of stay, from POP stopovers to full family lodges.</p>
+</section>
+
+<div class="about-wrap">
+  <div class="story-grid">
+    <div>
+      <div class="story-eyebrow">Our Story</div>
+      <h2 class="story-h">Built by people who actually camp.</h2>
+      <div class="story-rule"></div>
+      <p class="story-p">KampKiepie began life in July 2025 as an app — a simple idea to bring South Africa's incredible campsites, guesthouses, and getaways together in one place, instead of scattered across ten different websites and Facebook groups.</p>
+      <p class="story-p">As the vision for KampKiepie grew, it became clear the original platform simply couldn't keep up — it was too restrictive and too slow to support where we wanted to take things next. So we made the call to rebuild KampKiepie from the ground up as a fully optimised website, built to handle the scale and features our vision actually needs.</p>
+      <p class="story-p">That rebuild is what powers KampKiepie today: a directory and booking platform that understands how South Africans really travel — WhatsApp-first, community-driven, and covering everything from a weekend POP stopover to a week-long family lodge booking.</p>
+    </div>
+    <div class="story-card">
+      <div class="story-quote">"KampKiepie is a family-owned business at heart. We didn't want another booking site that only understands hotels — campers, caravaners, and long-stayers deserve a platform built around how they actually travel, which is exactly why we rebuilt KampKiepie the right way instead of settling for a platform that couldn't grow with us."</div>
+      <div class="story-quote-by">— The de Beer Family, KampKiepie</div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num" id="statResorts">–</div>
+      <div class="stat-lbl">Resorts Listed</div>
+    </div>
+    <div>
+      <div class="stat-num" id="statViews">–</div>
+      <div class="stat-lbl">Resort Page Views</div>
+    </div>
+    <div>
+      <div class="stat-num" id="statProvinces">–</div>
+      <div class="stat-lbl">Provinces Covered</div>
+    </div>
+    <div>
+      <div class="stat-num">2025</div>
+      <div class="stat-lbl">Founded</div>
+    </div>
+  </div>
+</div>
+
+<div class="about-wrap">
+  <div class="values-title">Why Choose KampKiepie?</div>
+  <div class="values-h">What we stand for</div>
+  <div class="values-grid">
+    <div class="value-item">
+      <div class="value-icon g">✅</div>
+      <div class="value-h">Trusted &amp; Verified</div>
+      <div class="value-p">All listings are verified to ensure a quality experience.</div>
+    </div>
+    <div class="value-item">
+      <div class="value-icon o">📍</div>
+      <div class="value-h">South Africa Wide</div>
+      <div class="value-p">Discover amazing destinations in every corner of the country.</div>
+    </div>
+    <div class="value-item">
+      <div class="value-icon g">📅</div>
+      <div class="value-h">Easy Bookings</div>
+      <div class="value-p">Book online quickly and securely with our trusted partners.</div>
+    </div>
+    <div class="value-item">
+      <div class="value-icon o">❤️</div>
+      <div class="value-h">Loved by Campers</div>
+      <div class="value-p">Join thousands of happy campers who keep coming back.</div>
+    </div>
+    <div class="value-item">
+      <div class="value-icon g">👪</div>
+      <div class="value-h">For Everyone</div>
+      <div class="value-p">Families, couples, groups and solo adventurers welcome.</div>
+    </div>
+  </div>
+</div>
+
+<div class="about-wrap" style="padding-top:0;">
+  <div class="values-title">The People Behind It</div>
+  <div class="values-h">Meet the team</div>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar">🧑‍💻</div>
+      <div class="team-name">David de Beer</div>
+      <div class="team-role">Founder &amp; Developer</div>
+      <div class="team-p">David studied programming at NWU in the nineties, spent a few years coding, and then life happened. He picked it back up in 2024 — and KampKiepie is what came out of it. The idea was simple: small resorts deserve a fair deal, and paying 15% commission to platforms that own your guests is not a fair deal. His day job is in cellular sales, so he knows exactly what it feels like to be on the receiving end of a pitch that sounds too good to be true.</div>
+      <div class="team-p" style="margin-top:8px;font-size:13px;"><a href="mailto:sales@kampkiepie.co.za" style="color:var(--orange);font-weight:800;text-decoration:none;">sales@kampkiepie.co.za</a></div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🛠️</div>
+      <div class="team-name">Lance de Beer</div>
+      <div class="team-role">Support &amp; Co-Developer</div>
+      <div class="team-p">Lance also studied programming at NWU and joined KampKiepie when it became clear that breaking into the industry is near-impossible when every junior role requires experience in tools that have only existed for three years. Rather than wait for the industry to catch up, he put his skills to work here. He handles resort onboarding, partner support and co-development — the person most likely to answer when you reach out.</div>
+      <div class="team-p" style="margin-top:8px;font-size:13px;"><a href="mailto:support@kampkiepie.co.za" style="color:var(--orange);font-weight:800;text-decoration:none;">support@kampkiepie.co.za</a></div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🤝</div>
+      <div class="team-name">Mariska de Beer</div>
+      <div class="team-role">Admin &amp; Resort Partnerships</div>
+      <div class="team-p">Mariska studied Business Communications at NWU in the nineties and has spent her entire working career in administration and HR — she practically runs on spreadsheets. At KampKiepie she keeps the back office in order, manages resort partnerships, and makes sure nothing falls through the cracks. If David builds it and Lance supports it, Mariska is the one making sure everyone stays organised.</div>
+      <div class="team-p" style="margin-top:8px;font-size:13px;"><a href="mailto:hoofhen@kampkiepie.co.za" style="color:var(--orange);font-weight:800;text-decoration:none;">hoofhen@kampkiepie.co.za</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="cta-banner">
+  <div class="cta-inner">
+    <div>
+      <div class="cta-h">READY FOR YOUR NEXT ADVENTURE?</div>
+      <div class="cta-p">Join the KampKiepie community and never miss a great getaway.</div>
+    </div>
+    <div class="cta-actions">
+      <a class="btn-outline" href="https://www.facebook.com/groups/kampkiepie" target="_blank">Join our community</a>
+      <a class="btn-solid-orange" href="contact.html">List your resort</a>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">
+        <div class="footer-brand-icon">🏕️</div>
+        <div class="footer-brand-text">Kamp<em>Kiepie</em></div>
+      </div>
+      <div class="footer-tag">Your adventure starts here.</div>
+      <div class="footer-socials">
+        <a class="footer-social" href="https://www.facebook.com/groups/kampkiepie" target="_blank" title="Facebook">📘</a>
+        <a class="footer-social" href="https://wa.me/27825614318" target="_blank" title="WhatsApp">💬</a>
+        <a class="footer-social" href="mailto:sales@kampkiepie.co.za" title="Email">✉️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Explore</div>
+      <a href="index2.html">All Resorts</a>
+      <a href="map.html">Map</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Support</div>
+      <a href="help.html">Help Centre</a>
+      <a href="how.html">How It Works</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+    <div class="footer-col">
+      <div class="footer-col-h">Company</div>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="blog.html">Blog</a>
+      <a href="list-your-resort.html">List Your Resort</a>
+    </div>
+    <div>
+      <div class="footer-col-h">Never Miss An Adventure</div>
+      <div class="footer-sub-p">Subscribe for updates and exclusive offers.</div>
+      <form class="footer-sub-form" onsubmit="return handleSubscribe(event)">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">→</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 KampKiepie. All rights reserved. &nbsp;·&nbsp; Website by <a href="https://www.binarybotany.co.za" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Binary Botany</a> &amp; <a href="https://www.facebook.com/swiftglideapps" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Swiftglide Apps</a></div>
+</footer>
+
+<script>
+const SHEET_RESORT   = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
+const SHEET_PROVINCE = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Province';
+const SHEET_CITY     = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=City';
+
+window.addEventListener('DOMContentLoaded', async () => {
+  try { await loadStats(); } catch (e) { console.warn('Could not load live stats:', e); }
+});
+
+async function fetchCsv(url) {
+  const bustUrl = url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now();
+  const res = await fetch(bustUrl, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.text();
+}
+function parseCsv(text) {
+  const rows = []; let row = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else { inQ = false; } }
+      else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cur); cur = ''; }
+      else if (c === '\r') { /* skip */ }
+      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
+      else cur += c;
+    }
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+function truthy(v) { if (!v) return false; const s = String(v).trim().toLowerCase(); return s === 'true' || s === '1' || s === 'yes'; }
+
+async function loadStats() {
+  const [provCsv, cityCsv, resortCsv] = await Promise.all([fetchCsv(SHEET_PROVINCE), fetchCsv(SHEET_CITY), fetchCsv(SHEET_RESORT)]);
+  const provinces = {};
+  parseCsv(provCsv).slice(1).forEach(r => { if (r[0] && r[1]) provinces[r[0].trim()] = r[1].trim(); });
+  const cities = {};
+  parseCsv(cityCsv).slice(1).forEach(r => { if (r[0] && r[1]) cities[r[0].trim()] = { name: r[1].trim(), provId: (r[2] || '').trim() }; });
+
+  const rows = parseCsv(resortCsv);
+  const headers = rows[0].map(h => (h || '').trim());
+  const col = name => headers.indexOf(name);
+  const iName = col('Resort- Header/ResortName'), iActive = col('Resorts - Switches/BetaActive?'),
+    iCityRef = col('Resort- Header/CityRowID'), iProvRef = col('Resort- Header/ProvinceRel'),
+    iTotalViews = col('Scoring/TotalViews');
+
+  let activeCount = 0, totalViews = 0;
+  const provNamesSeen = new Set();
+  rows.slice(1).forEach(row => {
+    const name = (row[iName] || '').trim();
+    if (!name) return;
+    const active = truthy(row[iActive]);
+    if (active) activeCount++;
+    totalViews += Number(row[iTotalViews]) || 0;
+    const cityObj = cities[(row[iCityRef] || '').trim()] || {};
+    let provName = '';
+    if (iProvRef >= 0 && row[iProvRef]) provName = provinces[(row[iProvRef] || '').trim()] || '';
+    if (!provName && cityObj.provId) provName = provinces[cityObj.provId] || '';
+    if (provName) provNamesSeen.add(provName);
+  });
+
+  document.getElementById('resortCountPill').textContent = activeCount + ' resorts';
+  document.getElementById('statResorts').textContent = activeCount.toLocaleString() + '+';
+  document.getElementById('statViews').textContent = totalViews.toLocaleString();
+  document.getElementById('statProvinces').textContent = provNamesSeen.size;
+}
+async function fetchConfigValue_(key) {
+  try {
+    const res = await fetch('config.txt', { cache: 'no-store' });
+    if (!res.ok) return null;
+    const text = await res.text();
+    const line = text.split(/\r?\n/).find(l => l.trim().startsWith(key + ':'));
+    if (!line) return null;
+    return line.split(':').slice(1).join(':').trim();
+  } catch (e) { return null; }
+}
+async function handleSubscribe(e) {
+  e.preventDefault();
+  const form = e.target;
+  const emailInput = form.querySelector('input[type="email"]');
+  const email = emailInput ? emailInput.value.trim() : '';
+  if (!email) return false;
+  const btn = form.querySelector('button');
+  const originalHtml = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    const apiUrl = await fetchConfigValue_('adminbackend_script');
+    if (!apiUrl) throw new Error('Newsletter service is not configured yet');
+    const body = new URLSearchParams({ action: 'subscribeNewsletter', email, sourcePage: location.pathname.split('/').pop() });
+    const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body: body.toString() });
+    const result = await res.json();
+    if (result.success) {
+      alert(result.alreadySubscribed ? 'You\u2019re already subscribed!' : 'Thanks for subscribing!');
+      form.reset();
+    } else {
+      alert('Could not subscribe: ' + (result.error || 'unknown error'));
+    }
+  } catch (err) {
+    alert('Could not subscribe right now: ' + (err.message || err));
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = originalHtml; }
+  }
+  return false;
+}
+</script>
+</body>
+</html>

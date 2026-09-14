@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KampKiepie Resort Importer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f0f4f0; color: #222; }
+  .hdr { background: #6A8E3F; color: white; padding: 14px 20px; display:flex; align-items:center; gap:12px; }
+  .hdr h1 { font-size: 16px; font-weight: 700; }
+  .hdr p { font-size: 12px; opacity: .8; margin-top: 2px; }
+  .wrap { max-width: 1050px; margin: 0 auto; padding: 16px; }
+  .card { background: white; border-radius: 10px; padding: 16px; margin-bottom: 14px; border: 1px solid #dde8d0; }
+  .card-title { font-size: 11px; font-weight: 700; color: #6A8E3F; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+  input[type=text] { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; margin-bottom: 8px; }
+  .btn { padding: 8px 18px; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; margin-right: 6px; margin-bottom: 6px; }
+  .btn-green  { background: #6A8E3F; color: white; }
+  .btn-blue   { background: #2563eb; color: white; }
+  .btn-gray   { background: #e5e7eb; color: #444; }
+  .btn-red    { background: #dc2626; color: white; }
+  .btn-orange { background: #ea580c; color: white; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .auth-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .auth-row input { flex: 1; min-width: 200px; margin-bottom: 0; }
+  .vs { font-size: 12px; font-weight: 700; }
+  .stats { display: flex; gap: 20px; flex-wrap: wrap; }
+  .stat .n { font-size: 24px; font-weight: 800; }
+  .stat .l { font-size: 10px; color: #999; text-transform: uppercase; }
+  .prog-bg   { background: #e5e7eb; border-radius: 99px; height: 8px; overflow: hidden; margin: 10px 0 4px; }
+  .prog-fill { background: #6A8E3F; height: 100%; border-radius: 99px; transition: width .3s; }
+  .prog-lbl  { font-size: 11px; color: #888; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+  th { padding: 7px 8px; text-align: left; color: #6A8E3F; font-weight: 700; border-bottom: 2px solid #dde8d0; white-space: nowrap; }
+  td { padding: 7px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+  .b-pend { background: #f3f4f6; color: #6b7280; }
+  .b-run  { background: #dbeafe; color: #1e40af; }
+  .b-ok   { background: #dcfce7; color: #166534; }
+  .b-dup  { background: #fef9c3; color: #854d0e; }
+  .b-err  { background: #fee2e2; color: #991b1b; }
+  .flag     { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; background: #dcfce7; color: #166534; margin: 1px; }
+  .flag-pet { background: #fef9c3; color: #854d0e; }
+  .log { background: #111; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 11px; max-height: 180px; overflow-y: auto; margin-top: 12px; display: none; }
+  .log-ok   { color: #86efac; }
+  .log-dup  { color: #fde68a; }
+  .log-err  { color: #fca5a5; }
+  .log-info { color: #93c5fd; }
+  .empty { text-align: center; padding: 30px; color: #aaa; font-size: 13px; }
+  .batch-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .batch-pill { padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; border: none; cursor: default; }
+  .bp-has  { background: #dcfce7; color: #166534; }
+  .bp-done { background: #f3f4f6; color: #9ca3af; }
+  .add-section { border-top: 1px solid #f0f0f0; margin-top: 14px; padding-top: 14px; }
+  textarea { width: 100%; min-height: 80px; border: 1px solid #ccc; border-radius: 6px; padding: 8px; font-family: monospace; font-size: 11px; resize: vertical; margin-bottom: 8px; }
+  #addStatus { font-size: 12px; color: #6A8E3F; margin-left: 8px; }
+  .fetch-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .fetch-status { font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span style="font-size:24px">🏕️</span>
+  <div>
+    <h1>KampKiepie Resort Importer</h1>
+    <p>Fetches pending resorts from the ImportQueue sheet tab · verify token → fetch → run all</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- AUTH -->
+  <div class="card">
+    <div class="card-title">Authentication</div>
+    <div class="auth-row">
+      <input type="text" id="tok" placeholder="Paste superadmin token here">
+      <button class="btn btn-green" onclick="verifyToken()">Verify Token</button>
+      <span id="vs" class="vs" style="color:#888">Not verified</span>
+    </div>
+    <div style="font-size:11px;color:#aaa;margin-top:6px">
+      Get token: <code>https://script.google.com/macros/s/AKfycbyMNA6rK5e_RZqk5KP2MwYNLjVXEkuiyGNycfERuK2vGfSGbslvTrwpaOz0kJ2GqlgzNQ/exec?action=login&email=admin@kampkiepie.co.za&password=kkkkkkkk</code>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><div class="n" id="sT">0</div><div class="l">In Queue</div></div>
+      <div class="stat"><div class="n" id="sP" style="color:#6b7280">0</div><div class="l">Pending</div></div>
+      <div class="stat"><div class="n" id="sO" style="color:#16a34a">0</div><div class="l">Added</div></div>
+      <div class="stat"><div class="n" id="sD" style="color:#d97706">0</div><div class="l">Duplicates</div></div>
+      <div class="stat"><div class="n" id="sE" style="color:#dc2626">0</div><div class="l">Errors</div></div>
+    </div>
+  </div>
+
+  <!-- QUEUE -->
+  <div class="card">
+    <div class="card-title">Import Queue</div>
+
+    <!-- Fetch bar -->
+    <div class="fetch-bar" style="margin-bottom:12px">
+      <button class="btn btn-blue" id="btnFetch" onclick="fetchQueue()">🔄 Fetch Queue from Sheet</button>
+      <span id="fetchStatus" class="fetch-status">Not fetched yet</span>
+    </div>
+
+    <!-- Batch summary pills — populated after fetch -->
+    <div id="batchPills" class="batch-pills" style="display:none"></div>
+
+    <!-- Action buttons -->
+    <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px">
+      <button class="btn btn-green" id="btnRun" onclick="runAll()">▶ Run All</button>
+      <button class="btn btn-gray"  onclick="resetErrors()">↺ Reset Errors</button>
+      <button class="btn btn-red"   onclick="clearAll()">🗑 Clear</button>
+    </div>
+
+    <!-- Progress -->
+    <div id="progWrap" style="display:none">
+      <div class="prog-bg"><div class="prog-fill" id="pbar" style="width:0%"></div></div>
+      <div class="prog-lbl" id="plbl">0 / 0</div>
+    </div>
+
+    <!-- Table -->
+    <div id="qEmpty" class="empty">Fetch the queue to see pending resorts</div>
+    <div id="qTableWrap" style="display:none;overflow-x:auto">
+      <table>
+        <thead>
+          <tr><th>Batch</th><th>#</th><th>Resort Name</th><th>Address</th><th>Coords</th><th>Flags</th><th>Price</th><th>Status</th></tr>
+        </thead>
+        <tbody id="qBody"></tbody>
+      </table>
+    </div>
+
+    <div class="log" id="logEl"></div>
+
+    <!-- Manual JSON fallback -->
+    <div class="add-section">
+      <div class="card-title">Manual Override — Add via JSON</div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:6px">Use this to add resorts directly without going through the sheet queue.</div>
+      <textarea id="jsonInput" placeholder='[{"resortName":"My Resort","address":"...","coordinates":"lat, lng","hasCamp":true,...}]'></textarea>
+      <button class="btn btn-blue" onclick="addFromJson()">➕ Add to Queue</button>
+      <span id="addStatus"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbyMNA6rK5e_RZqk5KP2MwYNLjVXEkuiyGNycfERuK2vGfSGbslvTrwpaOz0kJ2GqlgzNQ/exec';
+
+// queue items: { rowIndex, batchID, data, status, resortID, error }
+// rowIndex is the sheet row — used to update status back in the sheet
+// rowIndex = null for manually added items (JSON override)
+let queue = [];
+let running = false;
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function tok() { return document.getElementById('tok').value.trim(); }
+
+function addLog(type, msg) {
+  const el = document.getElementById('logEl');
+  el.style.display = 'block';
+  const d = document.createElement('div');
+  d.className = 'log-' + type;
+  d.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+function updateStats() {
+  document.getElementById('sT').textContent = queue.length;
+  document.getElementById('sP').textContent = queue.filter(i => i.status === 'pending').length;
+  document.getElementById('sO').textContent = queue.filter(i => i.status === 'ok').length;
+  document.getElementById('sD').textContent = queue.filter(i => i.status === 'duplicate').length;
+  document.getElementById('sE').textContent = queue.filter(i => i.status === 'error').length;
+}
+
+function badgeHtml(item) {
+  const map = {
+    pending:   ['b-pend', '⏸ Pending'],
+    running:   ['b-run',  '⏳ Running…'],
+    ok:        ['b-ok',   '✅ #' + item.resortID],
+    duplicate: ['b-dup',  '⚠ Duplicate'],
+    error:     ['b-err',  '❌ ' + (item.error || 'Error')]
+  };
+  const [cls, txt] = map[item.status] || map.pending;
+  return `<span class="badge ${cls}">${txt}</span>`;
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderQueue() {
+  updateStats();
+  const empty = document.getElementById('qEmpty');
+  const wrap  = document.getElementById('qTableWrap');
+  const body  = document.getElementById('qBody');
+  if (!queue.length) { empty.style.display = 'block'; wrap.style.display = 'none'; return; }
+  empty.style.display = 'none';
+  wrap.style.display = 'block';
+  body.innerHTML = queue.map((item, i) => {
+    const d = item.data;
+    const flags = [
+      d.hasCamp       && 'Camp',
+      d.hasLankstaan  && 'Lankstaan',
+      d.hasGlamp      && 'Glamp',
+      d.hasChalet     && 'Chalet',
+      d.hasCottage    && 'Cottage',
+      d.hasLodge      && 'Lodge',
+      d.hasBnB        && 'B&B',
+      d.hasGuesthouse && 'Guesthouse',
+      d.petsAllowed   && '🐾 Pets',
+      d.hasHunting    && 'Hunting',
+    ].filter(Boolean);
+    return `<tr>
+      <td style="color:#6A8E3F;font-weight:700;font-size:11px">${esc(String(item.batchID || '–'))}</td>
+      <td style="color:#aaa;font-size:11px">${i + 1}</td>
+      <td style="font-weight:700;max-width:170px">${esc(d.resortName)}</td>
+      <td style="font-size:11px;color:#666;max-width:150px">${esc(d.address || '')}</td>
+      <td style="font-size:11px;color:#aaa;white-space:nowrap">${esc(d.coordinates || '')}</td>
+      <td>${flags.map(f => `<span class="flag${f.includes('🐾') ? ' flag-pet' : ''}">${f}</span>`).join('')}</td>
+      <td style="font-size:11px;color:#6A8E3F;max-width:130px">${esc((d.priceTXT || '').substring(0, 55))}</td>
+      <td>${badgeHtml(item)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderBatchPills(batchTotals) {
+  const container = document.getElementById('batchPills');
+  if (!batchTotals || !Object.keys(batchTotals).length) { container.style.display = 'none'; return; }
+  container.style.display = 'flex';
+  container.innerHTML = Object.entries(batchTotals)
+    .sort((a, b) => Number(a[0]) - Number(b[0]))
+    .map(([batchID, totals]) => {
+      const total   = Object.values(totals).reduce((s, v) => s + v, 0);
+      const pending = totals.pending || 0;
+      const cls = pending > 0 ? 'bp-has' : 'bp-done';
+      const label = pending > 0
+        ? `Batch ${batchID}: ${pending} pending`
+        : `Batch ${batchID}: done ✓`;
+      return `<span class="batch-pill ${cls}">${label}</span>`;
+    }).join('');
+}
+
+// ── AUTH ─────────────────────────────────────────────────────────────────
+async function verifyToken() {
+  const t = tok();
+  const el = document.getElementById('vs');
+  if (!t) { el.textContent = '⚠ No token'; el.style.color = '#dc2626'; return; }
+  el.textContent = '⏳ Checking…'; el.style.color = '#888';
+  try {
+    const r = await fetch(API + '?' + new URLSearchParams({ action: 'listResorts', token: t }));
+    const d = await r.json();
+    if (d.success) { el.textContent = '✅ Verified — superadmin'; el.style.color = '#16a34a'; }
+    else           { el.textContent = '❌ ' + (d.error || 'Failed'); el.style.color = '#dc2626'; }
+  } catch(e) { el.textContent = '❌ Network error'; el.style.color = '#dc2626'; }
+}
+
+// ── FETCH QUEUE FROM SHEET ────────────────────────────────────────────────
+async function fetchQueue() {
+  const t = tok();
+  const statusEl = document.getElementById('fetchStatus');
+  if (!t) { statusEl.textContent = '⚠ Verify token first'; return; }
+
+  document.getElementById('btnFetch').disabled = true;
+  statusEl.textContent = '⏳ Fetching from sheet…';
+
+  try {
+    const r = await fetch(API + '?' + new URLSearchParams({ action: 'getImportQueue', token: t }));
+    const d = await r.json();
+
+    if (!d.success) {
+      statusEl.textContent = '❌ ' + (d.error || 'Failed');
+      document.getElementById('btnFetch').disabled = false;
+      return;
+    }
+
+    // Merge fetched pending resorts into queue (skip any already loaded)
+    let added = 0;
+    (d.pending || []).forEach(item => {
+      const alreadyIn = queue.find(q =>
+        q.rowIndex === item.rowIndex ||
+        (q.data.resortName || '').toLowerCase() === (item.resort.resortName || '').toLowerCase()
+      );
+      if (!alreadyIn) {
+        queue.push({
+          rowIndex: item.rowIndex,
+          batchID:  item.batchID,
+          data:     item.resort,
+          status:   'pending',
+          resortID: null,
+          error:    null
+        });
+        added++;
+      }
+    });
+
+    renderBatchPills(d.batchTotals);
+    renderQueue();
+
+    const msg = d.total === 0
+      ? '✅ Queue is empty — all batches processed!'
+      : `✅ Fetched ${d.total} pending resort(s) · ${added} new added to view`;
+    statusEl.textContent = msg;
+    statusEl.style.color = d.total === 0 ? '#16a34a' : '#888';
+    addLog('info', msg);
+
+  } catch(e) {
+    statusEl.textContent = '❌ Network error: ' + e.message;
+  }
+
+  document.getElementById('btnFetch').disabled = false;
+}
+
+// ── MANUAL JSON ───────────────────────────────────────────────────────────
+function addFromJson() {
+  const raw = document.getElementById('jsonInput').value.trim();
+  const statusEl = document.getElementById('addStatus');
+  let resorts;
+  try {
+    resorts = JSON.parse(raw);
+    if (!Array.isArray(resorts)) resorts = [resorts];
+  } catch(e) {
+    statusEl.textContent = '❌ Invalid JSON: ' + e.message;
+    statusEl.style.color = '#dc2626';
+    return;
+  }
+  let added = 0;
+  resorts.forEach(d => {
+    if (!d.resortName) return;
+    if (!queue.find(q => (q.data.resortName || '').toLowerCase() === d.resortName.toLowerCase())) {
+      queue.push({ rowIndex: null, batchID: 'manual', data: d, status: 'pending', resortID: null, error: null });
+      added++;
+    }
+  });
+  statusEl.textContent = '✅ ' + added + ' resort(s) added';
+  statusEl.style.color = '#16a34a';
+  renderQueue();
+}
+
+function clearAll()    { if (confirm('Clear queue?')) { queue = []; renderQueue(); } }
+function resetErrors() { queue.forEach(i => { if (i.status === 'error') i.status = 'pending'; }); renderQueue(); }
+
+// ── RUN ALL ───────────────────────────────────────────────────────────────
+async function runAll() {
+  if (running) return;
+  const t = tok();
+  if (!t) { addLog('err', '❌ Paste and verify your token first'); return; }
+  const pend = queue.filter(i => i.status === 'pending');
+  if (!pend.length) { addLog('info', '⚠ No pending resorts — fetch the queue first'); return; }
+
+  running = true;
+  const btn = document.getElementById('btnRun');
+  btn.textContent = '⏳ Running…'; btn.disabled = true;
+  document.getElementById('progWrap').style.display = 'block';
+
+  let done = 0;
+  for (const item of pend) {
+    item.status = 'running'; renderQueue();
+    try {
+      // Step 1: Add the resort
+      const params = { action: 'addResort', token: t };
+      Object.entries(item.data).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== '') params[k] = String(v);
+      });
+      const r = await fetch(API + '?' + new URLSearchParams(params));
+      const d = await r.json();
+
+      if (d.success) {
+        item.status = 'ok'; item.resortID = d.resortID;
+        addLog('ok', '✅ Added: ' + item.data.resortName + ' → ID #' + d.resortID);
+      } else if (d.duplicate) {
+        item.status = 'duplicate';
+        addLog('dup', '⚠ Duplicate skipped: ' + item.data.resortName);
+      } else {
+        item.status = 'error'; item.error = d.error || 'Unknown error';
+        addLog('err', '❌ ' + item.data.resortName + ' — ' + item.error);
+      }
+
+      // Step 2: Update the sheet queue row (if this came from the sheet)
+      if (item.rowIndex) {
+        try {
+          await fetch(API + '?' + new URLSearchParams({
+            action:   'updateImportQueue',
+            token:    t,
+            rowIndex: String(item.rowIndex),
+            status:   item.status === 'ok' ? 'ok' : item.status === 'duplicate' ? 'duplicate' : 'error',
+            resortID: item.resortID || '',
+            errorMsg: item.error   || ''
+          }));
+        } catch(_) { /* non-critical — queue update failed but resort was added */ }
+      }
+
+    } catch(e) {
+      item.status = 'error'; item.error = e.message;
+      addLog('err', '❌ Network error: ' + item.data.resortName);
+    }
+
+    done++;
+    document.getElementById('pbar').style.width = Math.round(done / pend.length * 100) + '%';
+    document.getElementById('plbl').textContent = done + ' / ' + pend.length;
+    renderQueue();
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  running = false;
+  btn.textContent = '▶ Run All'; btn.disabled = false;
+  addLog('info',
+    '── Batch complete: ' + queue.filter(i=>i.status==='ok').length + ' added, ' +
+    queue.filter(i=>i.status==='duplicate').length + ' duplicates, ' +
+    queue.filter(i=>i.status==='error').length + ' errors ──'
+  );
+}
+</script>
+</body>
+</html>

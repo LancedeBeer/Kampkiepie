@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>My Saved Resorts &#8211; KampKiepie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#F97316;--brand-l:#FFF7ED;--brand-d:#EA580C;
+  --green:#173B2C;--green-l:#F0FDF4;
+  --bg:#FBF6EC;--card:#FFFFFF;--text:#18181B;
+  --muted:#6B7280;--subtle:#9CA3AF;--border:#E7E2D6;
+  --bad:#DC2626;--bad-l:#FEF2F2;
+  --r:14px;--sh:0 4px 18px rgba(23,59,44,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+/* ── HEADER ── */
+.hdr{background:var(--green);padding:12px 20px;display:flex;align-items:center;
+  gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}
+.hdr-logo{width:30px;height:30px;border-radius:8px;background:var(--brand);
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.hdr-brand{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;color:#fff;flex:1;}
+.hdr-brand em{color:rgba(255,255,255,.65);font-style:normal;}
+.back-btn{background:rgba(255,255,255,.14);color:#fff;border:none;border-radius:20px;
+  padding:7px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;
+  cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;}
+.back-btn:hover{background:rgba(255,255,255,.24);}
+/* ── PAGE ── */
+.page{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+.page-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  gap:12px;margin-bottom:24px;}
+.page-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:24px;}
+.page-sub{font-size:13px;color:var(--muted);font-weight:700;margin-top:3px;}
+.count-pill{background:var(--brand-l);color:var(--brand-d);border-radius:20px;
+  padding:5px 13px;font-size:13px;font-weight:800;}
+.clear-btn{background:var(--bad-l);color:var(--bad);border:none;border-radius:10px;
+  padding:8px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.clear-btn:hover{opacity:.85;}
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:600px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1200px){.grid{grid-template-columns:repeat(4,1fr);}}
+/* ── RESORT CARD ── */
+.rc{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;
+  display:flex;flex-direction:column;border:1.5px solid var(--border);transition:transform .15s,box-shadow .15s;}
+.rc:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(23,59,44,.12);}
+.rc-thumb{position:relative;height:160px;overflow:hidden;background:linear-gradient(135deg,var(--brand-l),#FDE68A);
+  display:flex;align-items:center;justify-content:center;font-size:52px;flex-shrink:0;}
+.rc-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.rc-remove{position:absolute;top:8px;right:8px;background:rgba(220,38,38,.88);color:#fff;
+  border:none;border-radius:8px;width:30px;height:30px;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.rc-remove:hover{background:#B91C1C;}
+.rc-kk{position:absolute;top:8px;left:8px;background:rgba(59,130,246,.9);color:#fff;
+  border-radius:20px;padding:3px 9px;font-size:10.5px;font-weight:800;backdrop-filter:blur(4px);}
+.rc-body{padding:14px;flex:1;display:flex;flex-direction:column;gap:8px;}
+.rc-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;line-height:1.3;color:var(--text);}
+.rc-loc{font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.rc-tags{display:flex;flex-wrap:wrap;gap:5px;flex:1;}
+.rc-tag{background:var(--bg);color:var(--muted);border-radius:20px;
+  padding:3px 9px;font-size:11px;font-weight:800;}
+.rc-actions{display:flex;gap:8px;margin-top:4px;}
+.rc-view{flex:1;height:38px;border:none;border-radius:9px;background:var(--brand);color:#fff;
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;justify-content:center;gap:5px;}
+.rc-view:hover{background:var(--brand-d);}
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:80px 20px 60px;}
+.empty-icon{font-size:64px;margin-bottom:16px;}
+.empty-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;margin-bottom:8px;}
+.empty-sub{font-size:14px;color:var(--muted);font-weight:600;line-height:1.6;max-width:400px;margin:0 auto 24px;}
+.browse-btn{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;
+  border:none;border-radius:12px;padding:12px 28px;font-family:'Nunito',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;text-decoration:none;}
+.browse-btn:hover{background:var(--brand-d);}
+/* ── LOADING ── */
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-weight:700;}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--brand);
+  border-radius:50%;margin:0 auto 14px;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* ── SKELETON ── */
+.skel{background:linear-gradient(90deg,#f0ebe0 25%,#e8e2d6 50%,#f0ebe0 75%);
+  background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:8px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;}
+.skel-img{height:160px;} .skel-line{height:14px;margin:14px 14px 8px;} .skel-line.short{width:60%;}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#fff;border:1.5px solid var(--brand);color:var(--brand-d);
+  font-weight:800;font-size:13px;padding:10px 20px;border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:9999;
+  transition:opacity .3s;pointer-events:none;}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-logo">&#127957;&#65039;</div>
+  <div class="hdr-brand">Kamp<em>Kiepie</em></div>
+  <a class="back-btn" href="index2.html">&#8592; Directory</a>
+</header>
+
+<div class="page">
+  <div class="page-hdr">
+    <div>
+      <div class="page-title">&#10084;&#65039; My Saved Resorts</div>
+      <div class="page-sub" id="pageSubtitle">Loading your saved resorts&hellip;</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px" id="hdrActions" style="display:none">
+      <span class="count-pill" id="countPill"></span>
+      <button class="clear-btn" onclick="clearAll()">Clear all</button>
+    </div>
+  </div>
+  <div id="content">
+    <div class="loading"><div class="spin"></div>Loading&hellip;</div>
+  </div>
+</div>
+
+<script>
+// ── KampKiepie localStorage cache ─────────────────────────────────────────────
+// kkGet: returns cached value or null if missing/expired/busted
+// kkSet: stores value with TTL (ms) and optional bust-flag
+// kkBust: admin calls this on save to invalidate all bustable entries
+const _KK_BUST = 'kkC_bust';
+const _KK_D30  = 30*24*60*60*1000;   // Province & City CSVs
+const _KK_D7   =  7*24*60*60*1000;   // Resort CSV   // 30 days in ms
+const _KK_H4   =  4*60*60*1000;      //  4 hours in ms
+function kkGet(key) {
+  try {
+    const e = JSON.parse(localStorage.getItem(key) || 'null');
+    if (!e || !e.v || !e.ts || !e.ttl) return null;
+    if (e.bustable && Number(localStorage.getItem(_KK_BUST)||0) > e.ts) return null;
+    if (Date.now() - e.ts > e.ttl) return null;
+    return e.v;
+  } catch(_) { return null; }
+}
+function kkSet(key, val, ttlMs, bustable) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ v:val, ts:Date.now(), ttl:ttlMs, bustable:!!bustable }));
+  } catch(_) {}  // quota exceeded — just skip caching
+}
+function kkBust() {
+  try { localStorage.setItem(_KK_BUST, String(Date.now())); } catch(_) {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function fetchCsvCached(cacheKey, url, ttlMs, bustable) {
+  const hit = kkGet(cacheKey);
+  if (hit !== null) return hit;
+  const text = await fetchCsv(url);
+  kkSet(cacheKey, text, ttlMs, bustable);
+  return text;
+}
+const SHEET_RESORT   = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
+const SHEET_PROVINCE = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Province';
+const SHEET_CITY     = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=City';
+const PLACEHOLDER_ID = '1DTvWTjU8nYUrhD-dt_aYPpk2JFt6jU6r';
+
+const OPT_KEYS = ['POP','Camp','Lankstaan','Glamp','Chalet','Cottage','Lodge','Room',
+  'BackPack','B&B','Guesthouse','FamilyHome','LankSlaap','Niche',
+  'Wedding','Conference','Functions','Hunting','Pets','Excursions'];
+const OPT_COLS = {
+  POP:'Resort - BookingOptions/POP?', Camp:'Resort - BookingOptions/Camp?',
+  Lankstaan:'Resort - BookingOptions/Lankstaan?', Glamp:'Resort - BookingOptions/Glamp',
+  Chalet:'Resort - BookingOptions/Chalet', Cottage:'Resort - BookingOptions/Cottage',
+  Lodge:'Resort - BookingOptions/Lodge', Room:'Resort - BookingOptions/Room?',
+  BackPack:'Resort - BookingOptions/BackPack', 'B&B':'Resort - BookingOptions/B&B',
+  Guesthouse:'Resort - BookingOptions/Guesthouse', FamilyHome:'Resort - BookingOptions/FamilyHome',
+  LankSlaap:'Resort - BookingOptions/LankSlaap', Niche:'Resort - BookingOptions/Niche',
+  Wedding:'Resort - BookingOptions/Wedding', Conference:'Resort - BookingOptions/Conference',
+  Functions:'Resort - BookingOptions/Functions', Hunting:'Resort - BookingOptions/Hunting',
+  Pets:'Resort - BookingOptions/Pets', Excursions:'Resort - BookingOptions/Excursions'
+};
+
+// ── FAVOURITES ────────────────────────────────────────────────────────────────
+function getFavs() {
+  try { return JSON.parse(localStorage.getItem('kkFavorites') || '[]'); } catch(e) { return []; }
+}
+function saveFavs(arr) {
+  try { localStorage.setItem('kkFavorites', JSON.stringify(arr)); } catch(e) {}
+}
+function removeFav(resortId) {
+  const favs = getFavs().filter(id => id !== resortId);
+  saveFavs(favs);
+  const card = document.getElementById('rc_' + resortId);
+  if (card) {
+    card.style.transition = 'opacity .25s,transform .25s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(.9)';
+    setTimeout(() => {
+      card.remove();
+      updateHeader();
+      if (!document.querySelectorAll('.rc').length) showEmpty();
+    }, 260);
+  }
+  toast('Removed from saved resorts');
+}
+function clearAll() {
+  if (!confirm('Remove all saved resorts?')) return;
+  saveFavs([]);
+  showEmpty();
+}
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+async function fetchCsv(url) {
+  const res = await fetch(url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now(), { cache:'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.text();
+}
+function parseCsv(text) {
+  const rows = []; let row = [], cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else inQ = false; }
+      else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cur); cur = ''; }
+      else if (c === '\r') { /* skip */ }
+      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
+      else cur += c;
+    }
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+function photoUrl(raw) {
+  if (!raw || !raw.trim()) return null;
+  const url = raw.trim();
+  if (url.includes(PLACEHOLDER_ID)) return null;
+  const m = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w600';
+  if (/\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(url)) return url;
+  if (/pexels|fbcdn|unsplash|imgix|cloudinary|amazonaws|googleusercontent/i.test(url)) return url;
+  return null;
+}
+function isTrue(v) { const s = String(v||'').toLowerCase(); return s==='true'||s==='1'||s==='yes'; }
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderCard(r) {
+  const tags = OPT_KEYS.filter(k => r.options[k]).slice(0, 5);
+  const loc  = [r.city, r.province].filter(Boolean).join(', ');
+  return `
+    <div class="rc" id="rc_${esc(r.resortId)}">
+      <div class="rc-thumb">
+        ${r.photo
+          ? `<img src="${esc(r.photo)}" alt="${esc(r.name)}" loading="lazy" onerror="this.style.display='none'">`
+          : '&#127957;&#65039;'}
+        ${r.kkBook ? '<div class="rc-kk">&#11088; KKBook</div>' : ''}
+        <button class="rc-remove" onclick="removeFav('${esc(r.resortId)}')" title="Remove from saved">
+          &#10005;
+        </button>
+      </div>
+      <div class="rc-body">
+        <div class="rc-name">${esc(r.name)}</div>
+        ${loc ? `<div class="rc-loc">&#128205; ${esc(loc)}</div>` : ''}
+        ${tags.length ? `<div class="rc-tags">${tags.map(t => `<span class="rc-tag">${esc(t)}</span>`).join('')}${r.options && OPT_KEYS.filter(k=>r.options[k]).length > 5 ? `<span class="rc-tag">+${OPT_KEYS.filter(k=>r.options[k]).length - 5} more</span>` : ''}</div>` : ''}
+        <div class="rc-actions">
+          <a class="rc-view" href="resort.html?id=${encodeURIComponent(r.resortId)}">
+            View resort &#8599;
+          </a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function showEmpty() {
+  document.getElementById('content').innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">&#127957;&#65039;</div>
+      <div class="empty-title">No saved resorts yet</div>
+      <div class="empty-sub">When you click &#10084;&#65039; Save on a resort page, it will appear here so you can find it again easily.</div>
+      <a class="browse-btn" href="index2.html">&#128269; Browse resorts</a>
+    </div>`;
+  document.getElementById('pageSubtitle').textContent = 'Save resorts from their pages to see them here.';
+  document.getElementById('hdrActions').style.display = 'none';
+}
+
+function updateHeader() {
+  const count = document.querySelectorAll('.rc').length;
+  const pill  = document.getElementById('countPill');
+  const sub   = document.getElementById('pageSubtitle');
+  if (pill) pill.textContent = count + ' saved';
+  if (sub)  sub.textContent  = count + ' resort' + (count !== 1 ? 's' : '') + ' saved';
+  document.getElementById('hdrActions').style.display = count ? 'flex' : 'none';
+}
+
+function showSkeletons(n) {
+  document.getElementById('content').innerHTML =
+    '<div class="grid">' +
+    Array.from({length: n}).map(() => `
+      <div class="skel-card">
+        <div class="skel skel-img"></div>
+        <div class="skel skel-line"></div>
+        <div class="skel skel-line short"></div>
+      </div>`).join('') +
+    '</div>';
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 2200);
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  const favIds = getFavs();
+
+  if (!favIds.length) { showEmpty(); return; }
+
+  // Show skeletons while loading
+  showSkeletons(Math.min(favIds.length, 8));
+  document.getElementById('pageSubtitle').textContent =
+    'Loading ' + favIds.length + ' saved resort' + (favIds.length !== 1 ? 's' : '') + '\u2026';
+
+  try {
+    const [provCsv, cityCsv, resortCsv] = await Promise.all([
+      fetchCsvCached('kkC_prov',    SHEET_PROVINCE, _KK_D30, false), fetchCsvCached('kkC_city',    SHEET_CITY,     _KK_D30, false), fetchCsvCached('kkC_resorts', SHEET_RESORT,   _KK_D7,  true)
+    ]);
+
+    // Build lookup maps
+    const PROV = {}, CITY = {};
+    parseCsv(provCsv).slice(1).forEach(r => { if (r[0] && r[1]) PROV[r[0].trim()] = r[1].trim(); });
+    parseCsv(cityCsv).slice(1).forEach(r => {
+      if (r[0] && r[1]) CITY[r[0].trim()] = { name: r[1].trim(), provId: (r[2]||'').trim() };
+    });
+
+    // Parse resorts
+    const rows    = parseCsv(resortCsv);
+    const headers = rows[0].map(h => (h||'').trim());
+    const favSet  = new Set(favIds.map(id => String(id).trim().toLowerCase()));
+
+    function g(row, name) {
+      const i = headers.indexOf(name);
+      return (i >= 0 && i < row.length) ? String(row[i]||'').trim() : '';
+    }
+
+    const iID = headers.indexOf('ResortID');
+    const resorts = [];
+
+    for (const row of rows.slice(1)) {
+      const rowId = (iID >= 0 ? String(row[iID]||'') : '').trim();
+      if (!rowId || !favSet.has(rowId.toLowerCase())) continue;
+
+      const cityRef = g(row,'Resort- Header/CityRowID');
+      const cityObj = CITY[cityRef] || {};
+      let province  = g(row,'Resort- Header/ProvinceRel');
+      if (province && PROV[province]) province = PROV[province];
+      else if (!province && cityObj.provId) province = PROV[cityObj.provId] || '';
+
+      const options = {};
+      OPT_KEYS.forEach(k => { options[k] = isTrue(g(row, OPT_COLS[k])); });
+
+      resorts.push({
+        resortId: rowId,
+        name:     g(row,'Resort- Header/ResortName') || rowId,
+        city:     cityObj.name || '',
+        province,
+        photo:    photoUrl(g(row,'Resort- Header/ResortExtraPhoto')),
+        kkBook:   isTrue(g(row,'Resort - KKBook/Active')),
+        options
+      });
+    }
+
+    // Preserve the order the user saved them in (most recent first)
+    const ordered = favIds
+      .map(id => resorts.find(r => r.resortId.toLowerCase() === id.toLowerCase()))
+      .filter(Boolean);
+
+    if (!ordered.length) {
+      showEmpty();
+      return;
+    }
+
+    document.getElementById('content').innerHTML =
+      '<div class="grid">' + ordered.map(renderCard).join('') + '</div>';
+
+    updateHeader();
+
+  } catch(err) {
+    document.getElementById('content').innerHTML =
+      `<div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:12px;padding:20px;color:#B91C1C;font-weight:600;">
+         &#9888;&#65039; Could not load resort data: ${esc(err.message)}<br><br>
+         <a href="index2.html" style="color:var(--brand);font-weight:800;">&#8592; Back to directory</a>
+       </div>`;
+    document.getElementById('pageSubtitle').textContent = 'Error loading data.';
+  }
+});
+</script>
+</body>
+</html>

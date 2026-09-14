@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join KampKiepie | Resort Partner</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #173B2C; --orange: #F97316; --orange-light: #fb923c;
+      --cream: #FBF6EC; --text: #1a1a1a; --muted: #6b7280; --white: #ffffff;
+      --radius: 12px; --shadow: 0 4px 24px rgba(23,59,44,0.10);
+    }
+    body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    nav { background: var(--green); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .nav-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--cream); text-decoration: none; }
+    .nav-logo span { color: var(--orange); }
+    .nav-link { font-size: 0.88rem; color: var(--cream); text-decoration: none; opacity: 0.75; }
+    .nav-link:hover { opacity: 1; }
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); width: 100%; max-width: 480px; overflow: hidden; }
+    .card-header { background: var(--green); padding: 28px 32px; color: var(--white); }
+    .card-header h1 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.5rem; line-height: 1.2; margin-bottom: 4px; letter-spacing: -0.5px; }
+    .card-header h1 span { color: var(--orange); }
+    .card-header p { font-size: 0.84rem; color: rgba(255,255,255,0.6); }
+
+    /* Tier selector in header */
+    .tier-switch { display: flex; gap: 6px; margin-top: 14px; }
+    .tsw { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.74rem; padding: 5px 12px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); background: transparent; cursor: pointer; transition: all 0.2s; }
+    .tsw.active { background: var(--orange); border-color: var(--orange); color: var(--white); }
+    .tsw.disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .tier-summary { display: none; padding: 10px 32px; background: rgba(23,59,44,0.04); border-bottom: 1px solid rgba(23,59,44,0.08); }
+    .tier-summary.visible { display: flex; gap: 10px; flex-wrap: wrap; }
+    .ts-chip { font-size: 0.78rem; color: var(--green); }
+    .ts-chip strong { font-family: 'Poppins', sans-serif; font-weight: 800; color: var(--orange); }
+
+    .referral-banner { background: rgba(249,115,22,0.08); border-bottom: 1px solid rgba(249,115,22,0.2); padding: 12px 32px; font-size: 0.83rem; color: var(--green); display: none; align-items: flex-start; gap: 8px; }
+    .referral-banner.visible { display: flex; }
+    .referral-banner .icon { flex-shrink: 0; margin-top: 1px; }
+    .referral-banner strong { color: var(--orange); }
+
+    .card-body { padding: 24px 32px 32px; }
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .pill { display: inline-flex; align-items: center; gap: 4px; background: rgba(23,59,44,0.07); border-radius: 999px; padding: 3px 10px; font-size: 0.74rem; font-weight: 600; color: var(--green); font-family: 'Poppins', sans-serif; }
+    .pill .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.78rem; color: var(--green); margin-bottom: 4px; }
+    .form-group label .req { color: var(--orange); }
+    .form-group input, .form-group select { width: 100%; padding: 10px 13px; border: 1.5px solid #ddd5c4; border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 0.9rem; color: var(--text); background: var(--cream); transition: border-color 0.2s; appearance: none; -webkit-appearance: none; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--green); background: var(--white); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .select-wrap { position: relative; }
+    .select-wrap::after { content: '▾'; position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; font-size: 0.85rem; }
+    .form-submit { width: 100%; background: var(--orange); color: var(--white); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.92rem; padding: 12px; border: none; border-radius: var(--radius); cursor: pointer; transition: background 0.2s; margin-top: 6px; }
+    .form-submit:hover { background: var(--orange-light); }
+    .form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .form-note { font-size: 0.74rem; color: var(--muted); text-align: center; margin-top: 10px; }
+    .form-status { border-radius: 8px; padding: 10px 13px; font-size: 0.84rem; margin-top: 10px; display: none; }
+    .form-status.success { background: #d1fae5; color: #065f46; display: block; }
+    .form-status.error { background: #fee2e2; color: #991b1b; display: block; }
+    .form-status.duplicate { background: #fef9c3; color: #854d0e; display: block; }
+
+    footer { background: var(--green); color: rgba(255,255,255,0.5); text-align: center; padding: 14px 32px; font-size: 0.76rem; flex-shrink: 0; }
+    footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    footer a:hover { color: var(--orange); }
+
+    @media (max-width: 520px) {
+      .card-header, .card-body { padding-left: 20px; padding-right: 20px; }
+      .referral-banner, .tier-summary { padding-left: 20px; padding-right: 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      nav { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="https://www.kampkiepie.co.za">Kamp<span>Kiepie</span></a>
+  <a class="nav-link" href="https://www.kampkiepie.co.za">← Back</a>
+</nav>
+
+<main>
+  <div class="card">
+    <div class="card-header">
+      <h1>Join KampKiepie<br>as a <span id="tierLabel">HEN Member</span></h1>
+      <p id="headerSub">5% online / 2% admin. R99/month minimum. Reduce via referrals.</p>
+      <div class="tier-switch">
+        <button class="tsw active" onclick="switchTier('hen',this)">🐔 HEN Member</button>
+        <button class="tsw disabled" disabled title="Coming soon">KAMPHAAN <span style="font-size:0.66rem;opacity:0.85;">Coming Soon</span></button>
+      </div>
+    </div>
+
+    <div id="tierSummary" class="tier-summary visible">
+      <span class="ts-chip"><strong>5.0%</strong> online</span>
+      <span class="ts-chip"><strong>2.0%</strong> admin</span>
+      <span class="ts-chip"><strong>R99/mo</strong> min. fee</span>
+      <span class="ts-chip">−0.5% per referral</span>
+    </div>
+
+    <div id="referralBanner" class="referral-banner">
+      <span class="icon">🤝</span>
+      <span id="referralBannerText">A partner resort referred you. Once you go live, they earn a commission reduction — and so will you for every resort you refer.</span>
+    </div>
+
+    <div class="card-body">
+      <div class="pills">
+        <span class="pill"><span class="dot"></span>No listing fees</span>
+        <span class="pill"><span class="dot"></span>Direct payments</span>
+        <span class="pill"><span class="dot"></span>Rate reduction per referral</span>
+      </div>
+
+      <form id="joinForm" novalidate>
+        <div class="form-group"><label>Resort Name <span class="req">*</span></label><input type="text" id="resortName" placeholder="e.g. Kleinplaas Oord" required /></div>
+        <div class="form-group"><label>Contact Person <span class="req">*</span></label><input type="text" id="contactPerson" placeholder="Full name" required /></div>
+        <div class="form-group"><label>Email Address <span class="req">*</span></label><input type="email" id="email" placeholder="you@yourresort.co.za" required /></div>
+        <div class="form-group"><label>Phone <span class="req">*</span></label><input type="tel" id="phone" placeholder="082 000 0000" required /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Province <span class="req">*</span></label><div class="select-wrap"><select id="province" required><option value="">Select…</option></select></div></div>
+          <div class="form-group"><label>City / Town <span class="req">*</span></label><input type="text" id="city" placeholder="e.g. Hartbeespoort" required /></div>
+        </div>
+        <input type="hidden" id="referredBy" value="" />
+        <input type="hidden" id="selectedTier" value="HEN" />
+        <button type="submit" class="form-submit" id="submitBtn">Send my application →</button>
+        <p class="form-note">No commitment. We'll be in touch within 1 business day.</p>
+        <div class="form-status" id="formStatus"></div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2025 KampKiepie · <a href="https://www.kampkiepie.co.za/terms">Terms</a> · <a href="https://www.kampkiepie.co.za/privacy">Privacy</a> · Website by <a href="https://binarybotany.co.za" target="_blank">Binary Botany</a> &amp; Swiftglide Apps</p>
+</footer>
+
+<script>
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyMNA6rK5e_RZqk5KP2MwYNLjVXEkuiyGNycfERuK2vGfSGbslvTrwpaOz0kJ2GqlgzNQ/exec';
+  const params = new URLSearchParams(window.location.search);
+  const refId = params.get('ref') || '';
+
+  const tiers = {
+    hen: {
+      label: 'HEN Member',
+      sub: '5% online / 2% admin. R99/month minimum. Reduce via referrals.',
+      summary: ['<strong>5.0%</strong> online','<strong>2.0%</strong> admin','<strong>R99/mo</strong> min. fee','−0.5% per referral'],
+      value: 'HEN'
+    },
+    kamphaan: {
+      label: 'KAMPHAAN Member',
+      sub: 'Rate TBC. R199/month minimum. Details coming soon.',
+      summary: ['<strong>TBC</strong> online','<strong>TBC</strong> admin','<strong>R199/mo</strong> min. fee','Coming soon'],
+      value: 'KAMPHAAN'
+    }
+  };
+
+  function switchTier(tier, btn) {
+    document.querySelectorAll('.tsw:not(.disabled)').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const t = tiers[tier];
+    document.getElementById('tierLabel').textContent = t.label;
+    document.getElementById('headerSub').textContent = t.sub;
+    document.getElementById('tierSummary').innerHTML = t.summary.map(s => `<span class="ts-chip">${s}</span>`).join('');
+    document.getElementById('selectedTier').value = t.value;
+  }
+
+  if (refId) {
+    document.getElementById('referredBy').value = refId;
+    document.getElementById('referralBanner').classList.add('visible');
+
+    fetch(`${GAS_URL}?action=getResortNameByID&id=${encodeURIComponent(refId)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.name) {
+          document.getElementById('referralBannerText').innerHTML =
+            `<strong>${data.name}</strong> referred you to KampKiepie. Once you go live, they earn a commission reduction — and so will you for every resort you refer.`;
+        }
+      })
+      .catch(() => {});
+  }
+
+  fetch(`${GAS_URL}?action=getProvinces`)
+    .then(r => r.json())
+    .then(data => {
+      const sel = document.getElementById('province');
+      (data.provinces || []).forEach(p => { const o = document.createElement('option'); o.value = p; o.textContent = p; sel.appendChild(o); });
+    })
+    .catch(() => {
+      ['Eastern Cape','Free State','Gauteng','KwaZulu-Natal','Limpopo','Mpumalanga','North West','Northern Cape','Western Cape','Namibia','Mozambique','Zimbabwe'].forEach(p => {
+        const o = document.createElement('option'); o.value = p; o.textContent = p; document.getElementById('province').appendChild(o);
+      });
+    });
+
+  document.getElementById('joinForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const status = document.getElementById('formStatus');
+    status.className = 'form-status';
+    const payload = {
+      action: 'submitOnboarding',
+      resortName: document.getElementById('resortName').value.trim(),
+      contactPerson: document.getElementById('contactPerson').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      province: document.getElementById('province').value,
+      city: document.getElementById('city').value.trim(),
+      referredBy: document.getElementById('referredBy').value,
+      tier: document.getElementById('selectedTier').value,
+      ccEmail: document.getElementById('email').value.trim(),
+    };
+    if (!payload.resortName || !payload.contactPerson || !payload.email || !payload.phone || !payload.province || !payload.city) {
+      status.className = 'form-status error'; status.textContent = 'Please fill in all required fields.'; return;
+    }
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      const res = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+      const text = await res.text();
+      console.log('GAS response:', text);
+      let data;
+      try { data = JSON.parse(text); } catch(e) { throw new Error('Non-JSON response: ' + text.substring(0, 200)); }
+      if (data.status === 'duplicate') {
+        status.className = 'form-status duplicate'; status.textContent = 'This email has already been submitted. Our team will be in touch.';
+        btn.disabled = false; btn.textContent = 'Send my application →';
+      } else if (data.status === 'ok') {
+        window.location.href = 'thank-you.html';
+      } else { throw new Error(JSON.stringify(data)); }
+    } catch(err) {
+      console.error('Submit error:', err);
+      status.className = 'form-status error'; status.textContent = 'Something went wrong. Please try again or email sales@kampkiepie.co.za.';
+      btn.disabled = false; btn.textContent = 'Send my application →';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 – Kiepie het verstik 🐔</title>
+
+  <style>
+    :root {
+      --bg: #2e7d32;      /* KampKiepie green */
+      --text: #ffffff;
+      --card: #ffffff;
+      --cardText: #333333;
+      --accent: #f9a825;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .card {
+      background: var(--card);
+      color: var(--cardText);
+      border-radius: 16px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      font-size: 64px;
+      margin: 0;
+    }
+
+    h2 {
+      margin-top: 10px;
+      font-size: 26px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 16px 0;
+    }
+
+    .divider {
+      margin: 30px auto;
+      width: 80px;
+      height: 4px;
+      background-color: var(--accent);
+      border-radius: 2px;
+    }
+
+    .buttons {
+      margin-top: 30px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 24px;
+      background-color: var(--bg);
+      color: white;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .btn.secondary {
+      background-color: #eeeeee;
+      color: #333;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    .emoji {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+
+      <div class="emoji">🐔💨</div>
+
+      <h1>404</h1>
+
+      <h2>Kiepie het verstik!</h2>
+
+      <p>
+        Kiepie kannie die blad sien nie…<br>
+        Dit lyk of jy ’n pad geloop het wat nie (meer) bestaan nie.
+      </p>
+
+      <div class="divider"></div>
+
+      <h2>Oops! Page not found</h2>
+
+      <p>
+        Kiepie can’t find the page you’re looking for.<br>
+        It may have been moved, renamed, or never existed.
+      </p>
+
+      <div class="buttons">
+        <a href="index.html" class="btn">🏕️ Tuis / Home</a>
+        <a href="kontak.html" class="btn secondary">📞 Kontak / Contact</a>
+      </div>
+    </div>
+
+    <footer>
+      © KampKiepie – Help ons om die kampvuur aan die brand te hou 🔥
+    </footer>
+  </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

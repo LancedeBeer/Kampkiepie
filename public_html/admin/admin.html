@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<title>KampKiepie – Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#F97316;--orange-l:#FFF7ED;--orange-d:#EA580C;
+  --green:#16A34A;--green-l:#F0FDF4;
+  --red:#DC2626;--red-l:#FEF2F2;
+  --blue:#3B82F6;--blue-l:#EFF6FF;
+  --bg:#F4F4F6;--card:#FFFFFF;--text:#18181B;
+  --muted:#6B7280;--subtle:#9CA3AF;--border:#E4E4E7;--r:12px;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.hdr{background:#fff;border-bottom:1px solid var(--border);padding:11px 20px;
+  display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.hdr-logo{width:32px;height:32px;border-radius:8px;background:var(--orange);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.hdr-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;flex:1;}
+.hdr-title em{color:var(--orange);font-style:normal;}
+.hdr-user{font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.logout-btn{background:var(--red-l);color:var(--red);border:none;border-radius:8px;
+  padding:5px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+.screen{display:none;}.screen.on{display:block;}
+.login-wrap{max-width:420px;margin:60px auto;padding:0 16px;}
+.login-card{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:32px;}
+.login-logo{text-align:center;font-size:48px;margin-bottom:8px;}
+.login-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;text-align:center;margin-bottom:4px;}
+.login-sub{font-size:13px;color:var(--muted);font-weight:600;text-align:center;margin-bottom:24px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.field input{width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;
+  padding:0 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
+  color:var(--text);background:var(--bg);outline:none;transition:border-color .18s;}
+.field input:focus{border-color:var(--orange);background:#fff;}
+.btn-login{width:100%;height:46px;border:none;border-radius:10px;background:var(--orange);
+  color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
+  cursor:pointer;transition:background .15s;}
+.btn-login:hover{background:var(--orange-d);}
+.btn-login:disabled{opacity:.6;cursor:default;}
+.msg{padding:10px 14px;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:16px;}
+.msg-err{background:var(--red-l);color:var(--red);}
+.msg-ok{background:var(--green-l);color:var(--green);}
+.msg-info{background:var(--blue-l);color:var(--blue);}
+.dash{max-width:1100px;margin:0 auto;padding:24px 16px 60px;}
+.dash-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.dash-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:20px;flex:1;}
+.btn-back{background:var(--orange-l);color:var(--orange-d);border:none;border-radius:8px;
+  padding:7px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.btn-bookings{background:var(--green-l);color:var(--green);border:none;border-radius:8px;
+  padding:7px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.btn-bookings:disabled{opacity:.6;cursor:default;}
+.resort-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+@media(min-width:600px){.resort-grid{grid-template-columns:1fr 1fr;}}
+@media(min-width:900px){.resort-grid{grid-template-columns:repeat(3,1fr);}}
+.rc{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);
+  padding:14px 16px;cursor:pointer;transition:transform .15s,box-shadow .15s;
+  border:1.5px solid transparent;}
+.rc:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,.1);border-color:var(--orange);}
+.rc-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;margin-bottom:3px;}
+.rc-id{font-size:11px;color:var(--subtle);font-weight:600;}
+.rc-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800;margin-top:6px;}
+.rc-y{background:var(--green-l);color:var(--green);}.rc-o{background:#FFF7ED;color:#C2410C;}.rc-b{background:#EFF6FF;color:#1D4ED8;}
+.rc-n{background:var(--red-l);color:var(--red);}
+.search-input{width:100%;height:40px;border:1.5px solid var(--border);border-radius:10px;
+  padding:0 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
+  outline:none;margin-bottom:16px;transition:border-color .18s;}
+.search-input:focus{border-color:var(--orange);}
+.edit-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:24px;}
+.form-grid{display:grid;grid-template-columns:1fr;gap:14px;}
+@media(min-width:700px){.form-grid{grid-template-columns:1fr 1fr;}}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.full{grid-column:1/-1;}
+.fg label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg textarea,.fg select{border:1.5px solid var(--border);border-radius:9px;
+  padding:0 12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;
+  color:var(--text);background:var(--bg);outline:none;transition:border-color .18s;width:100%;}
+.fg input{height:40px;}
+.fg textarea{min-height:90px;resize:vertical;padding:9px 12px;line-height:1.5;}
+.fg input:focus,.fg textarea:focus{border-color:var(--orange);background:#fff;}
+.cb-group{display:flex;flex-wrap:wrap;gap:10px;padding:4px 0;}
+.cb-item{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;cursor:pointer;}
+.cb-item input{width:16px;height:16px;accent-color:var(--orange);cursor:pointer;flex-shrink:0;}
+.divider{border-top:2px solid var(--border);padding-top:12px;padding-bottom:12px;
+  font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;color:var(--orange);
+  cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;}
+.divider:hover{color:var(--green);}
+.sec-arrow{font-size:10px;display:inline-block;transition:transform .2s;flex-shrink:0;}
+.sec-arrow.open{transform:rotate(90deg);}
+.sec-body{display:none;}
+.sec-body .form-grid{display:grid;grid-template-columns:1fr;gap:14px;padding-bottom:10px;}
+@media(min-width:700px){.sec-body .form-grid{grid-template-columns:1fr 1fr;}}
+.acc-pill-row{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 6px;}
+.acc-pill{padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:#fff;font-size:12px;font-weight:800;cursor:pointer;color:var(--text);transition:border-color .15s,background .15s,color .15s;}
+.acc-pill.on{background:var(--green);border-color:var(--green);color:#fff;}
+.acc-pill:hover:not(.on){border-color:var(--green);color:var(--green);}
+.acc-editor-panel{background:var(--bg);border-radius:12px;padding:16px;margin-top:8px;border:1.5px solid var(--border);display:none;}
+.acc-editor-panel.on{display:block;}
+.booking-mode-pair{display:flex;gap:10px;margin-top:4px;}
+.bm-radio{flex:1;display:flex;align-items:center;gap:8px;border:2px solid var(--border);border-radius:10px;
+  padding:10px 14px;cursor:pointer;transition:border-color .15s,background .15s;}
+.bm-radio input{width:16px;height:16px;accent-color:var(--green);cursor:pointer;flex-shrink:0;}
+.bm-radio-label{font-size:13px;font-weight:800;color:var(--text);}
+.bm-radio-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:1px;}
+.bm-radio.selected{border-color:var(--green);background:var(--green-l);}
+.bm-radio.selected .bm-radio-label{color:var(--green);}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:4px}
+.photo-card{border:2px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.photo-card:hover{border-color:var(--green)}
+.photo-card img{width:100%;height:90px;object-fit:cover;display:block}
+.photo-card-name{font-size:10px;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted)}
+.acc-editor-title{font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;color:var(--orange);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;}
+.save-bar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border);
+  padding:12px 20px;display:flex;gap:10px;justify-content:flex-end;
+  box-shadow:0 -2px 8px rgba(0,0,0,.06);z-index:50;margin-top:20px;}
+.save-bar button{min-width:120px;height:42px;border-radius:9px;border:none;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+.btn-save{background:var(--orange);color:#fff;}
+.btn-cancel{background:var(--bg);color:var(--text);border:1.5px solid var(--border) !important;}
+.spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);
+  border-radius:50%;margin:40px auto;animation:spin .8s linear infinite;display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin-wrap{text-align:center;padding:20px;color:var(--muted);font-weight:700;}
+/* ── IMAGE MANAGER ── */
+.btn-images{background:#EDE9FE;color:#7C3AED;border:none;border-radius:8px;
+  padding:7px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.btn-images:disabled{opacity:.6;cursor:default;}
+.img-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;
+  display:none;align-items:flex-end;justify-content:center;padding:0;}
+.img-modal-overlay.on{display:flex;}
+@media(min-width:640px){.img-modal-overlay{align-items:center;padding:16px;}}
+.img-modal-box{width:100%;max-width:880px;max-height:92vh;overflow:auto;background:#fff;
+  border-radius:20px 20px 0 0;box-shadow:0 30px 80px rgba(0,0,0,.3);}
+@media(min-width:640px){.img-modal-box{border-radius:16px;}}
+.img-modal-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:2;}
+.img-modal-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;}
+.img-modal-body{padding:20px;}
+.upload-zone{border:2.5px dashed var(--border);border-radius:12px;padding:30px 20px;
+  text-align:center;background:var(--bg);cursor:pointer;transition:border-color .15s,background .15s;}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--orange);background:#fffaf5;}
+.upload-zone-icon{font-size:34px;margin-bottom:8px;}
+.upload-zone-title{font-weight:800;font-size:15px;margin-bottom:4px;}
+.upload-zone-sub{font-size:12px;color:var(--muted);font-weight:700;line-height:1.6;}
+.img-grid-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin-top:16px;}
+.img-card{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;}
+.img-card img{width:100%;height:110px;object-fit:cover;display:block;background:var(--bg);}
+.img-card-name{font-size:10px;font-weight:800;color:var(--muted);padding:5px 8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-top:1px solid var(--border);}
+.img-card-acts{display:flex;gap:4px;padding:5px 6px;}
+.img-card-acts button{flex:1;border:none;border-radius:6px;padding:5px 0;
+  font-family:'Nunito',sans-serif;font-size:10.5px;font-weight:800;cursor:pointer;}
+.btn-img-rename{background:var(--blue-l);color:var(--blue);}
+.btn-img-delete{background:var(--red-l);color:var(--red);}
+.upload-progress{margin-top:10px;}
+.upload-item{display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px;font-weight:700;}
+.upload-item-status{flex-shrink:0;font-size:14px;}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <img src="KampKiepieLogo.png" alt="KampKiepie" style="height:36px;width:auto;display:block;border-radius:7px;">
+  <div class="hdr-title">Kamp<em>Kiepie</em> Admin</div>
+  <div class="hdr-user" id="hdrUser" style="display:none">
+    <span id="hdrName"></span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+<!-- LOGIN -->
+<div class="screen" id="screenLogin">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">&#127957;&#65039;</div>
+      <div class="login-title">Resort Admin</div>
+      <div class="login-sub">Sign in with your resort email address</div>
+      <button onclick="closeAdminTab()" style="background:var(--bg);color:var(--muted);border:none;border-radius:8px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;margin-bottom:16px;">&larr; Back</button>
+      <div id="loginMsg"></div>
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+      <div id="passField" class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+      </div>
+      <div id="newPassField" class="field" style="display:none">
+        <label>Set New Password</label>
+        <input type="password" id="newPassword" placeholder="Choose a password (min 6 chars)">
+      </div>
+      <div id="confirmPassField" class="field" style="display:none">
+        <label>Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm your password">
+      </div>
+      <button class="btn-login" id="loginBtn" onclick="handleLogin()">Sign In</button>
+    </div>
+  </div>
+</div>
+<!-- RESORT LIST -->
+<div class="screen" id="screenList">
+  <div class="dash">
+    <div class="dash-hdr" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div class="dash-title">All Resorts</div>
+      <select id="listFilterSel" onchange="setListFilter(this.value)"
+        style="display:none;height:32px;border:1.5px solid var(--border);border-radius:8px;
+        padding:0 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;
+        color:var(--text);background:#fff;cursor:pointer;outline:none;">
+        <option value="all">All Resorts</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+        <option value="kkbook">KKBook</option>
+        <option value="online">Online Bookings</option>
+        <option value="external">External Bookings</option>
+      </select>
+      <button id="btnSitemap" onclick="updateResortSitemap()"
+        style="display:none;background:#173B2C;color:#fff;border:none;border-radius:8px;
+        padding:6px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;
+        cursor:pointer;white-space:nowrap;">&#128506;&#65039; Update Sitemap</button>
+    </div>
+    <input class="search-input" id="listSearch" placeholder="Search resorts..." oninput="filterList()">
+    <div id="resortList" class="resort-grid">
+      <div class="spin-wrap"><div class="spin"></div>Loading...</div>
+    </div>
+  </div>
+</div>
+<!-- EDIT SCREEN -->
+<div class="screen" id="screenEdit">
+  <div class="dash">
+    <div class="dash-hdr">
+      <button class="btn-back" onclick="goBack()">&larr; Back</button>
+      <div class="dash-title" id="editTitle">Edit Resort</div>
+      <button class="btn-images" id="btnManageImages" onclick="openImageManager()" style="display:none">&#128247; Images</button>
+      <button class="btn-bookings" id="btnManageBookings" onclick="goToBookingBackend()">&#128197; Manage Bookings</button>
+    </div>
+    <div id="editMsg"></div>
+    <div id="editWrap"><div class="spin-wrap"><div class="spin"></div>Loading...</div></div>
+    <div class="save-bar">
+      <button class="btn-cancel" onclick="goBack()">Cancel</button>
+      <button class="btn-save" onclick="saveResort()">&#128190; Save Changes</button>
+      <button class="btn-reset" id="btnReset" onclick="openResetModal()" style="display:none">&#128465; Reset Data</button>
+    </div>
+  </div>
+</div>
+<!-- IMAGE MANAGER MODAL -->
+<div class="img-modal-overlay" id="imgModal" onclick="if(event.target===this)closeImgModal()">
+  <div class="img-modal-box">
+    <div class="img-modal-hdr">
+      <div>
+        <div class="img-modal-title">&#128247; Manage Images</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:2px" id="imgModalFolder"></div>
+      </div>
+      <button onclick="closeImgModal()" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">&times; Close</button>
+    </div>
+    <div class="img-modal-body">
+      <!-- Upload zone -->
+      <div class="upload-zone" id="uploadZone"
+           onclick="document.getElementById('imgFileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('drag')"
+           ondragleave="this.classList.remove('drag')"
+           ondrop="this.classList.remove('drag');handleUpload(event.dataTransfer.files)">
+        <div class="upload-zone-icon">&#128444;&#65039;</div>
+        <div class="upload-zone-title">Upload images</div>
+        <div class="upload-zone-sub">
+          Tap to choose files &mdash; on mobile you can use your <strong>camera</strong> or photo library<br>
+          JPG &middot; PNG &middot; WebP &middot; GIF &nbsp;&bull;&nbsp; up to 10 MB each
+        </div>
+      </div>
+      <!-- Hidden file input — accept="image/*" gives "Camera / Files" sheet on mobile -->
+      <input type="file" id="imgFileInput" accept="image/*" multiple style="display:none"
+             onchange="handleUpload(this.files)">
+      <div id="imgUploadProgress"></div>
+      <div id="imgGridWrap">
+        <div style="text-align:center;padding:30px 0;color:var(--muted);font-weight:700;">Loading images&hellip;</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+// ── Cache bust helper — invalidates guest-side localStorage caches on save ──
+function kkBust() {
+  try { localStorage.setItem('kkC_bust', String(Date.now())); } catch(_) {}
+}
+let SITEMAP_SECRET = '';
+let LIST_FILTER = 'all'; // active|inactive|kkbook|online|external
+let API_URL = ''; // loaded from config.txt — set admin_script key
+let SESSION      = null;
+let ALL_RESORTS  = [];
+let CURRENT_RESORT = null;
+let needsNewPassword = false;
+let BACKEND_URL  = '';      // KKAdminBackend.gs URL, loaded from config.txt
+let BACKEND_SESSION = null; // KKAdminBackend session token for image operations
+let IMG_LIST     = [];      // current image list from Drive
+
+// ── CONFIG ───────────────────────────────────────────────────────────────────
+async function loadConfig() {
+  try {
+    const res  = await fetch('config.txt', { cache: 'no-store' });
+    if (!res.ok) return;
+    const text = await res.text();
+    text.split(/\r?\n/).forEach(line => {
+      const t = line.trim();
+      if (!t || t.startsWith('#')) return;
+      const ix = t.indexOf(':');
+      if (ix < 0) return;
+      const k = t.slice(0, ix).trim();
+      const v = t.slice(ix + 1).trim();
+      if (k === 'sitemap_secret')      SITEMAP_SECRET = v;
+      if (k === 'adminbackend_script') {
+        BACKEND_URL = v;
+        // Silent warm-up ping so KKAdminBackend.gs is ready when admin opens Manage Bookings
+        if (v) fetch(v + '?action=ping&_ts=' + Date.now(), { cache:'no-store' }).catch(function(){});
+      }
+      if (k === 'admin_script')         API_URL     = v;
+    });
+  } catch(e) { /* config.txt optional */ }
+}
+
+// ── SCREENS ──────────────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+function showMsg(elId, text, type) {
+  document.getElementById(elId).innerHTML = text
+    ? '<div class="msg msg-' + (type||'err') + '">' + text + '</div>' : '';
+}
+
+// ── API helpers ───────────────────────────────────────────────────────────────
+function api(data, _retry) {
+  return new Promise(function(resolve) {
+    if (!API_URL) {
+      resolve({ success:false, error:'admin_script URL not set in config.txt \u2014 please add it and reload.' });
+      return;
+    }
+    try {
+      var params = new URLSearchParams();
+      Object.keys(data).forEach(function(k) {
+        var v = data[k];
+        params.set(k, (typeof v === 'object') ? JSON.stringify(v) : String(v));
+      });
+      params.set('_ts', Date.now());
+      var encoded = params.toString();
+      var usePOST  = data.action === 'saveResort' || data.action === 'updateResort';
+      var url      = usePOST ? API_URL : API_URL + '?' + encoded;
+      console.log('[KK admin] api:', data.action, _retry ? '(retry)' : '', usePOST?'[POST]':url.slice(0,120));
+      var fetchOpts = usePOST
+        ? { method:'POST', redirect:'follow', cache:'no-store',
+            headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body:encoded }
+        : { method:'GET',  redirect:'follow', cache:'no-store' };
+      fetch(url, fetchOpts)
+        .then(function(r) { return r.text(); })
+        .then(function(text) {
+          console.log('[KK admin] response (' + (_retry ? 'retry' : '1st') + '):', text.slice(0, 200));
+          // Try to parse as JSON
+          if (text && text.trim()) {
+            try {
+              return resolve(JSON.parse(text));
+            } catch(e) { /* not JSON — fall through */ }
+          }
+          // Bad/empty response — retry once after 3.5s (script cold-start)
+          if (!_retry) {
+            console.log('[KK admin] cold-start detected, retrying in 3.5s');
+            var loginBtn = document.getElementById('loginBtn');
+            if (loginBtn && !loginBtn.disabled) { loginBtn.disabled = true; loginBtn.textContent = 'Connecting\u2026'; }
+            setTimeout(function() { api(data, true).then(resolve); }, 3500);
+            return;
+          }
+          // Retry also failed — show the error
+          if (!text || !text.trim()) {
+            resolve({ success:false, error:'Empty response \u2014 check admin.gs deployment and that the script URL is correct.' });
+          } else {
+            var preview = text.slice(0, 200).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            resolve({ success:false, error:'Bad response from server: ' + preview });
+          }
+        })
+        .catch(function(e) { resolve({ success:false, error:'Network error: ' + e.message }); });
+    } catch(e) { resolve({ success:false, error: e.message }); }
+  });
+}
+
+// Call KKAdminBackend.gs (GET or POST)
+async function apiBackend(data, method) {
+  if (!BACKEND_URL) throw new Error('Booking backend URL not configured in config.txt');
+  method = method || 'GET';
+  if (method === 'GET') {
+    const params = new URLSearchParams();
+    Object.entries(data).forEach(([k, v]) => params.set(k, typeof v === 'object' ? JSON.stringify(v) : String(v)));
+    params.set('_ts', Date.now());
+    const res  = await fetch(BACKEND_URL + '?' + params.toString(), { method:'GET', redirect:'follow' });
+    const text = await res.text();
+    try { return JSON.parse(text); } catch(e) { throw new Error('Bad response from backend'); }
+  }
+  // POST
+  const form = new URLSearchParams();
+  Object.entries(data).forEach(([k, v]) => form.set(k, typeof v === 'object' ? JSON.stringify(v) : String(v)));
+  const res  = await fetch(BACKEND_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body: form.toString() });
+  const text = await res.text();
+  try { return JSON.parse(text); } catch(e) { throw new Error('Bad response from backend'); }
+}
+
+// Mint a bootstrap token via admin.gs, then exchange it for a KKAdminBackend session
+async function getBackendSession() {
+  if (BACKEND_SESSION) return BACKEND_SESSION; // reuse if already obtained
+  const resortId = (SESSION && SESSION.role === 'superadmin')
+    ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '')
+    : (SESSION ? SESSION.resortId : '');
+  // 1. Mint a short-lived bootstrap token via our own admin.gs
+  const mintRes = await api({ action:'mintBootstrapToken', token: SESSION.token, resortId });
+  if (!mintRes.success) throw new Error('Could not get auth token: ' + (mintRes.error || ''));
+  // 2. Exchange it for a KKAdminBackend session
+  const exchRes = await apiBackend({ action:'exchangeBootstrapToken', token: mintRes.token });
+  if (!exchRes.success) throw new Error('Session exchange failed: ' + (exchRes.error || ''));
+  BACKEND_SESSION = exchRes.session;
+  return BACKEND_SESSION;
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function handleLogin() {
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn      = document.getElementById('loginBtn');
+  if (!email) { showMsg('loginMsg', 'Please enter your email address'); return; }
+  if (needsNewPassword) {
+    const np = document.getElementById('newPassword').value;
+    const cp = document.getElementById('confirmPassword').value;
+    if (np.length < 6) { showMsg('loginMsg', 'Password must be at least 6 characters'); return; }
+    if (np !== cp)      { showMsg('loginMsg', 'Passwords do not match'); return; }
+    btn.disabled = true; btn.textContent = 'Setting password...';
+    api({ action:'setPassword', email, password:np }).then(res => {
+      btn.disabled = false; btn.textContent = 'Sign In';
+      if (res.success) { startSession(res);
+      if(BACKEND_URL)fetch(BACKEND_URL+'?action=recordFrontEndLogin&email='+encodeURIComponent(email),{cache:'no-store'}).catch(function(){}); }
+      else showMsg('loginMsg', res.error || 'Could not set password');
+    });
+    return;
+  }
+  if (!password) { showMsg('loginMsg', 'Please enter your password'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  api({ action:'login', email, password }).then(res => {
+    btn.disabled = false; btn.textContent = 'Sign In';
+    if (res.success) {
+      startSession(res);
+      if(BACKEND_URL)fetch(BACKEND_URL+'?action=recordFrontEndLogin&email='+encodeURIComponent(email),{cache:'no-store'}).catch(function(){});
+    } else if (res.needsPassword) {
+      needsNewPassword = true;
+      document.getElementById('passField').style.display = 'none';
+      document.getElementById('newPassField').style.display = 'block';
+      document.getElementById('confirmPassField').style.display = 'block';
+      document.getElementById('loginBtn').textContent = 'Set Password & Sign In';
+      showMsg('loginMsg', 'First login detected \u2014 please set a password.', 'info');
+    } else {
+      showMsg('loginMsg', res.error || 'Sign in failed. Check email and password.');
+    }
+  });
+}
+function startSession(res) {
+  SESSION = { role:res.role, resortId:res.resortId||'', name:res.name||'', email:res.email||'', token:res.token };
+
+  // KampKiepie staff get full super access regardless of role returned by GAS
+  if (SESSION.email && SESSION.email.toLowerCase().endsWith('@kampkiepie.co.za')) {
+    SESSION.role = 'superadmin';
+  }
+  sessionStorage.setItem('kkAdmin', JSON.stringify(SESSION));
+  if (SESSION.role === 'resort') { try { localStorage.setItem('kkIsResortStaff','true'); } catch(e){} }
+  document.getElementById('hdrUser').style.display = 'flex';
+  document.getElementById('hdrName').textContent = SESSION.name;
+  if (SESSION.role === 'superadmin') { show('screenList'); loadList(); }
+  else { show('screenEdit'); document.getElementById('editTitle').textContent = SESSION.name; loadEdit(SESSION.resortId); }
+}
+function logout() { sessionStorage.removeItem('kkAdmin'); window.close(); }
+function closeAdminTab() { window.close(); }
+function goBack() {
+  if (SESSION && SESSION.role === 'superadmin') show('screenList');
+  else window.close();
+}
+
+// ── SUPER ADMIN LIST ──────────────────────────────────────────────────────────
+function loadList() {
+  api({ action:'listResorts', token:SESSION.token }).then(res => {
+    if (!res.success) { document.getElementById('resortList').innerHTML = '<div class="msg msg-err">'+(res.error||'Failed')+'</div>'; return; }
+    ALL_RESORTS = res.resorts || [];
+    LIST_FILTER = 'all';
+    var sel = document.getElementById('listFilterSel');
+    if (sel) sel.value = 'all';
+    renderList(ALL_RESORTS);
+    // Show sitemap button for superadmin only
+    var sb  = document.getElementById('btnSitemap');
+    var sel = document.getElementById('listFilterSel');
+    var isSA = SESSION && SESSION.role === 'superadmin';
+    if (sb)  sb.style.display  = isSA ? '' : 'none';
+    if (sel) sel.style.display = isSA ? '' : 'none';
+  });
+}
+function setListFilter(val) {
+  LIST_FILTER = val;
+  applyFilters();
+}
+function filterList() { applyFilters(); }
+function applyFilters() {
+  const q = document.getElementById('listSearch').value.toLowerCase();
+  // Field mapping from admin.gs listResorts:
+  //   r.active      = Resort - KKBook/Active        (already returned)
+  //   r.betaActive  = Resorts - Switches/BetaActive? (added to admin.gs)
+  //   r.hasBookings = Resorts - Bookings/HasBookings  (added to admin.gs)
+  const isBetaActive = r => !!(r.betaActive);
+  const isKKBook     = r => !!(r.active);   // r.active IS KKBook/Active
+  const hasBk        = r => !!(r.hasBookings);
+  let list = ALL_RESORTS;
+  if (q) list = list.filter(r =>
+    r.name.toLowerCase().includes(q) || r.resortId.toLowerCase().includes(q));
+  switch (LIST_FILTER) {
+    case 'active':   list = list.filter(r =>  isBetaActive(r));                 break;
+    case 'inactive': list = list.filter(r => !isBetaActive(r));                 break;
+    case 'kkbook':   list = list.filter(r =>  isKKBook(r));                     break;
+    case 'online':   list = list.filter(r =>  hasBk(r));                        break;
+    case 'external': list = list.filter(r =>  hasBk(r) && !isKKBook(r));        break;
+  }
+  renderList(list);
+}
+function renderList(list) {
+  if (!list.length) { document.getElementById('resortList').innerHTML = '<div style="color:var(--muted);font-weight:700;padding:20px;">No resorts found</div>'; return; }
+  document.getElementById('resortList').innerHTML = list.map(r =>
+    '<div class="rc" onclick="selectResort(\'' + esc(r.resortId) + '\',\'' + esc(r.name) + '\')">' +
+    '<div class="rc-name">' + esc(r.name) + '</div>' +
+    '<div class="rc-id">ID: ' + esc(r.resortId) + '</div>' +
+    (r.betaActive ? '<span class="rc-badge rc-y">Active</span>' : '') +(r.active ? '<span class="rc-badge rc-b" style="margin-left:4px">★ KKBook</span>' : '') +(r.hasBookings ? '<span class="rc-badge rc-o" style="margin-left:4px">📅 Online</span>' : '') +'</div>'
+  ).join('');
+}
+function selectResort(resortId, name) {
+  BACKEND_SESSION = null; // reset session when switching resorts
+  show('screenEdit');
+  document.getElementById('editTitle').textContent = name;
+  loadEdit(resortId);
+}
+
+// ── EDIT FORM ─────────────────────────────────────────────────────────────────
+function loadEdit(resortId) {
+  showMsg('editMsg', '');
+  document.getElementById('btnManageImages').style.display = 'none';
+  // Show cached data instantly; fetch fresh in background
+  var cacheKey = 'kkResortCache_' + resortId;
+  var cached = null;
+  try { cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null'); } catch(e) {}
+  if (cached) {
+    CURRENT_RESORT = cached;
+    renderForm(cached);
+    if (cached['Resort- Header/DriveFolderLink'] && BACKEND_URL) document.getElementById('btnManageImages').style.display = 'inline-flex';
+    showMsg('editMsg', '<span style="font-size:11px">↻ Refreshing…</span>', 'info');
+  } else {
+    document.getElementById('editWrap').innerHTML = '<div class="spin-wrap"><div class="spin"></div>Loading resort data...</div>';
+  }
+  api({ action:'getResort', resortId, token:SESSION.token }).then(function(res) {
+    showMsg('editMsg', '');
+    if (!res.success) {
+      if (!cached) document.getElementById('editWrap').innerHTML = '<div class="msg msg-err">'+(res.error||'Failed')+'</div>';
+      else showMsg('editMsg', res.error||'Could not refresh data.', 'err');
+      return;
+    }
+    CURRENT_RESORT = res.resort;
+    try { sessionStorage.setItem(cacheKey, JSON.stringify(res.resort)); } catch(e) {}
+    renderForm(res.resort);
+    if (res.resort && res.resort['Resort- Header/DriveFolderLink'] && BACKEND_URL) document.getElementById('btnManageImages').style.display = 'inline-flex';
+  });
+}
+
+function isKKUser() {
+  // KampKiepie staff (any @kampkiepie.co.za email) or superadmin role get full access
+  return SESSION && (
+    SESSION.role === 'superadmin' ||
+    (SESSION.email && String(SESSION.email).toLowerCase().endsWith('@kampkiepie.co.za'))
+  );
+}
+// Fields that only KampKiepie staff may edit — resort users see these as read-only
+var ACCOM_TYPES = [
+  {i:0,  key:'POP',        bk:'Resort - BookingOptions/POP?',       label:'POP',          lk:'Resort - Amenities/POP',        tk:'Resort - Amenities/POPTXT'},
+  {i:1,  key:'Camp',       bk:'Resort - BookingOptions/Camp?',      label:'Camping',      lk:'Resort - Amenities/Camp',       tk:'Resort - Amenities/CampTXT'},
+  {i:2,  key:'Lankstaan',  bk:'Resort - BookingOptions/Lankstaan?', label:'Lankstaan',    lk:'Resort - Amenities/LankStaan',  tk:'Resort - Amenities/LankStaanTXT'},
+  {i:3,  key:'Glamp',      bk:'Resort - BookingOptions/Glamp',      label:'Glamping',     lk:'Resort - Amenities/Glamp',      tk:'Resort - Amenities/GlampTXT'},
+  {i:4,  key:'Chalet',     bk:'Resort - BookingOptions/Chalet',     label:'Chalet',       lk:'Resort - Amenities/Chalet',     tk:'Resort - Amenities/ChaletTXT'},
+  {i:5,  key:'Cottage',    bk:'Resort - BookingOptions/Cottage',    label:'Cottage',      lk:'Resort - Amenities/Cottage',    tk:'Resort - Amenities/CottageTXT'},
+  {i:6,  key:'Lodge',      bk:'Resort - BookingOptions/Lodge',      label:'Lodge',        lk:'Resort - Amenities/Lodge',      tk:'Resort - Amenities/LodgeTXT'},
+  {i:7,  key:'Room',       bk:'Resort - BookingOptions/Room?',      label:'Room',         lk:'Resort - Amenities/Room',       tk:'Resort - Amenities/RoomTXT'},
+  {i:8,  key:'BackPack',   bk:'Resort - BookingOptions/BackPack',   label:'Backpacker',   lk:'Resort - Amenities/BackPack',   tk:'Resort - Amenities/BackPackTXT'},
+  {i:9,  key:'BnB',        bk:'Resort - BookingOptions/B&B',        label:'B&B',          lk:'Resort - Amenities/B&B',        tk:'Resort - Amenities/B&BTXT'},
+  {i:10, key:'Guesthouse', bk:'Resort - BookingOptions/Guesthouse', label:'Guesthouse',   lk:'Resort - Amenities/GuestHouse', tk:'Resort - Amenities/GuestHouseTXT'},
+  {i:11, key:'FamilyHome', bk:'Resort - BookingOptions/FamilyHome', label:'Family Home',  lk:'Resort - Amenities/FamilyHome', tk:'Resort - Amenities/FamilyHomeTXT'},
+  {i:12, key:'LankSlaap',  bk:'Resort - BookingOptions/LankSlaap',  label:'LankSlaap',    lk:'Resort - Amenities/LankSlaap',  tk:'Resort - Amenities/LankSlaapTXT'},
+  {i:13, key:'Niche',      bk:'Resort - BookingOptions/Niche',      label:'Niche',        lk:'Resort - Amenities/Niche',      tk:'Resort - Amenities/NicheTXT'},
+  {i:14, key:'Wedding',    bk:'Resort - BookingOptions/Wedding',    label:'Weddings',     lk:'Resort - Amenities/Wedding',    tk:'Resort - Amenities/WeddingTXT'},
+  {i:15, key:'Conference', bk:'Resort - BookingOptions/Conference', label:'Conference',   lk:'Resort - Amenities/Conference', tk:'Resort - Amenities/ConferenceTXT'},
+  {i:16, key:'Functions',  bk:'Resort - BookingOptions/Functions',  label:'Functions',    lk:'Resort - Amenities/Functions',  tk:'Resort - Amenities/FunctionsTXT'},
+  {i:17, key:'Hunting',    bk:'Resort - BookingOptions/Hunting',    label:'Hunting',      lk:'Resort - Amenities/Hunting',    tk:'Resort - Amenities/HuntingTXT'},
+  {i:18, key:'Pets',       bk:'Resort - BookingOptions/Pets',       label:'Pets Welcome', lk:'Resort - Amenities/Pets',  tk:'Resort - Amenities/PetsTXT'},
+  {i:19, key:'Excursions', bk:'Resort - BookingOptions/Excursions', label:'Excursions',   lk:'Resort - Amenities/Excursions', tk:'Resort - Amenities/ExcursionsTXT'},
+  {i:20, key:'Off-Grid',   bk:'Resort - BookingOptions/OffGrid', label:'Off-Grid',   lk:'Resort - Amenities/OffGrid', tk:'Resort - Amenities/OffGridTXT'},
+];
+var RESTRICTED_FIELDS = new Set([
+  'Resort- Header/DriveRef',
+  'Resort- Gallery/GalleryLinksArray',
+  'Resorts - Bookings/BookingLink',
+  'Resorts - Bookings/HasBookings',
+  'Resort - KKBook/Level',
+  'Resort - KKBook/Active',
+  'Resort - KKBook/BookingMode',
+  'Resort- Owner/OnBoard',
+]);
+var GROUPS = [
+  { title:'Basic Information', fields:[
+    { key:'Resort- Header/ResortName',         label:'Resort Name',           type:'text' },
+    { key:'Resort- Header/DriveRef',           label:'Drive Ref (e.g. NC SOL001)', type:'text' },
+    { key:'Resort- Header/Address',            label:'Address',               type:'text' },
+    { key:'Resort- Header/Coordinates',        label:'Coordinates (lat,lng)', type:'text' },
+    { key:'Resort- Header/ResortDescription',  label:'Description',           type:'textarea' },
+  ]},
+  { title:'Contact Details', fields:[
+    { key:'Resort- Header/ContactPersonName',        label:'Contact Person Name',   type:'text' },
+    { key:'Resort- Header/ContactPersonEmail',       label:'Contact Person Email',  type:'email' },
+    { key:'Resort- Header/ContactPersonPhoneNumber', label:'Contact Person Phone',  type:'text' },
+    { key:'Resort- Header/email',                    label:'Resort Email',          type:'email' },
+    { key:'Resort- Header/WhatsappPhone',            label:'WhatsApp Phone',        type:'text' },
+    { key:'Resort- Header/Website',                  label:'Website URL',           type:'url' },
+  ]},
+  { title:'Social Media', fields:[
+    { key:'Resort- Socials/Facebook',  label:'Facebook',  type:'text' },
+    { key:'Resort- Socials/Instagram', label:'Instagram', type:'text' },
+    { key:'Resort- Socials/TikTok',    label:'TikTok',    type:'text' },
+  ]},
+  { title:'Photos', fields:[
+    { key:'Resort- Header/ResortExtraPhoto',   label:'Main Photo URL',               type:'url', showThumb:true },
+    { key:'Resort- Header/ResortProfilePhoto', label:'Logo / Profile Photo URL',     type:'url', showThumb:true },
+    { key:'Resort- Gallery/GalleryLinksArray', label:'Gallery (pipe-separated URLs)', type:'textarea', syncGallery:true },
+    { key:'Resort- Map/CampMap',               label:'Camp Map Image URL',            type:'url', viewMap:true },
+  ]},
+  { title:'Accommodation Types', accomGroup:true, checkboxes:[
+    { key:'Resort - BookingOptions/POP?',       label:'POP' },
+    { key:'Resort - BookingOptions/Camp?',      label:'Camp' },
+    { key:'Resort - BookingOptions/Lankstaan?', label:'Lankstaan' },
+    { key:'Resort - BookingOptions/Glamp',      label:'Glamp' },
+    { key:'Resort - BookingOptions/Chalet',     label:'Chalet' },
+    { key:'Resort - BookingOptions/Cottage',    label:'Cottage' },
+    { key:'Resort - BookingOptions/Lodge',      label:'Lodge' },
+    { key:'Resort - BookingOptions/Room?',      label:'Room' },
+    { key:'Resort - BookingOptions/BackPack',   label:'Backpack' },
+    { key:'Resort - BookingOptions/B&B',        label:'B&B' },
+    { key:'Resort - BookingOptions/Guesthouse', label:'Guesthouse' },
+    { key:'Resort - BookingOptions/FamilyHome', label:'Family Home' },
+    { key:'Resort - BookingOptions/LankSlaap',  label:'LankSlaap' },
+    { key:'Resort - BookingOptions/Niche',      label:'Niche' },
+    { key:'Resort - BookingOptions/Wedding',    label:'Weddings' },
+    { key:'Resort - BookingOptions/Conference', label:'Conference' },
+    { key:'Resort - BookingOptions/Functions',  label:'Functions' },
+    { key:'Resort - BookingOptions/Hunting',    label:'Hunting' },
+    { key:'Resort - BookingOptions/Pets',       label:'Pets Welcome' },
+    { key:'Resort - BookingOptions/Excursions', label:'Excursions' },
+    { key:'Resort - BookingOptions/OffGrid',       label:'Off-Grid' },
+  ]},
+  { title:'POP Settings', fields:[{ key:'Resort- POP/POPMaxNights', label:'Max POP Nights', type:'number' }]},
+  { title:'Bookings', fields:[
+    { key:'Resorts - Bookings/BookingLink', label:'Booking Link URL', type:'url' },
+  ], checkboxes:[
+    { key:'Resorts - Bookings/HasBookings', label:'Has Online Bookings' },
+  ]},
+  { title:'Amenities', fields:[
+    { key:'Resort - Amenities/AmenitiesBasic',        label:'Basic Facilities (comma-separated)',  type:'textarea' },
+    { key:'Resort - Amenities/AmenitiesWork',         label:'Work & Connectivity',                 type:'textarea' },
+    { key:'Resort - Amenities/AmenitiesComfort',      label:'Comfort',                             type:'textarea' },
+    { key:'Resort - Amenities/AmenitiesRecreational', label:'Recreational',                        type:'textarea' },
+    { key:'Resort - Amenities/AmenitiesSafety',       label:'Safety & Security',                   type:'textarea' },
+    { key:'Resort - Amenities/AmenitiesAdditional',   label:'Additional',                          type:'textarea' },
+    { key:'Resort - Amenities/Pets',                  label:'Pet Policy',                          type:'text' },
+    { key:'Resort - Amenities/Nearby',                label:'Nearby Attractions',                  type:'textarea' },
+  ]},
+  { title:'Content', fields:[
+    { key:'Resort - Host/MessageTXT', label:'Host Welcome Message',    type:'textarea' },
+    { key:'Resort - Rules/RulesTXT',  label:'Resort Rules',            type:'textarea' },
+    { key:'Resort - FAQ/FAQArray',    label:'FAQ (format: Q|A||Q|A)',  type:'textarea' },
+    { key:'Resort - More/MoreTXT',    label:'Additional Information',  type:'textarea' },
+  ]},
+  { title:'Branding', fields:[
+    { key:'Resort - config/CorpColour', label:'Primary Colour (e.g. #F97316)',   type:'text' },
+    { key:'Resort - config/SubColour',  label:'Secondary Colour (e.g. #16A34A)', type:'text' },
+  ]},
+  { title:'KKBook Settings', fields:[
+    { key:'Resort - KKBook/Level', label:'KKBook Level', type:'text' },
+    { key:'Resort - KKBook/BookingMode', label:'Booking Mode', type:'bookingmode' },
+  ], checkboxes:[
+    { key:'Resort - KKBook/Active', label:'KKBook Active' },
+    { key:'Resort- Owner/OnBoard', label:'OnBoard (Public Live)' },
+  ]},
+];
+var SUPER_GROUPS = [
+  { title:'Super Admin Settings', fields:[], checkboxes:[
+    { key:'Resorts - Switches/BetaActive?',   label:'Beta Active' },
+    { key:'Resorts - Switches/MembersOnly?',  label:'Members Only' },
+  ]},
+];
+function safeId(key) { return key.replace(/[^a-zA-Z0-9]/g, '_'); }
+function isTrue(val) {
+  return String(val||'').trim().toLowerCase() === 'true' ||
+         String(val||'').trim() === '1' ||
+         String(val||'').trim().toLowerCase() === 'yes';
+}
+function renderForm(resort) {
+  var groups = GROUPS.slice();
+  if (isKKUser()) groups = groups.concat(SUPER_GROUPS);
+  var html = '<div class="edit-card">';
+  groups.forEach(function(group) {
+    var secId = 'sec_' + safeId(group.title);
+    html += '<div class="divider" onclick="toggleSection(\''+secId+'\')"><span class="sec-arrow" id="arr_'+secId+'">&#9654;</span> \uD83C\uDFF7\uFE0F ' + group.title + '</div>';
+    html += '<div class="sec-body" id="' + secId + '"><div class="form-grid">';
+    (group.fields||[]).forEach(function(f) {
+      var val = resort[f.key] !== undefined ? String(resort[f.key]) : '';
+      var restricted = !isKKUser() && RESTRICTED_FIELDS.has(f.key);
+      var roStyle = restricted ? 'background:var(--bg);color:var(--subtle);cursor:not-allowed;border-style:dashed;' : '';
+      var roAttr  = restricted ? ' readonly' : '';
+      var lockIco = restricted ? '&#128274; ' : '';
+      if (f.type === 'bookingmode') {
+        var curMode = (val || 'live').toLowerCase();
+        var bmId = 'bm_' + safeId(f.key);
+        html += '<div class="fg"><label>' + lockIco + f.label + '</label>'
+          + '<div class="booking-mode-pair">'
+          + '<label class="bm-radio' + (curMode !== 'indirect' ? ' selected' : '') + '" id="' + bmId + '_live" onclick="setBookingMode(\'' + f.key + '\',\'live\')">'
+          + '<input type="radio" name="' + bmId + '" value="live"' + (curMode !== 'indirect' ? ' checked' : '') + '>'
+          + '<div><div class="bm-radio-label">&#9989; Live</div><div class="bm-radio-sub">Fully managed in KampKiepie</div></div>'
+          + '</label>'
+          + '<label class="bm-radio' + (curMode === 'indirect' ? ' selected' : '') + '" id="' + bmId + '_indirect" onclick="setBookingMode(\'' + f.key + '\',\'indirect\')">'
+          + '<input type="radio" name="' + bmId + '" value="indirect"' + (curMode === 'indirect' ? ' checked' : '') + '>'
+          + '<div><div class="bm-radio-label">&#128232; Indirect</div><div class="bm-radio-sub">Enquiry only &#8212; resort manages booking</div></div>'
+          + '</label>'
+          + '</div></div>';
+      } else if (f.type === 'textarea') {
+        var syncBtn = f.syncGallery
+          ? '<button type="button" onclick="syncGallery()" style="background:#EDE9FE;color:#7C3AED;border:none;border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;" id="syncGalleryBtn">↻ Sync from Drive</button>'
+          : '';
+        var taLabelRow = syncBtn
+          ? '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><label style="margin:0">' + lockIco + f.label + '</label>' + syncBtn + '</div>'
+          : '<label>' + lockIco + f.label + '</label>';
+        html += '<div class="fg full">' + taLabelRow + '<textarea id="f_' + safeId(f.key) + '" rows="3" style="' + roStyle + '"' + roAttr + '>' + esc(val) + '</textarea></div>';
+      } else {
+        var viewMapHtml = '';
+        if (f.viewMap) {
+          var mapBtnStyle = 'background:var(--green-l);color:var(--green);border:1.5px solid var(--green);'
+            + 'border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;'
+            + 'font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;';
+          viewMapHtml = val
+            ? '<a id="maplink_'+safeId(f.key)+'" href="' + esc(val) + '" target="_blank" rel="noopener" style="' + mapBtnStyle + '">&#128506; View Map</a>'
+            : '<a id="maplink_'+safeId(f.key)+'" href="#" style="' + mapBtnStyle + 'opacity:.4;cursor:not-allowed;pointer-events:none;">&#128506; View Map</a>';
+        }
+        var drivePickBtn = f.showThumb
+          ? '<button type="button" onclick="openPhotoPicker(\'' + f.key + '\')" '
+            + 'style="background:#EDE9FE;color:#7C3AED;border:none;border-radius:7px;padding:3px 11px;'
+            + 'font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;">&#128247; Pick from Drive</button>'
+          : '';
+        var thumbHtml = '';
+        if (f.showThumb && val) {
+          thumbHtml = '<img id="thumb_' + safeId(f.key) + '" src="' + esc(driveImgUrl(val)) + '" '
+            + 'style="max-height:80px;max-width:100%;margin-top:6px;border-radius:6px;display:block;object-fit:contain" '
+            + 'onerror="this.style.display=\'none\'" onload="this.style.display=\'block\'">';
+        } else if (f.showThumb) {
+          thumbHtml = '<img id="thumb_' + safeId(f.key) + '" src="" '
+            + 'style="max-height:80px;max-width:100%;margin-top:6px;border-radius:6px;display:none;object-fit:contain" '
+            + 'onerror="this.style.display=\'none\'">';
+        }
+        var thumbHandler = f.showThumb
+          ? 'var t=document.getElementById(\'thumb_'+safeId(f.key)+'\');if(t){t.src=driveImgUrl(el.value);t.style.display=el.value?\'block\':\'none\';}'
+          : '';
+        var mapHandler = f.viewMap
+          ? 'var m=document.getElementById(\'maplink_'+safeId(f.key)+'\');if(m){m.href=el.value||\'#\';m.style.opacity=el.value?\'1\':\'0.4\';m.style.pointerEvents=el.value?\'\':[\'none\'][0];}'
+          : '';
+        var onInput = (thumbHandler||mapHandler)
+          ? ' oninput="(function(el){'+thumbHandler+mapHandler+'}).call(this,this)"'
+          : '';
+        var extraBtn = viewMapHtml || drivePickBtn || '';
+        var elLabelRow = extraBtn
+          ? '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><label style="margin:0">' + lockIco + f.label + '</label>' + extraBtn + '</div>'
+          : '<label>' + lockIco + f.label + '</label>';
+        html += '<div class="fg">' + elLabelRow
+          + '<input type="' + (f.type||'text') + '" id="f_' + safeId(f.key) + '" value="' + esc(val) + '" style="' + roStyle + '"' + roAttr + onInput + '>'
+          + thumbHtml + '</div>';
+      }
+    });
+    var cbs = group.checkboxes || [];
+    if (cbs.length) {
+      html += '<div class="fg full"><label>Options</label><div class="cb-group">';
+      cbs.forEach(function(f) {
+        var restricted = !isKKUser() && RESTRICTED_FIELDS.has(f.key);
+        var disAttr  = restricted ? ' disabled' : '';
+        var disStyle = restricted ? 'style="opacity:.5;cursor:not-allowed;"' : '';
+        var lockIco  = restricted ? '&#128274; ' : '';
+        var onChange = group.accomGroup ? ' onchange="updateAccomPills()"' : '';
+        html += '<label class="cb-item" ' + disStyle + '><input type="checkbox" id="f_' + safeId(f.key) + '" ' + (isTrue(resort[f.key])?'checked':'') + disAttr + onChange + '> ' + lockIco + f.label + '</label>';
+      });
+      html += '</div></div>';
+    }
+    if (group.accomGroup) {
+      html += '<div class="fg full"><div class="acc-pill-row" id="accPillRow"></div>';
+      html += '<div class="acc-editor-panel" id="accEditorPanel">';
+      html += '<div class="acc-editor-title" id="accEditorTitle"></div>';
+      html += '<div class="fg full"><label>Facilities &mdash; one per line</label>';
+      html += '<textarea id="accEditorList" rows="6" placeholder="e.g.\nAblution block\nBraai area\nSwimming pool"></textarea></div>';
+      html += '<div class="fg full" style="margin-top:10px"><label>Description / more detail</label>';
+      html += '<textarea id="accEditorTxt" rows="4" placeholder="Tell guests more about this accommodation type..."></textarea></div>';
+      html += '</div></div>';
+      ACCOM_TYPES.forEach(function(t) {
+        var lv = resort[t.lk] !== undefined ? esc(String(resort[t.lk])) : '';
+        var tv = resort[t.tk] !== undefined ? esc(String(resort[t.tk])) : '';
+        html += '<input type="hidden" id="f_' + safeId(t.lk) + '" value="' + lv + '">';
+        html += '<input type="hidden" id="f_' + safeId(t.tk) + '" value="' + tv + '">';
+      });
+    }
+    html += '</div></div>';
+  });
+  html += '</div>';
+  // Save which sections are currently open before re-rendering
+  var openSecs = [];
+  document.querySelectorAll('.sec-body').forEach(function(b) {
+    if (b.style.display === 'block') openSecs.push(b.id);
+  });
+  document.getElementById('editWrap').innerHTML = html;
+  updateAccomPills();
+  // Restore previously open sections
+  openSecs.forEach(function(id) {
+    var body  = document.getElementById(id);
+    var arrow = document.getElementById('arr_' + id);
+    if (body)  body.style.display = 'block';
+    if (arrow) arrow.classList.add('open');
+  });
+}
+var _accActiveIdx = null;
+function accFlushEditor() {
+  if (_accActiveIdx === null) return;
+  var t = ACCOM_TYPES[_accActiveIdx];
+  if (!t) return;
+  var lel = document.getElementById('f_' + safeId(t.lk));
+  var tel = document.getElementById('f_' + safeId(t.tk));
+  var edList = document.getElementById('accEditorList');
+  var edTxt  = document.getElementById('accEditorTxt');
+  if (lel && edList) lel.value = edList.value.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(',');
+  if (tel && edTxt)  tel.value = edTxt.value;
+}
+function selectAccomPill(idx) {
+  accFlushEditor();
+  _accActiveIdx = idx;
+  var t = ACCOM_TYPES[idx];
+  if (!t) return;
+  document.querySelectorAll('#accPillRow .acc-pill').forEach(function(p){ p.classList.remove('on'); });
+  var pill = document.getElementById('accPill_' + idx);
+  if (pill) pill.classList.add('on');
+  var lel   = document.getElementById('f_' + safeId(t.lk));
+  var tel   = document.getElementById('f_' + safeId(t.tk));
+  var edList  = document.getElementById('accEditorList');
+  var edTxt   = document.getElementById('accEditorTxt');
+  var edTitle = document.getElementById('accEditorTitle');
+  if (edTitle) edTitle.textContent = t.label;
+  if (edList)  edList.value  = lel ? lel.value.split(',').map(function(s){return s.trim();}).filter(Boolean).join('\n') : '';
+  if (edTxt)   edTxt.value   = tel ? tel.value : '';
+  var panel = document.getElementById('accEditorPanel');
+  if (panel) panel.classList.add('on');
+}
+function updateAccomPills() {
+  var row = document.getElementById('accPillRow');
+  if (!row) return;
+  accFlushEditor();
+  var ticked = ACCOM_TYPES.filter(function(t) {
+    var cb = document.getElementById('f_' + safeId(t.bk));
+    return cb && cb.checked;
+  });
+  row.innerHTML = ticked.length
+    ? ticked.map(function(t) {
+        var on = t.i === _accActiveIdx ? ' on' : '';
+        return '<button type="button" class="acc-pill' + on + '" id="accPill_' + t.i + '" onclick="selectAccomPill(' + t.i + ')">' + t.label + '</button>';
+      }).join('')
+    : '<span style="font-size:12px;color:var(--muted);font-weight:600">Tick accommodation types above to add details</span>';
+  // If active pill's type was unticked, close panel
+  if (_accActiveIdx !== null && !ticked.find(function(t){ return t.i === _accActiveIdx; })) {
+    _accActiveIdx = null;
+    var panel = document.getElementById('accEditorPanel');
+    if (panel) panel.classList.remove('on');
+  }
+}
+function toggleSection(secId) {
+  var body  = document.getElementById(secId);
+  var arrow = document.getElementById('arr_' + secId);
+  if (!body) return;
+  var isOpen = body.style.display !== 'none' && body.style.display !== '';
+  body.style.display  = isOpen ? 'none' : 'block';
+  if (arrow) arrow.classList.toggle('open', !isOpen);
+}
+var _photoPickerTarget = null;
+function openPhotoPicker(fieldKey) {
+  _photoPickerTarget = fieldKey;
+  var folderLink = (CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink']) || '';
+  if (!folderLink) {
+    alert('No Drive folder link configured for this resort (Resort- Header/DriveFolderLink is empty).');
+    return;
+  }
+  document.getElementById('photoPickerTitle').textContent = fieldKey.includes('ProfilePhoto') ? 'Choose Logo / Profile Photo' : 'Choose Main Photo';
+  var body = document.getElementById('photoPickerBody');
+  body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">Loading images…</div>';
+  document.getElementById('photoPickerModal').style.display = 'block';
+  apiBackend({ action:'listDriveFolderImages', folderLink:folderLink }, 'GET')
+    .then(function(res) {
+      if (!res.success || !res.images || !res.images.length) {
+        body.innerHTML = '<div style="padding:16px;color:var(--muted)">' + (res.error || 'No images found in this folder.') + '</div>';
+        return;
+      }
+      body.innerHTML = '<div style="font-size:11px;color:var(--muted);margin-bottom:10px">'
+        + res.images.length + ' image' + (res.images.length!==1?'s':'') + ' in ' + esc(res.folderName||'Drive folder') + '</div>'
+        + '<div class="photo-grid">'
+        + res.images.map(function(img) {
+            return '<div class="photo-card" onclick="pickPhoto(\'' + esc(img.url) + '\')">'
+              + '<img src="' + esc(img.thumbnail) + '" alt="' + esc(img.name) + '" onerror="this.style.background=\'#f0f0f0\'">'
+              + '<div class="photo-card-name">' + esc(img.name) + '</div>'
+              + '</div>';
+          }).join('')
+        + '</div>';
+    })
+    .catch(function(err) {
+      body.innerHTML = '<div style="padding:16px;color:var(--bad)">Could not load images: ' + esc(err.message||String(err)) + '</div>';
+    });
+}
+function pickPhoto(url) {
+  if (!_photoPickerTarget) return;
+  var input = document.getElementById('f_' + safeId(_photoPickerTarget));
+  if (input) {
+    input.value = url;
+    // Update thumbnail
+    var thumb = document.getElementById('thumb_' + safeId(_photoPickerTarget));
+    if (thumb) { thumb.src = driveImgUrl(url); thumb.style.display = 'block'; }
+    // Update view-map link if present
+    var mapLink = document.getElementById('maplink_' + safeId(_photoPickerTarget));
+    if (mapLink) { mapLink.href = url || '#'; mapLink.style.opacity = url ? '1' : '0.4'; }
+  }
+  closePhotoPicker();
+}
+function closePhotoPicker() {
+  document.getElementById('photoPickerModal').style.display = 'none';
+  _photoPickerTarget = null;
+}
+async function setBookingMode(fieldKey, newVal) {
+  if (!SESSION || !CURRENT_RESORT) return;
+  var resortId = CURRENT_RESORT['ResortID'];
+  var bmId = 'bm_' + safeId(fieldKey);
+  var fId  = 'f_' + safeId(fieldKey);
+  ['live','indirect'].forEach(function(v) {
+    var el = document.getElementById(bmId + '_' + v);
+    if (el) el.classList.toggle('selected', v === newVal);
+  });
+  var hidden = document.getElementById(fId);
+  if (hidden) hidden.value = newVal;
+  try {
+    var fields = {}; fields[fieldKey] = newVal;
+    var res = await api({ action:'updateResort', token:SESSION.token, resortId:resortId, fields:JSON.stringify(fields) });
+    if (res && res.success) {
+      if (CURRENT_RESORT) CURRENT_RESORT[fieldKey] = newVal;
+      showMsg('editMsg', '&#10003; Booking Mode saved', 'ok');
+      setTimeout(function(){ showMsg('editMsg',''); }, 2500);
+    } else { showMsg('editMsg', '&#10060; Could not save: ' + ((res && res.error) || 'unknown'), 'error'); }
+  } catch(e) { showMsg('editMsg', '&#10060; Save error: ' + e.message, 'error'); }
+}
+function driveImgUrl(url) {
+  if (!url) return '';
+  // Already a renderable URL
+  if (!url.includes('drive.google.com') && !url.includes('docs.google.com')) return url;
+  if (url.includes('drive.google.com/thumbnail') || url.includes('lh3.googleusercontent.com')) return url;
+  // Extract file ID from /file/d/ID or ?id=ID or /d/ID patterns
+  var m = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+  if (!m) m = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w400';
+  return url;
+}
+function saveResort() {
+  accFlushEditor();
+  var allFields = [];
+  var groups = GROUPS.slice();
+  if (isKKUser()) groups = groups.concat(SUPER_GROUPS);
+  groups.forEach(function(g) {
+    (g.fields||[]).forEach(function(f) { allFields.push(f); });
+    (g.checkboxes||[]).forEach(function(f) { allFields.push({ key:f.key, type:'checkbox' }); });
+  });
+  var fields = {};
+  allFields.forEach(function(f) {
+    var el = document.getElementById('f_' + safeId(f.key));
+    if (!el) return;
+    fields[f.key] = (f.type === 'checkbox') ? el.checked : el.value;
+  });
+  // Collect accommodation amenity hidden fields
+  ACCOM_TYPES.forEach(function(t) {
+    var lel = document.getElementById('f_' + safeId(t.lk));
+    var tel = document.getElementById('f_' + safeId(t.tk));
+    if (lel) fields[t.lk] = lel.value;
+    if (tel) fields[t.tk] = tel.value;
+  });
+  var resortId = (SESSION.role === 'superadmin') ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '') : SESSION.resortId;
+  // Stamp the last-update time so the sheet always records when this resort was last edited
+  fields['Scoring/LastUpdate'] = new Date().toISOString();
+  var saveBtn = document.querySelector('.btn-save');
+  saveBtn.disabled = true; saveBtn.textContent = 'Saving...';
+  api({ action:'updateResort', resortId, token:SESSION.token, fields }).then(res => {
+    saveBtn.disabled = false; saveBtn.textContent = '\uD83D\uDCBE Save Changes';
+    if (res.success) {
+      // Bust the cache so the next visit shows fresh data
+      try { sessionStorage.removeItem('kkResortCache_' + resortId); } catch(e) {}
+      kkBust(); // invalidate guest-side CSV and boot caches
+      showMsg('editMsg', '\u2705 Changes saved successfully!', 'ok'); window.scrollTo(0,0); }
+    else showMsg('editMsg', '\u274C ' + (res.error || 'Save failed'), 'err');
+  });
+}
+
+// ── IMAGE MANAGER ─────────────────────────────────────────────────────────────
+async function openImageManager() {
+  if (!BACKEND_URL) { alert('Booking backend URL not found in config.txt'); return; }
+  const folderLink = CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink'];
+  if (!folderLink) { alert('No Drive folder link found for this resort (Resort- Header/DriveFolderLink).'); return; }
+
+  // Show modal immediately with loading state
+  document.getElementById('imgModal').classList.add('on');
+  const folderEl = document.getElementById('imgModalFolder');
+  if (folderEl) folderEl.textContent = '';
+  document.getElementById('imgGridWrap').innerHTML =
+    '<div style="text-align:center;padding:30px 0;color:var(--muted);font-weight:700;">Loading images\u2026</div>';
+  document.getElementById('imgUploadProgress').innerHTML = '';
+
+  try {
+    const session = await getBackendSession();
+    await loadImages(folderLink, session);
+  } catch(err) {
+    document.getElementById('imgGridWrap').innerHTML =
+      '<div class="msg msg-err">' + esc(err.message || String(err)) + '</div>';
+  }
+}
+function closeImgModal() {
+  document.getElementById('imgModal').classList.remove('on');
+  document.getElementById('imgFileInput').value = '';
+}
+
+async function loadImages(folderLink, session) {
+  folderLink = folderLink || (CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink']);
+  session    = session    || await getBackendSession();
+  try {
+    const res = await apiBackend({ action:'listDriveFolderImages', folderLink, session });
+    if (!res.success) throw new Error(res.error || 'Could not load images');
+    IMG_LIST = res.images || [];
+    const folderEl = document.getElementById('imgModalFolder');
+    if (folderEl && res.folderName) folderEl.textContent = res.folderName;
+    renderImageGrid(IMG_LIST);
+  } catch(err) {
+    document.getElementById('imgGridWrap').innerHTML =
+      '<div class="msg msg-err">' + esc(err.message || String(err)) + '</div>';
+  }
+}
+
+function renderImageGrid(images) {
+  const wrap = document.getElementById('imgGridWrap');
+  if (!images.length) {
+    wrap.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);font-weight:700;">No images in this folder yet. Upload some above!</div>';
+    return;
+  }
+  wrap.innerHTML = '<div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px">' +
+    images.length + ' image' + (images.length!==1?'s':'') + '</div>' +
+    '<div class="img-grid-wrap">' +
+    images.map(img => `
+      <div class="img-card" id="imgcard_${esc(img.id)}">
+        <img src="${esc(img.thumbnail)}" alt="${esc(img.name)}"
+             onerror="this.style.height='60px';this.style.background='var(--bg)'">
+        <div class="img-card-name" title="${esc(img.name)}">${esc(img.name)}</div>
+        <div class="img-card-acts">
+          <button class="btn-img-rename" onclick="renameImage('${esc(img.id)}','${esc(img.name)}')">Rename</button>
+          <button class="btn-img-delete" onclick="deleteImage('${esc(img.id)}','${esc(img.name)}')">Delete</button>
+        </div>
+      </div>`).join('') +
+    '</div>';
+}
+
+// Upload one or more files
+async function handleUpload(files) {
+  if (!files || !files.length) return;
+  const folderLink = CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink'];
+  const prog = document.getElementById('imgUploadProgress');
+  prog.innerHTML = '';
+  let session;
+  try { session = await getBackendSession(); } catch(err) { prog.innerHTML = '<div class="msg msg-err">' + esc(err.message) + '</div>'; return; }
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (!file.type.startsWith('image/')) continue;
+    if (file.size > 10 * 1024 * 1024) {
+      prog.innerHTML += '<div class="upload-item"><span class="upload-item-status">\u26A0\uFE0F</span>' + esc(file.name) + ' \u2014 too large (max 10 MB)</div>';
+      continue;
+    }
+    // Show "uploading" row
+    const rowId = 'urow_' + i;
+    prog.innerHTML += '<div class="upload-item" id="' + rowId + '"><span class="upload-item-status">&#8987;</span>' + esc(file.name) + ' \u2014 uploading\u2026</div>';
+    try {
+      const base64 = await readFileAsBase64(file);
+      const res = await apiBackend({
+        action:      'uploadImageToDrive',
+        folderLink,
+        session,
+        fileName:    file.name,
+        mimeType:    file.type,
+        imageBase64: base64
+      }, 'POST');
+      const row = document.getElementById(rowId);
+      if (res.success) {
+        if (row) row.innerHTML = '<span class="upload-item-status">\u2705</span>' + esc(file.name) + ' \u2014 uploaded';
+        // Add to grid immediately
+        IMG_LIST.push({ id:res.id, name:res.name, url:res.url, thumbnail:res.thumbnail });
+        renderImageGrid(IMG_LIST);
+      } else {
+        if (row) row.innerHTML = '<span class="upload-item-status">\u274C</span>' + esc(file.name) + ' \u2014 ' + esc(res.error||'Upload failed');
+      }
+    } catch(err) {
+      const row = document.getElementById(rowId);
+      if (row) row.innerHTML = '<span class="upload-item-status">\u274C</span>' + esc(file.name) + ' \u2014 ' + esc(err.message||String(err));
+    }
+  }
+  // Reset file input so same file can be uploaded again
+  document.getElementById('imgFileInput').value = '';
+}
+
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = e => resolve(e.target.result.split(',')[1]); // strip data-URI prefix
+    reader.onerror = () => reject(new Error('Could not read file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function deleteImage(fileId, name) {
+  if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+  const card = document.getElementById('imgcard_' + fileId);
+  if (card) { card.style.opacity = '0.4'; card.style.pointerEvents = 'none'; }
+  try {
+    const session = await getBackendSession();
+    const res = await apiBackend({ action:'deleteImageFromDrive', fileId, session }, 'POST');
+    if (res.success) {
+      IMG_LIST = IMG_LIST.filter(img => img.id !== fileId);
+      renderImageGrid(IMG_LIST);
+    } else {
+      if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
+      alert('Delete failed: ' + (res.error || 'unknown error'));
+    }
+  } catch(err) {
+    if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
+    alert('Delete failed: ' + (err.message || String(err)));
+  }
+}
+
+async function renameImage(fileId, currentName) {
+  const ext      = currentName.includes('.') ? '.' + currentName.split('.').pop() : '';
+  const baseName = currentName.includes('.') ? currentName.slice(0, currentName.lastIndexOf('.')) : currentName;
+  const newBase  = prompt('Rename "' + currentName + '" to:', baseName);
+  if (!newBase || newBase.trim() === baseName) return;
+  const newName = newBase.trim() + ext;
+  const card    = document.getElementById('imgcard_' + fileId);
+  if (card) { card.style.opacity = '0.5'; card.style.pointerEvents = 'none'; }
+  try {
+    const session = await getBackendSession();
+    const res = await apiBackend({ action:'renameImageInDrive', fileId, newName, session }, 'POST');
+    if (res.success) {
+      const img = IMG_LIST.find(i => i.id === fileId);
+      if (img) img.name = newName;
+      renderImageGrid(IMG_LIST);
+    } else {
+      if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
+      alert('Rename failed: ' + (res.error || 'unknown error'));
+    }
+  } catch(err) {
+    if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
+    alert('Rename failed: ' + (err.message || String(err)));
+  }
+}
+
+
+// ── GALLERY SYNC ──────────────────────────────────────────────────────────────
+async function syncGallery() {
+  const driveRef = CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveRef'];
+  if (!driveRef || !driveRef.trim()) {
+    alert('No DriveRef set for this resort.\nAdd it in the “Drive Ref” field (Basic Information section) and save first.');
+    return;
+  }
+  const btn = document.getElementById('syncGalleryBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '↻ Syncing…'; }
+  showMsg('editMsg', '');
+  try {
+    const session = await getBackendSession();
+    const res = await apiBackend({ action: 'syncGalleryFromDrive', driveRef: driveRef.trim(), session });
+    if (!res.success) {
+      showMsg('editMsg', '❌ Gallery sync failed: ' + esc(res.error || 'unknown error'), 'err');
+      window.scrollTo(0, 0);
+      return;
+    }
+    // Populate the textarea
+    const fieldId = 'f_' + safeId('Resort- Gallery/GalleryLinksArray');
+    const ta = document.getElementById(fieldId);
+    if (ta) {
+      ta.value = res.content;
+      ta.style.borderColor = '#16A34A';
+      setTimeout(() => { ta.style.borderColor = ''; }, 4000);
+    }
+    showMsg('editMsg',
+      '✅ Gallery synced — <strong>' + esc(res.imageCount) + ' image' + (res.imageCount !== 1 ? 's' : '') + '</strong> from <em>' + esc(res.fileName) + '</em> (last updated ' + esc(res.lastUpdated) + '). Review and click “Save Changes” to persist.',
+      'ok');
+    window.scrollTo(0, 0);
+  } catch(err) {
+    showMsg('editMsg', '❌ Sync error: ' + esc(err.message || String(err)), 'err');
+    window.scrollTo(0, 0);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '↻ Sync from Drive'; }
+  }
+}
+
+// ── BOOKING BACKEND HANDOFF ───────────────────────────────────────────────────
+
+// ── Sitemap updater (superadmin only) ─────────────────────────────────────────
+async function updateResortSitemap() {
+  if (!SESSION || SESSION.role !== 'superadmin') return;
+  if (!SITEMAP_SECRET) {
+    alert('sitemap_secret is not set in config.txt. Add a line:\nsitemap_secret: your-random-key\nand make sure update-sitemap.php is deployed.');
+    return;
+  }
+  var btn = document.getElementById('btnSitemap');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating\u2026'; }
+  try {
+    // 1. Call KKAdminBackend to generate the sitemap XML
+    var backendUrl = BACKEND_URL;
+    if (!backendUrl) throw new Error('adminbackend_script not set in config.txt');
+    var params = new URLSearchParams({
+      action:   'generateSitemap',
+      siteBase: 'https://kampkiepie.co.za/NewKiepie',
+      _ts:      Date.now()
+    });
+    var genRes = await fetch(backendUrl + '?' + params.toString(), { cache: 'no-store' });
+    var genData = await genRes.json();
+    if (!genData.success) throw new Error('Sitemap generation failed: ' + genData.error);
+
+    // 2. POST the XML to update-sitemap.php on the server
+    if (btn) btn.textContent = 'Uploading\u2026';
+    var uploadRes = await fetch('update-sitemap.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ key: SITEMAP_SECRET, xml: genData.xml, file: 'sitemap-resorts.xml' })
+    });
+    var uploadData = await uploadRes.json();
+    if (!uploadData.success) throw new Error('Upload failed: ' + uploadData.error);
+
+    alert('\u2705 sitemap-resorts.xml updated on server\n' +
+          genData.count + ' resort URLs \u2014 ' + uploadData.bytes + ' bytes\n' +
+          'Updated: ' + uploadData.updated);
+  } catch(err) {
+    alert('\u274C ' + (err.message || err));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '\ud83d\uddfa\ufe0f Update Resort Sitemap'; }
+  }
+}
+
+function goToBookingBackend() {
+  if (!SESSION) return;
+  var resortId = (SESSION.role === 'superadmin') ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '') : SESSION.resortId;
+  var btn = document.getElementById('btnManageBookings');
+  if (btn) { btn.disabled = true; btn.textContent = 'Opening\u2026'; }
+  api({ action:'mintBootstrapToken', token:SESSION.token, resortId }).then(res => {
+    if (btn) { btn.disabled = false; btn.textContent = '\uD83D\uDCC5 Manage Bookings'; }
+    if (!res.success) { alert('Could not open booking system: ' + (res.error||'unknown error')); return; }
+    window.location.href = 'adminbackend.html?resort=' + encodeURIComponent(resortId) + '&token=' + encodeURIComponent(res.token);
+  });
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async function() {
+  document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') handleLogin(); });
+  document.getElementById('loginEmail').addEventListener('keydown',    e => { if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
+
+  await loadConfig(); // load KKAdminBackend URL from config.txt
+
+  var saved = sessionStorage.getItem('kkAdmin');
+  if (saved) {
+    try {
+      SESSION = JSON.parse(saved);
+      document.getElementById('hdrUser').style.display = 'flex';
+      document.getElementById('hdrName').textContent = SESSION.name;
+      if (SESSION.role === 'superadmin') { show('screenList'); loadList(); }
+      else { show('screenEdit'); document.getElementById('editTitle').textContent = SESSION.name; loadEdit(SESSION.resortId); }
+    } catch(e) { sessionStorage.removeItem('kkAdmin'); show('screenLogin'); }
+  } else {
+    show('screenLogin');
+  }
+});
+</script>
+<div id="photoPickerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;overflow:auto;padding:20px">
+  <div style="background:#fff;border-radius:16px;max-width:680px;margin:auto;padding:0;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.3)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1.5px solid #eee">
+      <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:14px" id="photoPickerTitle">Choose Photo</div>
+      <button onclick="closePhotoPicker()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888">&times;</button>
+    </div>
+    <div id="photoPickerBody" style="padding:16px;min-height:120px"></div>
+  </div>
+</div>
+</body>
+</html>

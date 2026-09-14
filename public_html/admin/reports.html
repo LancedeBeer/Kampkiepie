@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">	
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>KampKiepie – Financial Reports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#F97316;--brand-l:#FFF7ED;--brand-d:#EA580C;
+  --ok:#16A34A;--ok-l:#F0FDF4;--warn:#D97706;--warn-l:#FFFBEB;
+  --bad:#DC2626;--bad-l:#FEF2F2;--info:#2563EB;--info-l:#EFF6FF;
+  --bg:#F4F4F6;--card:#FFFFFF;--text:#18181B;
+  --muted:#6B7280;--subtle:#9CA3AF;--border:#E4E4E7;
+  --r:12px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 16px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.topbar{position:sticky;top:0;z-index:100;min-height:48px;background:#fff;
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  gap:8px;padding:0 12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--brand);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex:0 0 auto;}
+.brand{font-family:'Poppins',sans-serif;font-weight:800;font-size:16px;white-space:nowrap;}
+.brand em{font-style:normal;color:var(--brand);}
+.pill{background:var(--brand-l);color:var(--brand-d);font-size:11px;font-weight:800;
+  border-radius:999px;padding:5px 10px;white-space:nowrap;}
+.btn{height:36px;border:none;border-radius:9px;padding:0 13px;font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;gap:6px;text-decoration:none;}
+.btn-soft{background:var(--bg);color:var(--text);border:1px solid var(--border);}
+.btn-soft:hover{background:#fff;}
+.btn-brand{background:var(--brand);color:#fff;}
+.btn-brand:hover{background:var(--brand-d);}
+.connect-gate{position:fixed;left:0;right:0;top:62px;bottom:0;background:var(--bg);
+  z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.connect-box{max-width:380px;width:100%;background:#fff;border:1px solid var(--border);
+  border-radius:16px;padding:26px;text-align:center;box-shadow:var(--sh);}
+.notice{border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;line-height:1.5;}
+.notice.info{background:var(--info-l);color:#1D4ED8;border:1px solid #BFDBFE;}
+.notice.warn{background:var(--warn-l);color:#92400E;border:1px solid #FCD34D;}
+.notice.bad{background:var(--bad-l);color:#B91C1C;border:1px solid #FECACA;}
+.hidden{display:none!important;}
+/* Period bar */
+.period-bar{background:#fff;border-bottom:1px solid var(--border);
+  padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  position:sticky;top:49px;z-index:90;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.period-bar label{font-size:11px;font-weight:800;color:var(--muted);white-space:nowrap;}
+.select,.input-date{height:36px;border:1.5px solid var(--border);border-radius:9px;
+  padding:0 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;
+  color:var(--text);background:var(--bg);outline:none;}
+.select:focus,.input-date:focus{border-color:var(--brand);background:#fff;}
+.period-label{font-size:11px;font-weight:700;color:var(--muted);margin-left:4px;}
+/* Wrap */
+.wrap{max-width:1200px;margin:0 auto;padding:16px 14px 56px;}
+.section{background:#fff;border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--sh);margin-bottom:18px;overflow:hidden;}
+.section-hdr{padding:13px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.section-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;}
+.section-sub{font-size:11px;font-weight:700;color:var(--muted);}
+.section-body{padding:14px 16px;}
+/* Stat grid */
+.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(min-width:600px){.statgrid{grid-template-columns:repeat(4,1fr);}}
+.stat{background:linear-gradient(180deg,#fff,#fff8f0);border:1px solid var(--border);
+  border-radius:12px;padding:12px;}
+.stat label{display:block;font-size:10px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.4px;}
+.stat strong{display:block;font-family:'Poppins',sans-serif;font-size:20px;
+  line-height:1.15;margin-top:5px;}
+.stat.ok strong{color:var(--ok);}
+.stat.bad strong{color:var(--bad);}
+.stat.warn strong{color:var(--warn);}
+.stat.info strong{color:var(--info);}
+.stat .sub{font-size:11px;color:var(--subtle);font-weight:700;margin-top:3px;}
+/* Table */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:left;
+  font-size:12px;vertical-align:middle;}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);
+  background:#fff;position:sticky;top:0;z-index:2;}
+tr:hover td{background:#fffdfa;}
+td.num,th.num{text-align:right;}
+/* Bar indicator */
+.bar-cell{min-width:80px;}
+.bar-bg{background:var(--border);border-radius:3px;height:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;background:var(--brand);}
+.chip{display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;
+  font-size:10px;font-weight:800;background:var(--bg);color:var(--muted);}
+.chip.ok{background:var(--ok-l);color:var(--ok);}
+.chip.bad{background:var(--bad-l);color:var(--bad);}
+.chip.info{background:var(--info-l);color:var(--info);}
+.chip.warn{background:var(--warn-l);color:var(--warn);}
+.empty-row td{text-align:center;color:var(--subtle);font-style:italic;padding:20px;}
+/* Refund detail modal */
+.rovl{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:16px;}
+.rovl.on{display:flex;}
+.rbox{background:#fff;border-radius:16px;width:min(520px,100%);
+  max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.28);}
+.rbox-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;border-bottom:1px solid var(--border);}
+.rbox-title{font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;}
+.rbox-body{padding:16px;}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px;font-size:13px;margin-bottom:8px;}
+.kv span{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding-top:1px;}
+.kv strong{font-weight:700;}
+/* Loading spinner */
+.spin{width:28px;height:28px;border:3px solid var(--border);
+  border-top-color:var(--brand);border-radius:50%;margin:0 auto 10px;
+  animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">📊</div>
+  <div class="brand">Kamp<em>Kiepie</em> Reports</div>
+  <div class="pill" id="rolePill"></div>
+  <div class="pill" id="resortPill" style="background:var(--bg);color:var(--muted);"></div>
+  <button class="btn btn-soft" style="margin-left:auto" onclick="goBack()">&#8592; Back</button>
+</header>
+
+<!-- Auth gate -->
+<div class="connect-gate" id="connectGate">
+  <div class="connect-box">
+    <div class="spin"></div>
+    <div class="notice info" id="connectMsg" style="margin-top:8px">Connecting…</div>
+    <a href="adminbackend.html" id="connectReturnBtn" class="btn btn-brand hidden"
+       style="width:100%;margin-top:14px;text-decoration:none;">← Back to Admin</a>
+  </div>
+</div>
+
+<!-- Period bar -->
+<div class="period-bar hidden" id="periodBar">
+  <label>Period</label>
+  <select class="select" id="periodSelect" onchange="onPeriodChange()">
+    <option value="thisMonth" selected>This Month</option>
+    <option value="lastMonth">Last Month</option>
+    <option value="thisQuarter">This Quarter</option>
+    <option value="lastQuarter">Last Quarter</option>
+    <option value="thisYear">This Year</option>
+    <option value="lastYear">Last Year</option>
+    <option value="custom">Custom Range…</option>
+  </select>
+  <div id="customRow" class="hidden" style="display:flex;gap:6px;align-items:center;">
+    <input class="input-date" type="date" id="customStart">
+    <span style="font-size:12px;color:var(--muted)">→</span>
+    <input class="input-date" type="date" id="customEnd">
+    <button class="btn btn-brand" onclick="generateReports()">Apply</button>
+  </div>
+  <span class="period-label" id="periodLabel"></span>
+</div>
+
+<!-- Main reports area -->
+<div class="wrap hidden" id="wrapMain">
+  <div id="reportsContainer">
+    <div style="text-align:center;padding:40px 20px;">
+      <div class="spin"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--muted);margin-top:8px;">Loading report data…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Refund detail modal -->
+<div class="rovl" id="refundModal" onclick="if(event.target===this)closeRefundModal()">
+  <div class="rbox">
+    <div class="rbox-hdr">
+      <div class="rbox-title">↩️ Refund Detail</div>
+      <button class="btn btn-soft" onclick="closeRefundModal()">× Close</button>
+    </div>
+    <div class="rbox-body" id="refundModalBody"></div>
+  </div>
+</div>
+<script>
+// ── Shared utilities ──────────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function truthy(v){const s=String(v||'').trim().toLowerCase();return s==='true'||s==='1'||s==='yes';}
+function displayDate(v){const s=String(v||'').trim();if(!s)return'';return s.includes('T')?s.split('T')[0]:s;}
+function formatMoney(amount,currency){const sym={ZAR:'R',USD:'$',EUR:'€',GBP:'£'};const s=currency?(sym[String(currency).toUpperCase()]||String(currency)+' '):'R';return s+Math.round(Number(amount||0)).toLocaleString();}
+function pct(n,d){return d?Math.round((n/d)*100)+'%':'0%';}
+
+// ── Session ───────────────────────────────────────────────────────────────────
+function getSession(){return sessionStorage.getItem('kkSession')||'';}
+function setSession(t){if(t)sessionStorage.setItem('kkSession',t);}
+function decodeSessionPayload(token){
+  try{const b64=String(token||'').split('.')[0].replace(/-/g,'+').replace(/_/g,'/');
+  let p=b64;while(p.length%4)p+='=';return JSON.parse(decodeURIComponent(escape(atob(p))));}
+  catch(e){return null;}
+}
+
+// ── Config + API ──────────────────────────────────────────────────────────────
+let __API_URL='';
+async function bootstrapConfig(){
+  try{
+    const r=await fetch('config.txt',{cache:'no-store'});
+    if(!r.ok)return '';
+    const text=await r.text();
+    const line=text.split(/\r?\n/).find(l=>l.trim().startsWith('adminbackend_script'));
+    if(line){const url=line.split(':').slice(1).join(':').trim();__API_URL=url;return url;}
+  }catch(_){}
+  return localStorage.getItem('kkAdminBackendApi')||'';
+}
+async function apiCall(action,params={},method='GET'){
+  if(!__API_URL)throw new Error('API not configured');
+  const payload=Object.assign({action,resortId:APP.resortId},params);
+  const infoId=localStorage.getItem('kkResortInfoSheetId')||'';
+  if(infoId)payload.resortInfoSheetId=infoId;
+  const session=getSession();
+  if(session&&action!=='exchangeBootstrapToken')payload.session=session;
+  if(method==='GET'){
+    const url=new URL(__API_URL);
+    Object.entries(payload).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
+    url.searchParams.set('_ts',Date.now());
+    const res=await fetch(url.toString(),{method:'GET',redirect:'follow',cache:'no-store'});
+    const result=JSON.parse(await res.text());
+    if(result&&result.requireLogin){showAuthRequired('Session expired.');throw new Error('Session expired');}
+    return result;
+  }else{
+    const form=new URLSearchParams();
+    Object.entries(payload).forEach(([k,v])=>form.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
+    const res=await fetch(__API_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:form.toString()});
+    const result=JSON.parse(await res.text());
+    if(result&&result.requireLogin){showAuthRequired('Session expired.');throw new Error('Session expired');}
+    return result;
+  }
+}
+
+// ── App state ─────────────────────────────────────────────────────────────────
+const APP={resortId:'1',resortName:'',role:'',userEmail:'',
+  state:{bookings:[],payments:[],stands:[],standTypes:[]}};
+
+// ── UI helpers ────────────────────────────────────────────────────────────────
+function showAuthRequired(msg){
+  document.getElementById('connectMsg').textContent=msg;
+  document.getElementById('connectMsg').className='notice warn';
+  document.getElementById('connectReturnBtn').classList.remove('hidden');
+  document.getElementById('connectGate').classList.remove('hidden');
+  document.getElementById('wrapMain').classList.add('hidden');
+  document.getElementById('periodBar').classList.add('hidden');
+}
+function hideConnectGate(){
+  document.getElementById('connectGate').classList.add('hidden');
+  document.getElementById('wrapMain').classList.remove('hidden');
+  document.getElementById('periodBar').classList.remove('hidden');
+}
+function goBack(){
+  const session=getSession();
+  const params=new URLSearchParams();
+  if(APP.resortId)params.set('resort',APP.resortId);
+  if(session)params.set('_ks',session);
+  window.location.href='adminbackend.html'+(params.toString()?'?'+params.toString():'');
+}
+
+// ── Date range ────────────────────────────────────────────────────────────────
+function computeRange(key){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  const fmt=d=>new Date(d).toISOString().slice(0,10);
+  const q=Math.floor(m/3);
+  switch(key){
+    case'thisMonth':  return[fmt(new Date(y,m,1)),         fmt(new Date(y,m+1,0))];
+    case'lastMonth':  return[fmt(new Date(y,m-1,1)),       fmt(new Date(y,m,0))];
+    case'thisQuarter':return[fmt(new Date(y,q*3,1)),       fmt(new Date(y,q*3+3,0))];
+    case'lastQuarter':{const lq=q===0?3:q-1,lqy=q===0?y-1:y;
+      return[fmt(new Date(lqy,lq*3,1)),fmt(new Date(lqy,lq*3+3,0))];}
+    case'thisYear':   return[fmt(new Date(y,0,1)),         fmt(new Date(y,11,31))];
+    case'lastYear':   return[fmt(new Date(y-1,0,1)),       fmt(new Date(y-1,11,31))];
+    case'custom':{
+      const s=document.getElementById('customStart').value;
+      const e=document.getElementById('customEnd').value;
+      return s&&e?[s,e]:[fmt(new Date(y,m,1)),fmt(new Date(y,m+1,0))];
+    }
+    default:          return[fmt(new Date(y,m,1)),         fmt(new Date(y,m+1,0))];
+  }
+}
+function rangeLabelText(start,end){
+  const opts={day:'numeric',month:'short',year:'numeric'};
+  const s=new Date(start+'T00:00:00Z').toLocaleDateString('en-ZA',{...opts,timeZone:'UTC'});
+  const e=new Date(end+'T00:00:00Z').toLocaleDateString('en-ZA',{...opts,timeZone:'UTC'});
+  return s+' – '+e;
+}
+function onPeriodChange(){
+  const key=document.getElementById('periodSelect').value;
+  const customRow=document.getElementById('customRow');
+  if(key==='custom'){customRow.classList.remove('hidden');}
+  else{customRow.classList.add('hidden');generateReports();}
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+async function boot(){
+  const cfg=await bootstrapConfig();
+  const urlParams=new URLSearchParams(location.search);
+  const handoff=urlParams.get('_ks');
+  const urlResort=urlParams.get('resort');
+  if(urlResort)APP.resortId=urlResort;
+  if(handoff){
+    setSession(handoff);
+    urlParams.delete('_ks');
+    history.replaceState({},'',location.pathname+(urlParams.toString()?'?'+urlParams.toString():''));
+  }
+  if(!cfg){showAuthRequired('Booking system not configured.');return;}
+  if(!getSession()){showAuthRequired('Please sign in through the Admin Portal.');return;}
+  // Read identity from session
+  const payload=decodeSessionPayload(getSession());
+  if(payload){
+    APP.role=payload.role||'';APP.userEmail=payload.userEmail||'';
+    APP.resortId=payload.resortId||APP.resortId;
+    document.getElementById('rolePill').textContent=payload.resortRole||payload.role||'';
+  }
+  // Load data
+  document.getElementById('connectMsg').textContent='Loading data…';
+  try{
+    const [bootsR,standsR,bookingsR,paymentsR,standTypesR]=await Promise.all([
+      apiCall('getBootPayload',{resortId:APP.resortId},'GET'),
+      apiCall('listStands',{},'GET'),
+      apiCall('listBookings',{},'GET'),
+      apiCall('listPayments',{},'GET'),
+      apiCall('listStandTypes',{},'GET'),
+    ]);
+    if(bootsR.success&&bootsR.payload){
+      APP.resortName=bootsR.payload.resortName||'Resort '+APP.resortId;
+      document.getElementById('resortPill').textContent=APP.resortName;
+    }
+    APP.state.stands=(standsR.stands||[]).filter(s=>!truthy(s.SoftDeleted));
+    APP.state.bookings=(bookingsR.bookings||[]).filter(b=>!truthy(b.SoftDeleted));
+    APP.state.payments=(paymentsR.payments||[]).filter(p=>!truthy(p.SoftDeleted));
+    APP.state.standTypes=(standTypesR.standTypes||[]).filter(t=>!truthy(t.SoftDeleted));
+    hideConnectGate();
+    generateReports();
+  }catch(err){
+    showAuthRequired('Could not load data: '+(err.message||err));
+  }
+}
+
+// ── Report generator ──────────────────────────────────────────────────────────
+function generateReports(){
+  const key=document.getElementById('periodSelect').value;
+  const [start,end]=computeRange(key);
+  document.getElementById('periodLabel').textContent=rangeLabelText(start,end);
+  const currency=APP.state.stands[0]?.Currency||'ZAR';
+  const container=document.getElementById('reportsContainer');
+  container.innerHTML=[
+    renderRevenueSummary(start,end,currency),
+    renderKKCommission(start,end,currency),
+    renderReservedBookings(start,end,currency),
+    renderPaymentMethods(start,end,currency),
+    renderRefunds(start,end,currency),
+    renderOutstandingBalances(currency),
+    renderOccupancy(start,end),
+    renderTopStands(start,end,currency),
+    renderBySource(start,end,currency),
+  ].join('');
+}
+
+// ── Helpers for filtering ─────────────────────────────────────────────────────
+function paymentsInRange(start,end){
+  return APP.state.payments.filter(p=>{
+    const d=displayDate(p.PaidAt);return d&&d>=start&&d<=end;
+  });
+}
+function bookingsInRange(start,end){
+  return APP.state.bookings.filter(b=>{
+    const d=displayDate(b.CheckInDate);return d&&d>=start&&d<=end;
+  });
+}
+function isActiveBooking(b){
+  return['reserved','confirmed','part-paid','checked-in'].includes(String(b.Status||'').toLowerCase());
+}
+function standName(id){
+  const s=APP.state.stands.find(x=>x.StandID===id);
+  return s?[s.StandNumber,s.StandName].filter(Boolean).join(' - '):String(id||'');
+}
+function standTypeName(id){
+  const t=APP.state.standTypes.find(x=>x.StandTypeID===id);
+  return t?String(t.StandTypeName||id):String(id||'');
+}
+
+// ── 1b. KK Commission ────────────────────────────────────────────────────────
+function renderKKCommission(start,end,currency){
+  const bookings=bookingsInRange(start,end).filter(b=>!['cancelled','no-show'].includes(String(b.Status||'').toLowerCase()));
+  if(!bookings.length)return '';
+  let totalFee=0,onlineFee=0,adminFee=0,promoCount=0;
+  const rows=bookings.map(b=>{
+    let snap=null;try{snap=JSON.parse(b.CommsSnapshot||'null');}catch(e){}
+    const gName=[b.GuestFirstName,b.GuestLastName].filter(Boolean).join(' ')||'—';
+    const comm=snap?Number(snap.commission||0):null;
+    const rate=snap?snap.rate:null;
+    const basis=snap?snap.basis:'—';
+    const promo=snap&&snap.promoApplied;
+    if(comm){totalFee+=comm;if(basis==='online')onlineFee+=comm;else adminFee+=comm;if(promo)promoCount++;}
+    return `<tr>
+      <td>${esc(b.BookingRef||b.BookingID||'')}</td>
+      <td>${esc(gName)}</td>
+      <td>${esc(b.CheckInDate||'')} → ${esc(b.CheckOutDate||'')}</td>
+      <td style="text-align:center">${esc(basis)}</td>
+      <td style="text-align:right">${rate!==null?rate+'%':'—'}</td>
+      <td style="text-align:right">${esc(formatMoney(Number(b.TotalSnapshot||0),currency))}</td>
+      <td style="text-align:right;font-weight:800;color:var(--orange-d)">${comm!==null?esc(formatMoney(comm,currency)):'—'}${promo?' ⚡':''}</td>
+    </tr>`;
+  }).join('');
+  return `<div>
+    <div class="section-title">💼 KampKiepie Commission</div>
+    <div class="stats-row">
+      <div class="stat"><label>Online Comm.</label><strong>${esc(formatMoney(onlineFee,currency))}</strong></div>
+      <div class="stat"><label>Admin Comm.</label><strong>${esc(formatMoney(adminFee,currency))}</strong></div>
+      <div class="stat ok"><label>Total Due</label><strong>${esc(formatMoney(totalFee,currency))}</strong></div>
+      ${promoCount?`<div class="stat warn"><label>Promo Bookings</label><strong>${promoCount}</strong></div>`:''}
+    </div>
+    <table class="report-table">
+      <thead><tr><th>Ref</th><th>Guest</th><th>Dates</th><th>Basis</th><th>Rate</th><th style="text-align:right">Stay Total</th><th style="text-align:right">Commission</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+// ── 1. Revenue Summary ────────────────────────────────────────────────────────
+function renderRevenueSummary(start,end,currency){
+  const pmts=paymentsInRange(start,end);
+  const bkgs=bookingsInRange(start,end);
+  let collected=0,refunds=0;
+  pmts.forEach(p=>{
+    const amt=Number(p.Amount||0);
+    if(String(p.PaymentType||'').toLowerCase()==='refund')refunds+=amt;
+    else collected+=amt;
+  });
+  const net=collected-refunds;
+  const avgPerBooking=bkgs.length?Math.round(net/bkgs.length):0;
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">💰 Revenue Summary</div>
+        <div class="section-sub">Payments received in period</div></div>
+    </div>
+    <div class="section-body">
+      <div class="statgrid">
+        <div class="stat ok"><label>Total Collected</label><strong>${esc(formatMoney(collected,currency))}</strong></div>
+        <div class="stat bad"><label>Refunds Issued</label><strong>${esc(formatMoney(refunds,currency))}</strong></div>
+        <div class="stat ${net>=0?'ok':'bad'}"><label>Net Revenue</label><strong>${esc(formatMoney(net,currency))}</strong></div>
+        <div class="stat info"><label>Avg per Booking</label><strong>${esc(formatMoney(avgPerBooking,currency))}</strong>
+          <div class="sub">${bkgs.length} booking${bkgs.length!==1?'s':''} in period</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 2. Reserved Bookings ──────────────────────────────────────────────────────
+function renderReservedBookings(start,end,currency){
+  const reserved=bookingsInRange(start,end)
+    .filter(b=>String(b.Status||'').toLowerCase()==='reserved')
+    .sort((a,b)=>displayDate(a.CheckInDate).localeCompare(displayDate(b.CheckInDate)));
+  const totalValue=reserved.reduce((s,b)=>s+Number(b.TotalSnapshot||0),0);
+  const totalDeposit=reserved.reduce((s,b)=>s+Number(b.DepositPaidSnapshot||0),0);
+  const totalOutstanding=reserved.reduce((s,b)=>s+Number(b.BalanceSnapshot||0),0);
+  const now=new Date();
+  const expired=reserved.filter(b=>b.HoldExpiresAt&&new Date(b.HoldExpiresAt)<now);
+  const tbody=reserved.length?reserved.map(b=>{
+    const s=APP.state.stands.find(x=>x.StandID===b.StandID);
+    const holdExp=b.HoldExpiresAt?new Date(b.HoldExpiresAt):null;
+    const isExpired=holdExp&&holdExp<now;
+    const holdLabel=holdExp
+      ?`<span style="font-size:10px;color:${isExpired?'var(--bad)':'var(--muted)'};font-weight:${isExpired?800:600}">${isExpired?'⚠ Expired':'Until'} ${holdExp.toLocaleDateString('en-ZA',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>`
+      :'<span style="color:var(--subtle);font-size:11px">No hold</span>';
+    return`<tr>
+      <td class="mono" style="font-size:11px">${esc(b.BookingRef)}</td>
+      <td><strong>${esc(b.GuestFullName)}</strong><div style="font-size:10px;color:var(--muted)">${esc(b.GuestEmail||'')}</div></td>
+      <td style="font-size:11px">${esc(s?[s.StandNumber,s.StandName].filter(Boolean).join(' - '):b.StandID)}</td>
+      <td>${esc(displayDate(b.CheckInDate))}</td>
+      <td>${holdLabel}</td>
+      <td class="num">${esc(formatMoney(b.TotalSnapshot,currency))}</td>
+      <td class="num" style="color:var(--ok)">${esc(formatMoney(b.DepositPaidSnapshot||0,currency))}</td>
+      <td class="num" style="color:var(--bad);font-weight:800">${esc(formatMoney(b.BalanceSnapshot||0,currency))}</td>
+    </tr>`}).join('')
+    :`<tr class="empty-row"><td colspan="8">No reserved bookings in this period</td></tr>`;
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">📋 Reserved Bookings</div>
+        <div class="section-sub">Status = reserved · sorted by check-in date</div></div>
+      ${reserved.length?`<span class="pill">${reserved.length} booking${reserved.length!==1?'s':''}</span>`:''}
+    </div>
+    <div class="section-body">
+      <div class="statgrid">
+        <div class="stat info"><label>Reserved</label><strong>${reserved.length}</strong></div>
+        <div class="stat warn"><label>Total Value</label><strong>${esc(formatMoney(totalValue,currency))}</strong></div>
+        <div class="stat ok"><label>Deposits Received</label><strong>${esc(formatMoney(totalDeposit,currency))}</strong></div>
+        <div class="stat bad"><label>Outstanding</label><strong>${esc(formatMoney(totalOutstanding,currency))}</strong>
+          ${expired.length?`<div class="sub">⚠ ${expired.length} hold${expired.length!==1?'s':''} expired</div>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Ref</th><th>Guest</th><th>Stand</th><th>Check-in</th><th>Hold</th><th class="num">Total</th><th class="num">Deposit Paid</th><th class="num">Balance</th></tr></thead>
+      <tbody>${tbody}</tbody>
+    </table></div>
+  </div>`;
+}
+function renderPaymentMethods(start,end,currency){
+  const pmts=paymentsInRange(start,end).filter(p=>String(p.PaymentType||'').toLowerCase()!=='refund');
+  const groups={};
+  pmts.forEach(p=>{
+    const method=String(p.PaymentMethod||'Unknown');
+    if(!groups[method])groups[method]={count:0,total:0};
+    groups[method].count++;groups[method].total+=Number(p.Amount||0);
+  });
+  const total=pmts.reduce((s,p)=>s+Number(p.Amount||0),0);
+  const rows=Object.entries(groups).sort((a,b)=>b[1].total-a[1].total);
+  const maxAmt=rows.length?rows[0][1].total:1;
+  const tbody=rows.length?rows.map(([method,d])=>`<tr>
+    <td><strong>${esc(method)}</strong></td>
+    <td class="num">${d.count}</td>
+    <td class="num">${esc(formatMoney(d.total,currency))}</td>
+    <td class="num">${pct(d.total,total)}</td>
+    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct(d.total,maxAmt)}"></div></div></td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="5">No payments in this period</td></tr>`;
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">💳 Payment Methods</div>
+        <div class="section-sub">Excluding refunds</div></div>
+      <span class="pill">${formatMoney(total,currency)} total</span>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Method</th><th class="num">Count</th><th class="num">Amount</th><th class="num">% of total</th><th></th></tr></thead>
+      <tbody>${tbody}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ── 3. Refunds Detail ─────────────────────────────────────────────────────────
+let _refundsData=[];
+function renderRefunds(start,end,currency){
+  _refundsData=paymentsInRange(start,end)
+    .filter(p=>String(p.PaymentType||'').toLowerCase()==='refund')
+    .sort((a,b)=>displayDate(b.PaidAt).localeCompare(displayDate(a.PaidAt)));
+  const total=_refundsData.reduce((s,p)=>s+Number(p.Amount||0),0);
+  const tbody=_refundsData.length?_refundsData.map((p,i)=>{
+    const b=APP.state.bookings.find(x=>x.BookingID===p.BookingID);
+    return`<tr onclick="openRefundDetail(${i})" style="cursor:pointer">
+      <td>${esc(displayDate(p.PaidAt))}</td>
+      <td class="mono" style="font-size:11px">${esc(b?b.BookingRef:p.BookingID||'—')}</td>
+      <td>${esc(b?b.GuestFullName:'—')}</td>
+      <td>${esc(p.PaymentMethod||'—')}</td>
+      <td>${esc(p.Reference||'—')}</td>
+      <td class="num" style="color:var(--bad);font-weight:800">${esc(formatMoney(p.Amount,currency))}</td>
+      <td style="font-size:11px;color:var(--muted)">${esc(p.ReceivedBy||'—')}</td>
+    </tr>`}).join('')
+    :`<tr class="empty-row"><td colspan="7">No refunds in this period</td></tr>`;
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">↩️ Refunds</div>
+        <div class="section-sub">Click a row for full detail</div></div>
+      ${_refundsData.length?`<span class="pill" style="background:var(--bad-l);color:var(--bad)">${_refundsData.length} refund${_refundsData.length!==1?'s':''} · ${formatMoney(total,currency)}</span>`:''}
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Date</th><th>Booking Ref</th><th>Guest</th><th>Method</th><th>Reference / Reason</th><th class="num">Amount</th><th>Posted By</th></tr></thead>
+      <tbody>${tbody}</tbody>
+    </table></div>
+  </div>`;
+}
+function openRefundDetail(i){
+  const p=_refundsData[i];if(!p)return;
+  const b=APP.state.bookings.find(x=>x.BookingID===p.BookingID);
+  const s=b?APP.state.stands.find(x=>x.StandID===b.StandID):null;
+  const currency=p.Currency||'ZAR';
+  document.getElementById('refundModalBody').innerHTML=`
+    <div class="notice bad" style="margin-bottom:14px">
+      Refund of <strong>${esc(formatMoney(p.Amount,currency))}</strong>
+    </div>
+    <div class="kv"><span>Date</span><strong>${esc(displayDate(p.PaidAt))}</strong></div>
+    <div class="kv"><span>Method</span><strong>${esc(p.PaymentMethod||'—')}</strong></div>
+    <div class="kv"><span>Reference / Reason</span><strong>${esc(p.Reference||'—')}</strong></div>
+    <div class="kv"><span>Notes</span><strong>${esc(p.Notes||'—')}</strong></div>
+    <div class="kv"><span>Posted By</span><strong>${esc(p.ReceivedBy||'—')}</strong></div>
+    <div style="height:1px;background:var(--border);margin:12px 0"></div>
+    <div class="kv"><span>Booking Ref</span><strong class="mono">${esc(b?b.BookingRef:'—')}</strong></div>
+    <div class="kv"><span>Guest</span><strong>${esc(b?b.GuestFullName:'—')}</strong></div>
+    <div class="kv"><span>Stand</span><strong>${esc(s?[s.StandNumber,s.StandName].filter(Boolean).join(' - '):'—')}</strong></div>
+    <div class="kv"><span>Check-in</span><strong>${esc(b?displayDate(b.CheckInDate):'—')}</strong></div>
+    <div class="kv"><span>Booking Total</span><strong>${esc(b?formatMoney(b.TotalSnapshot,currency):'—')}</strong></div>
+  `;
+  document.getElementById('refundModal').classList.add('on');
+}
+function closeRefundModal(){
+  document.getElementById('refundModal').classList.remove('on');
+}
+
+// ── 4. Outstanding Balances ───────────────────────────────────────────────────
+function renderOutstandingBalances(currency){
+  const owing=APP.state.bookings
+    .filter(b=>isActiveBooking(b)&&Number(b.BalanceSnapshot||0)>0)
+    .sort((a,b)=>Number(b.BalanceSnapshot||0)-Number(a.BalanceSnapshot||0));
+  const total=owing.reduce((s,b)=>s+Number(b.BalanceSnapshot||0),0);
+  const tbody=owing.length?owing.map(b=>`<tr>
+    <td class="mono" style="font-size:11px">${esc(b.BookingRef)}</td>
+    <td><strong>${esc(b.GuestFullName)}</strong></td>
+    <td>${esc(standName(b.StandID))}</td>
+    <td>${esc(displayDate(b.CheckInDate))}</td>
+    <td><span class="chip ${b.Status==='reserved'?'warn':'info'}">${esc(b.Status)}</span></td>
+    <td class="num">${esc(formatMoney(b.TotalSnapshot,currency))}</td>
+    <td class="num" style="color:var(--bad);font-weight:800">${esc(formatMoney(b.BalanceSnapshot,currency))}</td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="7">No outstanding balances 🎉</td></tr>`;
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">⏳ Outstanding Balances</div>
+        <div class="section-sub">Active bookings with balance still owed</div></div>
+      ${owing.length?`<span class="pill" style="background:var(--warn-l);color:var(--warn)">${owing.length} booking${owing.length!==1?'s':''} · ${formatMoney(total,currency)} outstanding</span>`:''}
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Ref</th><th>Guest</th><th>Stand</th><th>Check-in</th><th>Status</th><th class="num">Total</th><th class="num">Balance</th></tr></thead>
+      <tbody>${tbody}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ── 5. Occupancy Rate ─────────────────────────────────────────────────────────
+function renderOccupancy(start,end){
+  const stands=APP.state.stands;
+  if(!stands.length)return'';
+  const startD=new Date(start+'T00:00:00Z'),endD=new Date(end+'T00:00:00Z');
+  const totalDays=Math.max(1,Math.round((endD-startD)/86400000)+1);
+  // Days a stand was occupied: count unique days with an active booking overlap
+  function occupiedDays(standId){
+    const days=new Set();
+    APP.state.bookings.filter(b=>b.StandID===standId&&isActiveBooking(b)).forEach(b=>{
+      let d=new Date(Math.max(new Date(b.CheckInDate+'T00:00:00Z'),startD));
+      const last=new Date(Math.min(new Date(b.CheckOutDate+'T00:00:00Z'),new Date(endD.getTime()+86400000)));
+      while(d<last){days.add(d.toISOString().slice(0,10));d=new Date(d.getTime()+86400000);}
+    });
+    return days.size;
+  }
+  const totalPossible=stands.length*totalDays;
+  let totalOccupied=0;
+  const byType={};
+  const byStand=stands.map(s=>{
+    const occ=occupiedDays(s.StandID);
+    totalOccupied+=occ;
+    const typeName=standTypeName(s.StandTypeID);
+    if(!byType[typeName])byType[typeName]={occ:0,possible:0};
+    byType[typeName].occ+=occ;byType[typeName].possible+=totalDays;
+    return{name:standName(s.StandID),type:typeName,occ,pct:Math.round((occ/totalDays)*100)};
+  }).sort((a,b)=>b.pct-a.pct);
+  const overallPct=Math.round((totalOccupied/totalPossible)*100);
+  const typeRows=Object.entries(byType).sort((a,b)=>b[1].occ-a[1].occ).map(([name,d])=>`<tr>
+    <td><strong>${esc(name)}</strong></td>
+    <td class="num">${Math.round((d.occ/d.possible)*100)}%</td>
+    <td class="num">${d.occ} / ${d.possible} days</td>
+    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${Math.round((d.occ/d.possible)*100)}%;background:var(--ok)"></div></div></td>
+  </tr>`).join('');
+  const standRows=byStand.map(s=>`<tr>
+    <td>${esc(s.name)}</td>
+    <td style="color:var(--muted);font-size:11px">${esc(s.type)}</td>
+    <td class="num">${s.pct}%</td>
+    <td class="num">${s.occ} / ${totalDays} days</td>
+    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${s.pct}%;background:${s.pct>=70?'var(--ok)':s.pct>=40?'var(--warn)':'var(--bad)'}"></div></div></td>
+  </tr>`).join('');
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">📅 Occupancy Rate</div>
+        <div class="section-sub">${totalDays} days · ${stands.length} stand${stands.length!==1?'s':''}</div></div>
+      <span class="pill" style="background:${overallPct>=70?'var(--ok-l)':overallPct>=40?'var(--warn-l)':'var(--bad-l)'};color:${overallPct>=70?'var(--ok)':overallPct>=40?'var(--warn)':'var(--bad)'}">${overallPct}% overall</span>
+    </div>
+    <div class="section-body" style="padding-bottom:0">
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">By Stand Type</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Type</th><th class="num">Occupancy</th><th class="num">Days</th><th></th></tr></thead>
+        <tbody>${typeRows}</tbody>
+      </table></div>
+    </div>
+    <div class="section-body">
+      <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">By Stand</div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Stand</th><th>Type</th><th class="num">Occupancy</th><th class="num">Days</th><th></th></tr></thead>
+        <tbody>${standRows}</tbody>
+      </table></div>
+    </div>
+  </div>`;
+}
+
+// ── 6. Top Performing Stands ──────────────────────────────────────────────────
+function renderTopStands(start,end,currency){
+  const bkgs=bookingsInRange(start,end).filter(b=>!['cancelled','no-show'].includes(String(b.Status||'').toLowerCase()));
+  const map={};
+  bkgs.forEach(b=>{
+    if(!map[b.StandID])map[b.StandID]={bookings:0,nights:0,revenue:0};
+    map[b.StandID].bookings++;
+    map[b.StandID].nights+=Number(b.Nights||0);
+    map[b.StandID].revenue+=Number(b.TotalSnapshot||0);
+  });
+  const rows=Object.entries(map).sort((a,b)=>b[1].revenue-a[1].revenue);
+  const maxRev=rows.length?rows[0][1].revenue:1;
+  const tbody=rows.length?rows.map(([id,d])=>`<tr>
+    <td><strong>${esc(standName(id))}</strong></td>
+    <td style="font-size:11px;color:var(--muted)">${esc(standTypeName(APP.state.stands.find(s=>s.StandID===id)?.StandTypeID||''))}</td>
+    <td class="num">${d.bookings}</td>
+    <td class="num">${d.nights}</td>
+    <td class="num" style="font-weight:800">${esc(formatMoney(d.revenue,currency))}</td>
+    <td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${pct(d.revenue,maxRev)}"></div></div></td>
+  </tr>`).join(''):`<tr class="empty-row"><td colspan="6">No bookings in this period</td></tr>`;
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">🏆 Top Performing Stands</div>
+        <div class="section-sub">Ranked by revenue · excludes cancelled / no-show</div></div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Stand</th><th>Type</th><th class="num">Bookings</th><th class="num">Nights</th><th class="num">Revenue</th><th></th></tr></thead>
+      <tbody>${tbody}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ── 7. Bookings by Source / Channel ──────────────────────────────────────────
+function renderBySource(start,end,currency){
+  const bkgs=bookingsInRange(start,end).filter(b=>!['cancelled','no-show'].includes(String(b.Status||'').toLowerCase()));
+  const bySource={},byChannel={};
+  bkgs.forEach(b=>{
+    const src=String(b.Source||'unknown');
+    const ch=String(b.BookingChannel||'unknown');
+    if(!bySource[src])bySource[src]={count:0,revenue:0};
+    bySource[src].count++;bySource[src].revenue+=Number(b.TotalSnapshot||0);
+    if(!byChannel[ch])byChannel[ch]={count:0,revenue:0};
+    byChannel[ch].count++;byChannel[ch].revenue+=Number(b.TotalSnapshot||0);
+  });
+  const mkRows=(map)=>{
+    const rows=Object.entries(map).sort((a,b)=>b[1].count-a[1].count);
+    if(!rows.length)return`<tr class="empty-row"><td colspan="3">No bookings in this period</td></tr>`;
+    return rows.map(([name,d])=>`<tr>
+      <td><strong>${esc(name)}</strong></td>
+      <td class="num">${d.count}</td>
+      <td class="num">${esc(formatMoney(d.revenue,currency))}</td>
+    </tr>`).join('');
+  };
+  return`<div class="section">
+    <div class="section-hdr">
+      <div><div class="section-title">📡 Bookings by Source & Channel</div>
+        <div class="section-sub">Where bookings originated · excludes cancelled / no-show</div></div>
+    </div>
+    <div class="section-body" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-bottom:0">
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">By Source</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Source</th><th class="num">Count</th><th class="num">Revenue</th></tr></thead>
+          <tbody>${mkRows(bySource)}</tbody>
+        </table></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">By Channel</div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Channel</th><th class="num">Count</th><th class="num">Revenue</th></tr></thead>
+          <tbody>${mkRows(byChannel)}</tbody>
+        </table></div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+  </div>`;
+}
+
+boot();
+</script>
+</body>
+</html>
