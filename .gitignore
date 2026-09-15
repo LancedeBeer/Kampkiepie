@@ -1,0 +1,11 @@
+# Server-side config with sensitive keys — lives on server only
+server/config.txt
+server/config.php
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db

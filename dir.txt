@@ -1,0 +1,63 @@
+kampkiepie
+├── public_html/
+    ├── .htaccess
+    ├── robots.txt
+    ├── favicon.png
+    │
+    ├── index.html
+    ├── index2.html
+    ├── about.html
+    ├── contact.html
+    ├── help.html
+    ├── how.html
+    ├── privacy.html
+    ├── terms.html
+    ├── thank-you.html
+    ├── bookings.html
+    ├── deck.html
+    ├── favourites.html
+    ├── list-your-resort.html
+    ├── map.html
+    ├── resort.html
+    ├── join1.html
+    ├── join2.html
+    ├── join3.html
+    ├── blog.html
+    ├── blog-family-campsite-gauteng.html
+    ├── KKLogo.png
+    ├── og-default.jpg
+    │
+    ├── errors/
+    │   ├── 400.shtml
+    │   ├── 401.shtml
+    │   ├── 403.shtml
+    │   ├── 404.shtml
+    │   └── 500.shtml
+    │
+    ├── admin/
+    │   ├── admin.html
+    │   ├── adminbackend.html
+    │   ├── adminbackend.js
+    │   ├── adminsetup.html
+    │   ├── importer.html
+    │   └── reports.html
+    │
+    ├── assets/
+    │   ├── css/
+    │   └── js/
+    │
+    ├── lib/
+    │   └── supabase-client.js       ← one shared file, all pages import from here
+    │
+    ├── server/
+    │   ├── log.php
+    │   ├── mail-relay.php
+    │   └── config.txt               ← protect with .htaccess deny, or move outside public_html if possible
+    │
+    ├── seo/
+    │   ├── generate-sitemap.html
+    │   ├── sitemap-index.html
+    │   ├── sitemap-resorts.xml
+    │   └── update-sitemap.php
+    │
+    └── deck_log.txt                 ← flag: confirm what this is before deciding where it goes
