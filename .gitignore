@@ -9,3 +9,4 @@ server/config.php
 # OS
 .DS_Store
 Thumbs.db
+public_html/config.txt

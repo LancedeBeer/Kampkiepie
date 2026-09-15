@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="apple-touch-icon" href="/favicon.png">	
+<link rel="apple-touch-icon" href="/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <!-- ── SEO ── -->
 <title>Resort Map – KampKiepie | Campsites Across South Africa</title>
@@ -71,7 +71,6 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
   .pill-admin{padding:8px;border-radius:50%;}
   .pill-admin-label{display:none;}
 }
-
 .map-page-head{padding:20px 32px;background:#fff;border-bottom:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;flex-shrink:0;}
 .map-page-title{font-weight:800;font-size:20px;color:var(--green);}
@@ -80,16 +79,13 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
 .map-search input{height:42px;border-radius:10px;border:1.5px solid var(--border);padding:0 14px;
   font-family:'Nunito',sans-serif;font-size:13.5px;outline:none;width:220px;}
 .map-search input:focus{border-color:var(--orange);}
-
 .map-shell{flex:1;position:relative;min-height:420px;}
 #map{position:absolute;inset:0;}
-
 .leaflet-popup-content-wrapper{border-radius:12px;}
 .map-popup-name{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--green);margin-bottom:4px;}
 .map-popup-loc{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px;}
 .map-popup-link{display:inline-block;background:var(--orange);color:#fff;border-radius:999px;padding:7px 14px;
   font-size:12px;font-weight:800;text-decoration:none;}
-
 .map-note{background:var(--orange-l);color:var(--orange-d);font-size:12.5px;font-weight:700;
   padding:10px 32px;text-align:center;flex-shrink:0;}
 </style>
@@ -104,7 +100,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
     </div>
   </a>
   <nav class="topbar-nav">
-    <a href="index2.html">Resorts</a>
+    <a href="explore.html">Resorts</a>
     <a href="map.html" class="current">Map</a>
     <a href="about.html">About</a>
     <a href="blog.html">Blog</a>
@@ -113,7 +109,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
   </nav>
   <div class="topbar-right">
     <span class="pill-count" id="resortCountPill">Loading…</span>
-    <a class="pill-admin" href="admin.html" target="_blank">⚙️<span class="pill-admin-label"> Admin</span></a>
+    <a class="pill-admin" href="admin/admin.html" target="_blank">⚙️<span class="pill-admin-label"> Admin</span></a>
   </div>
 </header>
 
@@ -127,16 +123,28 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
   </div>
 </div>
 
-<div class="map-note">📍 Only resorts with a known map location are shown here. If you can't find a resort on the map, it doesn't yet have location data — try the <a href="index2.html" style="color:var(--orange-d);font-weight:800;">full directory</a> instead.</div>
+<div class="map-note">📍 Only resorts with a known map location are shown here. If you can't find a resort on the map, it doesn't yet have location data — try the <a href="explore.html" style="color:var(--orange-d);font-weight:800;">full directory</a> instead.</div>
 
 <div class="map-shell">
   <div id="map"></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SHEET_RESORT = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
+// ── Supabase config ───────────────────────────────────────────────────────────
+const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 let map, markers = [];
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function isValidLatLng(str) {
+  if (!str) return false;
+  return /^-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/.test(String(str).trim());
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
   map = L.map('map', { minZoom: 4 });
@@ -147,76 +155,38 @@ window.addEventListener('DOMContentLoaded', async () => {
   }).addTo(map);
   try {
     await loadResorts();
-  } catch (e) {
+  } catch(e) {
     document.getElementById('mapSub').textContent = 'Could not load resort locations: ' + e.message;
   }
 });
 
-async function fetchCsv(url) {
-  const bustUrl = url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now();
-  const res = await fetch(bustUrl, { cache: 'no-store' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.text();
-}
-function parseCsv(text) {
-  const rows = []; let row = []; let cur = ''; let inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else { inQ = false; } }
-      else cur += c;
-    } else {
-      if (c === '"') inQ = true;
-      else if (c === ',') { row.push(cur); cur = ''; }
-      else if (c === '\r') { /* skip */ }
-      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
-      else cur += c;
-    }
-  }
-  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
-  return rows;
-}
-function truthy(v) { if (!v) return false; const s = String(v).trim().toLowerCase(); return s === 'true' || s === '1' || s === 'yes'; }
-function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-function isValidLatLng(str) {
-  if (!str) return false;
-  return /^-?\d{1,3}(\.\d+)?\s*,\s*-?\d{1,3}(\.\d+)?$/.test(String(str).trim());
-}
-
 async function loadResorts() {
-  const csv = await fetchCsv(SHEET_RESORT);
-  const rows = parseCsv(csv);
-  const headers = rows[0].map(h => (h || '').trim());
-  const col = name => headers.indexOf(name);
-  const iName = col('Resort- Header/ResortName'), iActive = col('Resorts - Switches/BetaActive?'),
-    iResortID = col('ResortID'), iMapCoords = col('Map/Coordinates'),
-    iCity = col('Resort- Header/CityRowID'), iAddress = col('Resort- Header/Address');
+  const { data, error } = await sb
+    .from('resorts')
+    .select('resort_id, resort_name, address, coordinates')
+    .eq('beta_active', true)
+    .eq('active', true)
+    .not('coordinates', 'is', null);
 
-  if (iMapCoords < 0) {
-    document.getElementById('mapSub').textContent = 'The Map/Coordinates column could not be found in the sheet.';
-    return;
-  }
+  if (error) throw new Error(error.message);
 
-  let plotted = 0, totalActive = 0;
-  rows.slice(1).forEach(row => {
-    const name = (row[iName] || '').trim();
-    if (!name) return;
-    const active = truthy(row[iActive]);
-    if (active) totalActive++;
-    if (!active) return;
-    const coords = (row[iMapCoords] || '').trim();
+  let plotted = 0, totalActive = data.length;
+
+  data.forEach(r => {
+    const name   = (r.resort_name  || '').trim(); if (!name) return;
+    const coords = (r.coordinates  || '').trim();
+    const address = (r.address     || '').trim();
+
     if (!isValidLatLng(coords)) return;
     const [latStr, lngStr] = coords.split(',').map(s => s.trim());
     const lat = parseFloat(latStr), lng = parseFloat(lngStr);
     if (isNaN(lat) || isNaN(lng)) return;
-    const resortId = (row[iResortID] || '').trim();
-    const address = (row[iAddress] || '').trim();
 
     const marker = L.marker([lat, lng]).addTo(map);
     marker.bindPopup(
       '<div class="map-popup-name">' + esc(name) + '</div>' +
       (address ? '<div class="map-popup-loc">📍 ' + esc(address) + '</div>' : '') +
-      '<a class="map-popup-link" href="resort.html?id=' + encodeURIComponent(resortId) + '" target="_blank">View Resort →</a>'
+      '<a class="map-popup-link" href="resort.html?id=' + encodeURIComponent(r.resort_id) + '" target="_blank">View Resort →</a>'
     );
     marker._resortName = name.toLowerCase();
     markers.push(marker);
@@ -232,7 +202,7 @@ function filterMapMarkers(query) {
   markers.forEach(m => {
     const match = !q || m._resortName.includes(q);
     if (match) { if (!map.hasLayer(m)) m.addTo(map); }
-    else { if (map.hasLayer(m)) map.removeLayer(m); }
+    else        { if (map.hasLayer(m)) map.removeLayer(m); }
   });
 }
 </script>
