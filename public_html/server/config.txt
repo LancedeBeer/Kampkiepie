@@ -1,7 +1,0 @@
-## Config File for KampKipeie.co.za
-
-
-adminbackend_script: https://script.google.com/macros/s/AKfycbzQIEAveqA6lDN3gy1XBEED-EGk0peLKUZUgXNKQpvOxeF7Sc1C2bze-oBY21gROpkrqg/exec
-resort_information_sheet_id: https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/edit?usp=drive_link
-admin_script: https://script.google.com/macros/s/AKfycbyMNA6rK5e_RZqk5KP2MwYNLjVXEkuiyGNycfERuK2vGfSGbslvTrwpaOz0kJ2GqlgzNQ/exec
-sitemap_secret: someLongRandomStringHere
