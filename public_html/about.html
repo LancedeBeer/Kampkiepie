@@ -382,74 +382,42 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
   <div class="footer-bottom">© 2026 KampKiepie. All rights reserved. &nbsp;·&nbsp; Website by <a href="https://www.binarybotany.co.za" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Binary Botany</a> &amp; <a href="https://www.facebook.com/swiftglideapps" target="_blank" rel="noopener" style="color:#8FA398;text-decoration:underline;">Swiftglide Apps</a></div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SHEET_RESORT   = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
-const SHEET_PROVINCE = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Province';
-const SHEET_CITY     = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=City';
+const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 window.addEventListener('DOMContentLoaded', async () => {
   try { await loadStats(); } catch (e) { console.warn('Could not load live stats:', e); }
 });
 
-async function fetchCsv(url) {
-  const bustUrl = url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now();
-  const res = await fetch(bustUrl, { cache: 'no-store' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.text();
-}
-function parseCsv(text) {
-  const rows = []; let row = []; let cur = ''; let inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else { inQ = false; } }
-      else cur += c;
-    } else {
-      if (c === '"') inQ = true;
-      else if (c === ',') { row.push(cur); cur = ''; }
-      else if (c === '\r') { /* skip */ }
-      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
-      else cur += c;
-    }
-  }
-  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
-  return rows;
-}
-function truthy(v) { if (!v) return false; const s = String(v).trim().toLowerCase(); return s === 'true' || s === '1' || s === 'yes'; }
-
 async function loadStats() {
-  const [provCsv, cityCsv, resortCsv] = await Promise.all([fetchCsv(SHEET_PROVINCE), fetchCsv(SHEET_CITY), fetchCsv(SHEET_RESORT)]);
-  const provinces = {};
-  parseCsv(provCsv).slice(1).forEach(r => { if (r[0] && r[1]) provinces[r[0].trim()] = r[1].trim(); });
-  const cities = {};
-  parseCsv(cityCsv).slice(1).forEach(r => { if (r[0] && r[1]) cities[r[0].trim()] = { name: r[1].trim(), provId: (r[2] || '').trim() }; });
+  const [resortRes, cityRes] = await Promise.all([
+    sb.from('resorts')
+      .select('total_views, city_row_id')
+      .eq('beta_active', true)
+      .eq('active', true),
+    sb.from('city')
+      .select('row_id, province_row_id')
+  ]);
 
-  const rows = parseCsv(resortCsv);
-  const headers = rows[0].map(h => (h || '').trim());
-  const col = name => headers.indexOf(name);
-  const iName = col('Resort- Header/ResortName'), iActive = col('Resorts - Switches/BetaActive?'),
-    iCityRef = col('Resort- Header/CityRowID'), iProvRef = col('Resort- Header/ProvinceRel'),
-    iTotalViews = col('Scoring/TotalViews');
+  if (resortRes.error) throw new Error(resortRes.error.message);
 
-  let activeCount = 0, totalViews = 0;
-  const provNamesSeen = new Set();
-  rows.slice(1).forEach(row => {
-    const name = (row[iName] || '').trim();
-    if (!name) return;
-    const active = truthy(row[iActive]);
-    if (active) activeCount++;
-    totalViews += Number(row[iTotalViews]) || 0;
-    const cityObj = cities[(row[iCityRef] || '').trim()] || {};
-    let provName = '';
-    if (iProvRef >= 0 && row[iProvRef]) provName = provinces[(row[iProvRef] || '').trim()] || '';
-    if (!provName && cityObj.provId) provName = provinces[cityObj.provId] || '';
-    if (provName) provNamesSeen.add(provName);
-  });
+  const data = resortRes.data || [];
+
+  // Map city -> province so we can count unique provinces
+  const cityProvMap = {};
+  (cityRes.data || []).forEach(c => { cityProvMap[c.row_id] = c.province_row_id; });
+
+  const activeCount = data.length;
+  const totalViews  = data.reduce((s, r) => s + (Number(r.total_views) || 0), 0);
+  const provsSeen   = new Set(data.map(r => cityProvMap[r.city_row_id]).filter(Boolean));
 
   document.getElementById('resortCountPill').textContent = activeCount + ' resorts';
-  document.getElementById('statResorts').textContent = activeCount.toLocaleString() + '+';
-  document.getElementById('statViews').textContent = totalViews.toLocaleString();
-  document.getElementById('statProvinces').textContent = provNamesSeen.size;
+  document.getElementById('statResorts').textContent     = activeCount.toLocaleString() + '+';
+  document.getElementById('statViews').textContent       = totalViews.toLocaleString();
+  document.getElementById('statProvinces').textContent   = provsSeen.size;
 }
 async function fetchConfigValue_(key) {
   try {
