@@ -67,7 +67,7 @@
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://www.kampkiepie.co.za/index2.html?q={search_term_string}"
+          "urlTemplate": "https://www.kampkiepie.co.za/explore.html?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       }
@@ -272,7 +272,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
     <div class="topbar-logo-text">Kamp<em>Kiepie</em></div>
   </div>
   <nav class="topbar-nav">
-    <a href="index2.html">Resorts</a>
+    <a href="explore.html">Resorts</a>
     <a href="map.html">Map</a>
     <a href="about.html">About</a>
     <a href="blog.html">Blog</a>
@@ -338,7 +338,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
     <h2 class="featured-title">Explore. Relax.<br>Make memories.</h2>
     <div class="featured-rule"></div>
     <p class="featured-desc">From tranquil bush escapes to fun-filled family getaways &#8211; discover the best destinations for every kind of adventurer.</p>
-    <a class="btn-browse" href="index2.html">Browse all resorts &#8594;</a>
+    <a class="btn-browse" href="explore.html">Browse all resorts &#8594;</a>
   </div>
   <div class="fcarousel">
     <div class="fcards" id="fcards"></div>
@@ -408,7 +408,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
     </div>
     <div class="footer-col">
       <div class="footer-col-h">Explore</div>
-      <a href="index2.html">All Resorts</a>
+      <a href="explore.html">All Resorts</a>
       <a href="map.html">Map</a>
     </div>
     <div class="footer-col">
@@ -760,7 +760,7 @@ function runHeroSearch() {
   if (q)              params.set('q',   q);
   if (area)           params.set('area', area);
   if (activeCategory) params.set('cat',  activeCategory);
-  window.location.href = 'index2.html' + (params.toString() ? '?' + params.toString() : '');
+  window.location.href = 'explore.html' + (params.toString() ? '?' + params.toString() : '');
 }
 function computeCarouselList() {
   if (!activeCategory && !searchQ && !searchArea) return pickFeaturedResorts();

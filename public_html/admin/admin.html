@@ -397,11 +397,10 @@ const COL_REV = Object.fromEntries(Object.entries(COL).map(([k,v])=>[v,k]));
 
 // Translate Supabase row (snake_case) → old-key format for renderForm()
 function sbRowToResort(row) {
+  // Return snake_case keys — matches GROUPS, ACCOM_TYPES, saveResort(), setBookingMode()
+  // CURRENT_RESORT['resort_name'], CURRENT_RESORT['resort_id'] etc.
   const out = {};
-  Object.entries(COL).forEach(([oldKey, newKey]) => {
-    if (row[newKey] !== undefined) out[oldKey] = row[newKey];
-  });
-  if (row.resort_id !== undefined) out['ResortID'] = row.resort_id;
+  Object.keys(row).forEach(k => { out[k] = row[k]; });
   return out;
 }
 
@@ -475,7 +474,7 @@ async function getBackendSession() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) throw new Error('Not authenticated');
   const resortId = SESSION.role === 'KampKiepie'
-    ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '')
+    ? (CURRENT_RESORT ? CURRENT_RESORT['resort_id'] : '')
     : SESSION.resortId;
   const exchRes = await apiBackend({ action:'exchangeBootstrapToken', token: session.access_token, resortId });
   if (!exchRes.success) throw new Error('Session exchange failed: ' + (exchRes.error || ''));
@@ -495,11 +494,24 @@ async function handleLogin() {
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   btn.disabled = false; btn.textContent = 'Sign In';
   if (error) { showMsg('loginMsg', error.message || 'Sign in failed. Check email and password.'); return; }
-  startSession(data.user);
+  startSession(data.user, data.session?.access_token || '');
 }
 
-function startSession(user) {
-  const meta     = user.app_metadata || {};
+function startSession(user, accessToken) {
+  // raw_app_meta_data is exposed in the JWT as the 'app_metadata' claim.
+  // Decode the access token directly — works with the anon key.
+  let meta = {};
+  try {
+    const token = accessToken || '';
+    if (token) {
+      const b64     = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      const claims  = JSON.parse(atob(b64));
+      meta = claims.app_metadata || {};
+    }
+  } catch(_) {}
+  // Fallback to SDK-provided fields
+  if (!meta.role && !meta.resort_id) meta = user.app_metadata  || {};
+  if (!meta.role && !meta.resort_id) meta = user.user_metadata || {};
   const role     = meta.role      || 'Super';
   const resortId = String(meta.resort_id || '');
   const name     = meta.name      || user.email;
@@ -1238,7 +1250,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (cpf) cpf.remove();
   await loadConfig();
   const { data: { session } } = await sb.auth.getSession();
-  if (session) { startSession(session.user); } else { show('screenLogin'); }
+  if (session) { startSession(session.user, session.access_token || ''); } else { show('screenLogin'); }
   sb.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
       SESSION = null; BACKEND_SESSION = null;
