@@ -414,9 +414,9 @@ async function loadData() {
       .select([
         'resort_id', 'resort_name', 'address', 'city_row_id',
         'resort_profile_photo', 'resort_extra_photo', 'resort_description',
-        'active', 'beta_active', 'has_bookings', 'booking_link', 'members_only',
+        'kk_book_active', 'beta_active', 'has_bookings', 'booking_link', 'members_only',
         'email', 'whatsapp_phone', 'website', 'facebook', 'instagram', 'coordinates',
-        'total_views', 
+        'total_views',
         'opt_pop', 'opt_camp', 'opt_glamp', 'opt_chalet', 'opt_cottage',
         'opt_lodge', 'opt_bb', 'opt_guesthouse', 'opt_pets', 'opt_wedding',
         'opt_conference', 'opt_room', 'opt_back_pack', 'opt_family_home',
@@ -424,7 +424,6 @@ async function loadData() {
         'opt_functions', 'opt_hunting', 'opt_off_grid'
       ].join(','))
       .eq('beta_active', true)
-      .eq('active', true)
   ]);
 
   if (provRes.error)   throw new Error('Provinces: '  + provRes.error.message);
@@ -467,7 +466,7 @@ async function loadData() {
       facebook:    r.facebook      || '',
       instagram:   r.instagram     || '',
       coordinates: r.coordinates   || '',
-      kkBook:      !!r.active,
+      kkBook:      !!r.kk_book_active,
       hasBookings: !!r.has_bookings,
       bookingLink: r.booking_link  || '',
       membersOnly: !!r.members_only,
@@ -534,8 +533,7 @@ async function fetchTotalViews() {
   try {
     const { data } = await sb.from('resorts')
       .select('total_views')
-      .eq('beta_active', true)
-      .eq('active', true);
+      .eq('beta_active', true);
     if (!data) return;
     const total = data.reduce((s, r) => s + (Number(r.total_views) || 0), 0);
     const el = document.getElementById('totalViewsBar');

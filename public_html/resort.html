@@ -367,11 +367,36 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ── Supabase config ────────────────────────────────────────────────────────────────────────────
 const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ── KampKiepie localStorage cache ─────────────────────────────────────────────
+// kkGet: returns cached value or null if missing/expired/busted
+// kkSet: stores value with TTL (ms) and optional bust-flag
+// kkBust: admin calls this on save to invalidate all bustable entries
+const _KK_BUST = 'kkC_bust';
+const _KK_D30  = 30*24*60*60*1000;   // Province & City CSVs
+const _KK_D7   =  8*60*60*1000;   // Resort CSV   // 30 days in ms
+const _KK_H4   =  4*60*60*1000;      //  4 hours in ms
+function kkGet(key) {
+  try {
+    const e = JSON.parse(localStorage.getItem(key) || 'null');
+    if (!e || !e.v || !e.ts || !e.ttl) return null;
+    if (e.bustable && Number(localStorage.getItem(_KK_BUST)||0) > e.ts) return null;
+    if (Date.now() - e.ts > e.ttl) return null;
+    return e.v;
+  } catch(_) { return null; }
+}
+function kkSet(key, val, ttlMs, bustable) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ v:val, ts:Date.now(), ttl:ttlMs, bustable:!!bustable }));
+  } catch(_) {}  // quota exceeded — just skip caching
+}
+function kkBust() {
+  try { localStorage.setItem(_KK_BUST, String(Date.now())); } catch(_) {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
 const PLACEHOLDER_ID   = '1DTvWTjU8nYUrhD-dt_aYPpk2JFt6jU6r';
 const ADMIN_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyMNA6rK5e_RZqk5KP2MwYNLjVXEkuiyGNycfERuK2vGfSGbslvTrwpaOz0kJ2GqlgzNQ/exec';
 const OL = {
@@ -461,7 +486,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     showErr('Could not load data: ' + e.message);
   }
 });
-// fetchCsv and parseCsv removed — data now comes from Supabase
+// fetchCsv/parseCsv removed
 async function loadResort(id) {
   const [resortRes, cityRes, provRes] = await Promise.all([
     sb.from('resorts').select('*').eq('resort_id', id).single(),
@@ -508,7 +533,7 @@ async function loadResort(id) {
     bookingLink:  r.booking_link      || '',
     popNights:    (r.pop_max_nights   || '').toString().replace(/\.0$/, ''),
     membersOnly:  !!r.members_only,
-    kkBook:       !!r.active,
+    kkBook:       !!r.kk_book_active,
     kkBookLevel:  r.level             || '',
     corpColour:   r.corp_colour       || '',
     subColour:    r.sub_colour        || '',
@@ -1010,10 +1035,12 @@ function renderResort(r) {
     <div class="main-wrap">
       <div class="two-col-grid">
         <div class="col">
-          ${r.hostMsg || r.description ? `<div class="sec"><div class="sec-title"><span>💬</span> About ${esc(r.name)}</div>
-            ${r.hostMsg ? `<div class="host-msg">"${esc(r.hostMsg)}"</div>` : ''}
-            ${r.description ? `<div class="desc${descLong ? ' clamped' : ''}" id="descText">${esc(r.description)}</div>
-            ${descLong ? `<button class="read-more-btn" id="readMoreBtn" onclick="toggleDescClamp()">Read more <span id="readMoreArrow">\u2304</span></button>` : ''}` : ''}
+          ${r.description ? `<div class="sec"><div class="sec-title"><span>💬</span> About ${esc(r.name)}</div>
+            <div class="desc${descLong ? ' clamped' : ''}" id="descText">${esc(r.description)}</div>
+            ${descLong ? `<button class="read-more-btn" id="readMoreBtn" onclick="toggleDescClamp()">Read more <span id="readMoreArrow">\u2304</span></button>` : ''}
+          </div>` : ''}
+          ${r.hostMsg ? `<div class="sec"><div class="sec-title"><span>🏠</span> From the host</div>
+            <div class="host-msg">"${esc(r.hostMsg)}"</div>
           </div>` : ''}
           ${amenHtml}
           ${cta ? `<div class="sec"><div class="sec-title"><span>🤝</span> Get in touch</div>

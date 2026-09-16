@@ -165,7 +165,6 @@ async function loadResorts() {
     .from('resorts')
     .select('resort_id, resort_name, address, coordinates')
     .eq('beta_active', true)
-    .eq('active', true)
     .not('coordinates', 'is', null);
 
   if (error) throw new Error(error.message);
