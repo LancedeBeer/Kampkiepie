@@ -168,10 +168,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px;font-weight:700;}
 .upload-item-status{flex-shrink:0;font-size:14px;}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <header class="hdr">
-  <img src="KampKiepieLogo.png" alt="KampKiepie" style="height:36px;width:auto;display:block;border-radius:7px;">
+  <img src="../KampKiepieLogo.png" alt="KampKiepie" style="height:36px;width:auto;display:block;border-radius:7px;">
   <div class="hdr-title">Kamp<em>Kiepie</em> Admin</div>
   <div class="hdr-user" id="hdrUser" style="display:none">
     <span id="hdrName"></span>
@@ -287,26 +288,141 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 <script>
+// ── Supabase client ───────────────────────────────────────────────────────────
+const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── Cache bust helper — invalidates guest-side localStorage caches on save ──
+// ── Column mapping: old Sheets key → Supabase snake_case column ───────────────
+const COL = {
+  'ResortID': 'resort_id',
+  'Resort- Header/ResortName': 'resort_name',
+  'Resort- Header/Address': 'address',
+  'Resort- Header/Coordinates': 'coordinates',
+  'Resort- Header/ResortDescription': 'resort_description',
+  'Resort- Header/DriveRef': 'drive_ref',
+  'Resort- Header/DriveFolderLink': 'drive_folder_link',
+  'Resort- Header/ResortExtraPhoto': 'resort_extra_photo',
+  'Resort- Header/ResortProfilePhoto': 'resort_profile_photo',
+  'Resort- Gallery/GalleryLinksArray': 'gallery_links_array',
+  'Resort- Map/CampMap': 'camp_map',
+  'Resort- Header/ContactPersonName': 'contact_person_name',
+  'Resort- Header/ContactPersonEmail': 'contact_person_email',
+  'Resort- Header/ContactPersonPhoneNumber': 'contact_person_phone_number',
+  'Resort- Header/email': 'email',
+  'Resort- Header/WhatsappPhone': 'whatsapp_phone',
+  'Resort- Header/Website': 'website',
+  'Resort- Socials/Facebook': 'facebook',
+  'Resort- Socials/Instagram': 'instagram',
+  'Resort- Socials/TikTok': 'tik_tok',
+  'Resort - BookingOptions/POP?': 'opt_pop',
+  'Resort - BookingOptions/Camp?': 'opt_camp',
+  'Resort - BookingOptions/Lankstaan?': 'opt_lankstaan',
+  'Resort - BookingOptions/LankstaanPrice': 'opt_lankstaan_price',
+  'Resort - BookingOptions/Glamp': 'opt_glamp',
+  'Resort - BookingOptions/Chalet': 'opt_chalet',
+  'Resort - BookingOptions/Cottage': 'opt_cottage',
+  'Resort - BookingOptions/Lodge': 'opt_lodge',
+  'Resort - BookingOptions/Room?': 'opt_room',
+  'Resort - BookingOptions/BackPack': 'opt_back_pack',
+  'Resort - BookingOptions/B&B': 'opt_bb',
+  'Resort - BookingOptions/Guesthouse': 'opt_guesthouse',
+  'Resort - BookingOptions/FamilyHome': 'opt_family_home',
+  'Resort - BookingOptions/LankSlaap': 'opt_lank_slaap',
+  'Resort - BookingOptions/Niche': 'opt_niche',
+  'Resort - BookingOptions/Wedding': 'opt_wedding',
+  'Resort - BookingOptions/Conference': 'opt_conference',
+  'Resort - BookingOptions/Functions': 'opt_functions',
+  'Resort - BookingOptions/Hunting': 'opt_hunting',
+  'Resort - BookingOptions/Pets': 'opt_pets',
+  'Resort - BookingOptions/Excursions': 'opt_excursions',
+  'Resort - BookingOptions/OffGrid': 'opt_off_grid',
+  'Resort - Amenities/POP': 'amen_pop',
+  'Resort - Amenities/POPTXT': 'amen_pop_txt',
+  'Resort - Amenities/Camp': 'amen_camp',
+  'Resort - Amenities/CampTXT': 'amen_camp_txt',
+  'Resort - Amenities/LankStaan': 'amen_lank_staan',
+  'Resort - Amenities/LankStaanTXT': 'amen_lank_staan_txt',
+  'Resort - Amenities/Glamp': 'amen_glamp',
+  'Resort - Amenities/GlampTXT': 'amen_glamp_txt',
+  'Resort - Amenities/Chalet': 'amen_chalet',
+  'Resort - Amenities/ChaletTXT': 'amen_chalet_txt',
+  'Resort - Amenities/Cottage': 'amen_cottage',
+  'Resort - Amenities/CottageTXT': 'amen_cottage_txt',
+  'Resort - Amenities/Lodge': 'amen_lodge',
+  'Resort - Amenities/LodgeTXT': 'amen_lodge_txt',
+  'Resort - Amenities/Room': 'amen_room',
+  'Resort - Amenities/RoomTXT': 'amen_room_txt',
+  'Resort - Amenities/BackPack': 'amen_back_pack',
+  'Resort - Amenities/BackPackTXT': 'amen_back_pack_txt',
+  'Resort - Amenities/B&B': 'amen_bb',
+  'Resort - Amenities/B&BTXT': 'amen_bb_txt',
+  'Resort - Amenities/GuestHouse': 'amen_guest_house',
+  'Resort - Amenities/GuestHouseTXT': 'amen_guest_house_txt',
+  'Resort - Amenities/FamilyHome': 'amen_family_home',
+  'Resort - Amenities/FamilyHomeTXT': 'amen_family_home_txt',
+  'Resort - Amenities/LankSlaap': 'amen_lank_slaap',
+  'Resort - Amenities/LankSlaapTXT': 'amen_lank_slaap_txt',
+  'Resort - Amenities/Niche': 'amen_niche',
+  'Resort - Amenities/NicheTXT': 'amen_niche_txt',
+  'Resort - Amenities/Pets': 'amen_pets',
+  'Resort - Amenities/PetsTXT': 'amen_pets_txt',
+  'Resort - Amenities/OffGrid': 'amen_off_grid',
+  'Resort - Amenities/OffGridTXT': 'amen_off_grid_txt',
+  'Resort - Amenities/AmenitiesBasic': 'amenities_basic',
+  'Resort - Amenities/AmenitiesWork': 'amenities_work',
+  'Resort - Amenities/AmenitiesComfort': 'amenities_comfort',
+  'Resort - Amenities/AmenitiesRecreational': 'amenities_recreational',
+  'Resort - Amenities/AmenitiesSafety': 'amenities_safety',
+  'Resort - Amenities/AmenitiesAdditional': 'amenities_additional',
+  'Resort - Amenities/Nearby': 'nearby',
+  'Resort- POP/POPMaxNights': 'pop_max_nights',
+  'Resorts - Bookings/BookingLink': 'booking_link',
+  'Resorts - Bookings/HasBookings': 'has_bookings',
+  'Resort - Host/MessageTXT': 'message_txt',
+  'Resort - Rules/RulesTXT': 'rules_txt',
+  'Resort - FAQ/FAQArray': 'faq_array',
+  'Resort - More/MoreTXT': 'more_txt',
+  'Resort - config/CorpColour': 'corp_colour',
+  'Resort - config/SubColour': 'sub_colour',
+  'Resort - KKBook/Level': 'level',
+  'Resort - KKBook/BookingMode': 'booking_mode',
+  'Resort - KKBook/Active': 'kk_book_active',
+  'Resort- Owner/OnBoard': 'on_board',
+  'Resorts - Switches/BetaActive?': 'beta_active',
+  'Resorts - Switches/MembersOnly?': 'members_only',
+  'Scoring/LastUpdate': 'last_update',
+};
+const COL_REV = Object.fromEntries(Object.entries(COL).map(([k,v])=>[v,k]));
+
+// Translate Supabase row (snake_case) → old-key format for renderForm()
+function sbRowToResort(row) {
+  const out = {};
+  Object.entries(COL).forEach(([oldKey, newKey]) => {
+    if (row[newKey] !== undefined) out[oldKey] = row[newKey];
+  });
+  if (row.resort_id !== undefined) out['ResortID'] = row.resort_id;
+  return out;
+}
+
+// ── Cache bust helper ─────────────────────────────────────────────────────────
 function kkBust() {
   try { localStorage.setItem('kkC_bust', String(Date.now())); } catch(_) {}
 }
-let SITEMAP_SECRET = '';
-let LIST_FILTER = 'all'; // active|inactive|kkbook|online|external
-let API_URL = ''; // loaded from config.txt — set admin_script key
-let SESSION      = null;
-let ALL_RESORTS  = [];
-let CURRENT_RESORT = null;
-let needsNewPassword = false;
-let BACKEND_URL  = '';      // KKAdminBackend.gs URL, loaded from config.txt
-let BACKEND_SESSION = null; // KKAdminBackend session token for image operations
-let IMG_LIST     = [];      // current image list from Drive
 
-// ── CONFIG ───────────────────────────────────────────────────────────────────
+let SITEMAP_SECRET  = '';
+let LIST_FILTER     = 'all';
+let SESSION         = null;
+let ALL_RESORTS     = [];
+let CURRENT_RESORT  = null;
+let BACKEND_URL     = '';
+let BACKEND_SESSION = null;
+let IMG_LIST        = [];
+
+// ── CONFIG ────────────────────────────────────────────────────────────────────
 async function loadConfig() {
   try {
-    const res  = await fetch('config.txt', { cache: 'no-store' });
+    const res  = await fetch('../config.txt', { cache: 'no-store' });
     if (!res.ok) return;
     const text = await res.text();
     text.split(/\r?\n/).forEach(line => {
@@ -319,78 +435,23 @@ async function loadConfig() {
       if (k === 'sitemap_secret')      SITEMAP_SECRET = v;
       if (k === 'adminbackend_script') {
         BACKEND_URL = v;
-        // Silent warm-up ping so KKAdminBackend.gs is ready when admin opens Manage Bookings
-        if (v) fetch(v + '?action=ping&_ts=' + Date.now(), { cache:'no-store' }).catch(function(){});
+        if (v) fetch(v + '?action=ping&_ts=' + Date.now(), { cache:'no-store' }).catch(() => {});
       }
-      if (k === 'admin_script')         API_URL     = v;
     });
-  } catch(e) { /* config.txt optional */ }
+  } catch(e) {}
 }
 
-// ── SCREENS ──────────────────────────────────────────────────────────────────
+// ── SCREENS ───────────────────────────────────────────────────────────────────
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
 }
 function showMsg(elId, text, type) {
   document.getElementById(elId).innerHTML = text
-    ? '<div class="msg msg-' + (type||'err') + '">' + text + '</div>' : '';
+    ? '<div class="msg msg-' + (type || 'err') + '">' + text + '</div>' : '';
 }
 
-// ── API helpers ───────────────────────────────────────────────────────────────
-function api(data, _retry) {
-  return new Promise(function(resolve) {
-    if (!API_URL) {
-      resolve({ success:false, error:'admin_script URL not set in config.txt \u2014 please add it and reload.' });
-      return;
-    }
-    try {
-      var params = new URLSearchParams();
-      Object.keys(data).forEach(function(k) {
-        var v = data[k];
-        params.set(k, (typeof v === 'object') ? JSON.stringify(v) : String(v));
-      });
-      params.set('_ts', Date.now());
-      var encoded = params.toString();
-      var usePOST  = data.action === 'saveResort' || data.action === 'updateResort';
-      var url      = usePOST ? API_URL : API_URL + '?' + encoded;
-      console.log('[KK admin] api:', data.action, _retry ? '(retry)' : '', usePOST?'[POST]':url.slice(0,120));
-      var fetchOpts = usePOST
-        ? { method:'POST', redirect:'follow', cache:'no-store',
-            headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body:encoded }
-        : { method:'GET',  redirect:'follow', cache:'no-store' };
-      fetch(url, fetchOpts)
-        .then(function(r) { return r.text(); })
-        .then(function(text) {
-          console.log('[KK admin] response (' + (_retry ? 'retry' : '1st') + '):', text.slice(0, 200));
-          // Try to parse as JSON
-          if (text && text.trim()) {
-            try {
-              return resolve(JSON.parse(text));
-            } catch(e) { /* not JSON — fall through */ }
-          }
-          // Bad/empty response — retry once after 3.5s (script cold-start)
-          if (!_retry) {
-            console.log('[KK admin] cold-start detected, retrying in 3.5s');
-            var loginBtn = document.getElementById('loginBtn');
-            if (loginBtn && !loginBtn.disabled) { loginBtn.disabled = true; loginBtn.textContent = 'Connecting\u2026'; }
-            setTimeout(function() { api(data, true).then(resolve); }, 3500);
-            return;
-          }
-          // Retry also failed — show the error
-          if (!text || !text.trim()) {
-            resolve({ success:false, error:'Empty response \u2014 check admin.gs deployment and that the script URL is correct.' });
-          } else {
-            var preview = text.slice(0, 200).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-            resolve({ success:false, error:'Bad response from server: ' + preview });
-          }
-        })
-        .catch(function(e) { resolve({ success:false, error:'Network error: ' + e.message }); });
-    } catch(e) { resolve({ success:false, error: e.message }); }
-  });
-}
-
-// Call KKAdminBackend.gs (GET or POST)
+// ── GAS backend (KKAdminBackend — bookings/images) ────────────────────────────
 async function apiBackend(data, method) {
   if (!BACKEND_URL) throw new Error('Booking backend URL not configured in config.txt');
   method = method || 'GET';
@@ -402,7 +463,6 @@ async function apiBackend(data, method) {
     const text = await res.text();
     try { return JSON.parse(text); } catch(e) { throw new Error('Bad response from backend'); }
   }
-  // POST
   const form = new URLSearchParams();
   Object.entries(data).forEach(([k, v]) => form.set(k, typeof v === 'object' ? JSON.stringify(v) : String(v)));
   const res  = await fetch(BACKEND_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body: form.toString() });
@@ -410,322 +470,291 @@ async function apiBackend(data, method) {
   try { return JSON.parse(text); } catch(e) { throw new Error('Bad response from backend'); }
 }
 
-// Mint a bootstrap token via admin.gs, then exchange it for a KKAdminBackend session
 async function getBackendSession() {
-  if (BACKEND_SESSION) return BACKEND_SESSION; // reuse if already obtained
-  const resortId = (SESSION && SESSION.role === 'superadmin')
+  if (BACKEND_SESSION) return BACKEND_SESSION;
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+  const resortId = SESSION.role === 'KampKiepie'
     ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '')
-    : (SESSION ? SESSION.resortId : '');
-  // 1. Mint a short-lived bootstrap token via our own admin.gs
-  const mintRes = await api({ action:'mintBootstrapToken', token: SESSION.token, resortId });
-  if (!mintRes.success) throw new Error('Could not get auth token: ' + (mintRes.error || ''));
-  // 2. Exchange it for a KKAdminBackend session
-  const exchRes = await apiBackend({ action:'exchangeBootstrapToken', token: mintRes.token });
+    : SESSION.resortId;
+  const exchRes = await apiBackend({ action:'exchangeBootstrapToken', token: session.access_token, resortId });
   if (!exchRes.success) throw new Error('Session exchange failed: ' + (exchRes.error || ''));
   BACKEND_SESSION = exchRes.session;
   return BACKEND_SESSION;
 }
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
-function handleLogin() {
+async function handleLogin() {
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const btn      = document.getElementById('loginBtn');
-  if (!email) { showMsg('loginMsg', 'Please enter your email address'); return; }
-  if (needsNewPassword) {
-    const np = document.getElementById('newPassword').value;
-    const cp = document.getElementById('confirmPassword').value;
-    if (np.length < 6) { showMsg('loginMsg', 'Password must be at least 6 characters'); return; }
-    if (np !== cp)      { showMsg('loginMsg', 'Passwords do not match'); return; }
-    btn.disabled = true; btn.textContent = 'Setting password...';
-    api({ action:'setPassword', email, password:np }).then(res => {
-      btn.disabled = false; btn.textContent = 'Sign In';
-      if (res.success) { startSession(res);
-      if(BACKEND_URL)fetch(BACKEND_URL+'?action=recordFrontEndLogin&email='+encodeURIComponent(email),{cache:'no-store'}).catch(function(){}); }
-      else showMsg('loginMsg', res.error || 'Could not set password');
-    });
-    return;
-  }
+  if (!email)    { showMsg('loginMsg', 'Please enter your email address'); return; }
   if (!password) { showMsg('loginMsg', 'Please enter your password'); return; }
-  btn.disabled = true; btn.textContent = 'Signing in...';
-  api({ action:'login', email, password }).then(res => {
-    btn.disabled = false; btn.textContent = 'Sign In';
-    if (res.success) {
-      startSession(res);
-      if(BACKEND_URL)fetch(BACKEND_URL+'?action=recordFrontEndLogin&email='+encodeURIComponent(email),{cache:'no-store'}).catch(function(){});
-    } else if (res.needsPassword) {
-      needsNewPassword = true;
-      document.getElementById('passField').style.display = 'none';
-      document.getElementById('newPassField').style.display = 'block';
-      document.getElementById('confirmPassField').style.display = 'block';
-      document.getElementById('loginBtn').textContent = 'Set Password & Sign In';
-      showMsg('loginMsg', 'First login detected \u2014 please set a password.', 'info');
-    } else {
-      showMsg('loginMsg', res.error || 'Sign in failed. Check email and password.');
-    }
-  });
+  btn.disabled = true; btn.textContent = 'Signing in\u2026';
+  showMsg('loginMsg', '');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false; btn.textContent = 'Sign In';
+  if (error) { showMsg('loginMsg', error.message || 'Sign in failed. Check email and password.'); return; }
+  startSession(data.user);
 }
-function startSession(res) {
-  SESSION = { role:res.role, resortId:res.resortId||'', name:res.name||'', email:res.email||'', token:res.token };
 
-  // KampKiepie staff get full super access regardless of role returned by GAS
-  if (SESSION.email && SESSION.email.toLowerCase().endsWith('@kampkiepie.co.za')) {
-    SESSION.role = 'superadmin';
+function startSession(user) {
+  const meta     = user.app_metadata || {};
+  const role     = meta.role      || 'Super';
+  const resortId = String(meta.resort_id || '');
+  const name     = meta.name      || user.email;
+  SESSION = { role, resortId, name, email: user.email };
+  if (role === 'Super' || role === 'Manager' || role === 'Admin' || role === 'Finance') {
+    try { localStorage.setItem('kkIsResortStaff', 'true'); } catch(e) {}
   }
-  sessionStorage.setItem('kkAdmin', JSON.stringify(SESSION));
-  if (SESSION.role === 'resort') { try { localStorage.setItem('kkIsResortStaff','true'); } catch(e){} }
   document.getElementById('hdrUser').style.display = 'flex';
-  document.getElementById('hdrName').textContent = SESSION.name;
-  if (SESSION.role === 'superadmin') { show('screenList'); loadList(); }
-  else { show('screenEdit'); document.getElementById('editTitle').textContent = SESSION.name; loadEdit(SESSION.resortId); }
+  document.getElementById('hdrName').textContent   = name;
+  if (role === 'KampKiepie') { show('screenList'); loadList(); }
+  else { show('screenEdit'); document.getElementById('editTitle').textContent = name; loadEdit(resortId); }
 }
-function logout() { sessionStorage.removeItem('kkAdmin'); window.close(); }
+
+async function logout() {
+  await sb.auth.signOut();
+  try { localStorage.removeItem('kkIsResortStaff'); } catch(e) {}
+  SESSION = null; BACKEND_SESSION = null;
+  show('screenLogin');
+  document.getElementById('hdrUser').style.display = 'none';
+  document.getElementById('loginEmail').value    = '';
+  document.getElementById('loginPassword').value = '';
+}
+
 function closeAdminTab() { window.close(); }
 function goBack() {
-  if (SESSION && SESSION.role === 'superadmin') show('screenList');
+  BACKEND_SESSION = null;
+  if (SESSION && SESSION.role === 'KampKiepie') show('screenList');
   else window.close();
 }
 
-// ── SUPER ADMIN LIST ──────────────────────────────────────────────────────────
-function loadList() {
-  api({ action:'listResorts', token:SESSION.token }).then(res => {
-    if (!res.success) { document.getElementById('resortList').innerHTML = '<div class="msg msg-err">'+(res.error||'Failed')+'</div>'; return; }
-    ALL_RESORTS = res.resorts || [];
-    LIST_FILTER = 'all';
-    var sel = document.getElementById('listFilterSel');
-    if (sel) sel.value = 'all';
-    renderList(ALL_RESORTS);
-    // Show sitemap button for superadmin only
-    var sb  = document.getElementById('btnSitemap');
-    var sel = document.getElementById('listFilterSel');
-    var isSA = SESSION && SESSION.role === 'superadmin';
-    if (sb)  sb.style.display  = isSA ? '' : 'none';
-    if (sel) sel.style.display = isSA ? '' : 'none';
-  });
+// ── RESORT LIST ───────────────────────────────────────────────────────────────
+async function loadList() {
+  document.getElementById('resortList').innerHTML = '<div class="spin-wrap"><div class="spin"></div>Loading...</div>';
+  const { data, error } = await sb.from('resorts')
+    .select('resort_id, resort_name, beta_active, kk_book_active, has_bookings')
+    .order('resort_name');
+  if (error) { document.getElementById('resortList').innerHTML = '<div class="msg msg-err">' + esc(error.message) + '</div>'; return; }
+  ALL_RESORTS = (data || []).map(r => ({
+    resortId:    String(r.resort_id),
+    name:        r.resort_name || '',
+    betaActive:  !!r.beta_active,
+    active:      !!r.kk_book_active,
+    hasBookings: !!r.has_bookings,
+  }));
+  LIST_FILTER = 'all';
+  const sel = document.getElementById('listFilterSel');
+  if (sel) sel.value = 'all';
+  renderList(ALL_RESORTS);
+  var btnSitemap = document.getElementById('btnSitemap');
+  var listSel    = document.getElementById('listFilterSel');
+  if (btnSitemap) btnSitemap.style.display = '';
+  if (listSel)    listSel.style.display    = '';
 }
-function setListFilter(val) {
-  LIST_FILTER = val;
-  applyFilters();
-}
-function filterList() { applyFilters(); }
+
+function setListFilter(val) { LIST_FILTER = val; applyFilters(); }
+function filterList()        { applyFilters(); }
 function applyFilters() {
   const q = document.getElementById('listSearch').value.toLowerCase();
-  // Field mapping from admin.gs listResorts:
-  //   r.active      = Resort - KKBook/Active        (already returned)
-  //   r.betaActive  = Resorts - Switches/BetaActive? (added to admin.gs)
-  //   r.hasBookings = Resorts - Bookings/HasBookings  (added to admin.gs)
-  const isBetaActive = r => !!(r.betaActive);
-  const isKKBook     = r => !!(r.active);   // r.active IS KKBook/Active
-  const hasBk        = r => !!(r.hasBookings);
-  let list = ALL_RESORTS;
-  if (q) list = list.filter(r =>
-    r.name.toLowerCase().includes(q) || r.resortId.toLowerCase().includes(q));
+  var list = ALL_RESORTS;
+  if (q) list = list.filter(r => r.name.toLowerCase().includes(q) || r.resortId.includes(q));
   switch (LIST_FILTER) {
-    case 'active':   list = list.filter(r =>  isBetaActive(r));                 break;
-    case 'inactive': list = list.filter(r => !isBetaActive(r));                 break;
-    case 'kkbook':   list = list.filter(r =>  isKKBook(r));                     break;
-    case 'online':   list = list.filter(r =>  hasBk(r));                        break;
-    case 'external': list = list.filter(r =>  hasBk(r) && !isKKBook(r));        break;
+    case 'active':   list = list.filter(r =>  r.betaActive);                   break;
+    case 'inactive': list = list.filter(r => !r.betaActive);                   break;
+    case 'kkbook':   list = list.filter(r =>  r.active);                       break;
+    case 'online':   list = list.filter(r =>  r.hasBookings);                  break;
+    case 'external': list = list.filter(r =>  r.hasBookings && !r.active);     break;
   }
   renderList(list);
 }
+
 function renderList(list) {
-  if (!list.length) { document.getElementById('resortList').innerHTML = '<div style="color:var(--muted);font-weight:700;padding:20px;">No resorts found</div>'; return; }
-  document.getElementById('resortList').innerHTML = list.map(r =>
-    '<div class="rc" onclick="selectResort(\'' + esc(r.resortId) + '\',\'' + esc(r.name) + '\')">' +
-    '<div class="rc-name">' + esc(r.name) + '</div>' +
-    '<div class="rc-id">ID: ' + esc(r.resortId) + '</div>' +
-    (r.betaActive ? '<span class="rc-badge rc-y">Active</span>' : '') +(r.active ? '<span class="rc-badge rc-b" style="margin-left:4px">★ KKBook</span>' : '') +(r.hasBookings ? '<span class="rc-badge rc-o" style="margin-left:4px">📅 Online</span>' : '') +'</div>'
-  ).join('');
+  if (!list.length) {
+    document.getElementById('resortList').innerHTML = '<div style="color:var(--muted);font-weight:700;padding:20px;">No resorts found</div>';
+    return;
+  }
+  document.getElementById('resortList').innerHTML = list.map(function(r) {
+    return '<div class="rc" onclick="selectResort(\'' + esc(r.resortId) + '\',\'' + esc(r.name) + '\')">'
+      + '<div class="rc-name">' + esc(r.name) + '</div>'
+      + '<div class="rc-id">ID: ' + esc(r.resortId) + '</div>'
+      + (r.betaActive  ? '<span class="rc-badge rc-y">Active</span>' : '')
+      + (r.active      ? '<span class="rc-badge rc-b" style="margin-left:4px">\u2605 KKBook</span>' : '')
+      + (r.hasBookings ? '<span class="rc-badge rc-o" style="margin-left:4px">\uD83D\uDCC5 Online</span>' : '')
+      + '</div>';
+  }).join('');
 }
+
 function selectResort(resortId, name) {
-  BACKEND_SESSION = null; // reset session when switching resorts
+  BACKEND_SESSION = null;
   show('screenEdit');
   document.getElementById('editTitle').textContent = name;
   loadEdit(resortId);
 }
 
 // ── EDIT FORM ─────────────────────────────────────────────────────────────────
-function loadEdit(resortId) {
+async function loadEdit(resortId) {
   showMsg('editMsg', '');
   document.getElementById('btnManageImages').style.display = 'none';
-  // Show cached data instantly; fetch fresh in background
-  var cacheKey = 'kkResortCache_' + resortId;
-  var cached = null;
-  try { cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null'); } catch(e) {}
-  if (cached) {
-    CURRENT_RESORT = cached;
-    renderForm(cached);
-    if (cached['Resort- Header/DriveFolderLink'] && BACKEND_URL) document.getElementById('btnManageImages').style.display = 'inline-flex';
-    showMsg('editMsg', '<span style="font-size:11px">↻ Refreshing…</span>', 'info');
-  } else {
-    document.getElementById('editWrap').innerHTML = '<div class="spin-wrap"><div class="spin"></div>Loading resort data...</div>';
+  document.getElementById('editWrap').innerHTML = '<div class="spin-wrap"><div class="spin"></div>Loading resort data...</div>';
+  const { data, error } = await sb.from('resorts').select('*').eq('resort_id', resortId).single();
+  if (error || !data) {
+    document.getElementById('editWrap').innerHTML = '<div class="msg msg-err">' + esc((error && error.message) || 'Resort not found') + '</div>';
+    return;
   }
-  api({ action:'getResort', resortId, token:SESSION.token }).then(function(res) {
-    showMsg('editMsg', '');
-    if (!res.success) {
-      if (!cached) document.getElementById('editWrap').innerHTML = '<div class="msg msg-err">'+(res.error||'Failed')+'</div>';
-      else showMsg('editMsg', res.error||'Could not refresh data.', 'err');
-      return;
-    }
-    CURRENT_RESORT = res.resort;
-    try { sessionStorage.setItem(cacheKey, JSON.stringify(res.resort)); } catch(e) {}
-    renderForm(res.resort);
-    if (res.resort && res.resort['Resort- Header/DriveFolderLink'] && BACKEND_URL) document.getElementById('btnManageImages').style.display = 'inline-flex';
-  });
+  CURRENT_RESORT = sbRowToResort(data);
+  CURRENT_RESORT['resort_id'] = data.resort_id;
+  renderForm(CURRENT_RESORT);
+  if (data.drive_folder_link && BACKEND_URL) {
+    document.getElementById('btnManageImages').style.display = 'inline-flex';
+  }
 }
 
-function isKKUser() {
-  // KampKiepie staff (any @kampkiepie.co.za email) or superadmin role get full access
-  return SESSION && (
-    SESSION.role === 'superadmin' ||
-    (SESSION.email && String(SESSION.email).toLowerCase().endsWith('@kampkiepie.co.za'))
-  );
-}
-// Fields that only KampKiepie staff may edit — resort users see these as read-only
-var ACCOM_TYPES = [
-  {i:0,  key:'POP',        bk:'Resort - BookingOptions/POP?',       label:'POP',          lk:'Resort - Amenities/POP',        tk:'Resort - Amenities/POPTXT'},
-  {i:1,  key:'Camp',       bk:'Resort - BookingOptions/Camp?',      label:'Camping',      lk:'Resort - Amenities/Camp',       tk:'Resort - Amenities/CampTXT'},
-  {i:2,  key:'Lankstaan',  bk:'Resort - BookingOptions/Lankstaan?', label:'Lankstaan',    lk:'Resort - Amenities/LankStaan',  tk:'Resort - Amenities/LankStaanTXT'},
-  {i:3,  key:'Glamp',      bk:'Resort - BookingOptions/Glamp',      label:'Glamping',     lk:'Resort - Amenities/Glamp',      tk:'Resort - Amenities/GlampTXT'},
-  {i:4,  key:'Chalet',     bk:'Resort - BookingOptions/Chalet',     label:'Chalet',       lk:'Resort - Amenities/Chalet',     tk:'Resort - Amenities/ChaletTXT'},
-  {i:5,  key:'Cottage',    bk:'Resort - BookingOptions/Cottage',    label:'Cottage',      lk:'Resort - Amenities/Cottage',    tk:'Resort - Amenities/CottageTXT'},
-  {i:6,  key:'Lodge',      bk:'Resort - BookingOptions/Lodge',      label:'Lodge',        lk:'Resort - Amenities/Lodge',      tk:'Resort - Amenities/LodgeTXT'},
-  {i:7,  key:'Room',       bk:'Resort - BookingOptions/Room?',      label:'Room',         lk:'Resort - Amenities/Room',       tk:'Resort - Amenities/RoomTXT'},
-  {i:8,  key:'BackPack',   bk:'Resort - BookingOptions/BackPack',   label:'Backpacker',   lk:'Resort - Amenities/BackPack',   tk:'Resort - Amenities/BackPackTXT'},
-  {i:9,  key:'BnB',        bk:'Resort - BookingOptions/B&B',        label:'B&B',          lk:'Resort - Amenities/B&B',        tk:'Resort - Amenities/B&BTXT'},
-  {i:10, key:'Guesthouse', bk:'Resort - BookingOptions/Guesthouse', label:'Guesthouse',   lk:'Resort - Amenities/GuestHouse', tk:'Resort - Amenities/GuestHouseTXT'},
-  {i:11, key:'FamilyHome', bk:'Resort - BookingOptions/FamilyHome', label:'Family Home',  lk:'Resort - Amenities/FamilyHome', tk:'Resort - Amenities/FamilyHomeTXT'},
-  {i:12, key:'LankSlaap',  bk:'Resort - BookingOptions/LankSlaap',  label:'LankSlaap',    lk:'Resort - Amenities/LankSlaap',  tk:'Resort - Amenities/LankSlaapTXT'},
-  {i:13, key:'Niche',      bk:'Resort - BookingOptions/Niche',      label:'Niche',        lk:'Resort - Amenities/Niche',      tk:'Resort - Amenities/NicheTXT'},
-  {i:14, key:'Wedding',    bk:'Resort - BookingOptions/Wedding',    label:'Weddings',     lk:'Resort - Amenities/Wedding',    tk:'Resort - Amenities/WeddingTXT'},
-  {i:15, key:'Conference', bk:'Resort - BookingOptions/Conference', label:'Conference',   lk:'Resort - Amenities/Conference', tk:'Resort - Amenities/ConferenceTXT'},
-  {i:16, key:'Functions',  bk:'Resort - BookingOptions/Functions',  label:'Functions',    lk:'Resort - Amenities/Functions',  tk:'Resort - Amenities/FunctionsTXT'},
-  {i:17, key:'Hunting',    bk:'Resort - BookingOptions/Hunting',    label:'Hunting',      lk:'Resort - Amenities/Hunting',    tk:'Resort - Amenities/HuntingTXT'},
-  {i:18, key:'Pets',       bk:'Resort - BookingOptions/Pets',       label:'Pets Welcome', lk:'Resort - Amenities/Pets',  tk:'Resort - Amenities/PetsTXT'},
-  {i:19, key:'Excursions', bk:'Resort - BookingOptions/Excursions', label:'Excursions',   lk:'Resort - Amenities/Excursions', tk:'Resort - Amenities/ExcursionsTXT'},
-  {i:20, key:'Off-Grid',   bk:'Resort - BookingOptions/OffGrid', label:'Off-Grid',   lk:'Resort - Amenities/OffGrid', tk:'Resort - Amenities/OffGridTXT'},
-];
+function isKKUser() { return SESSION && SESSION.role === 'KampKiepie'; }
+
+// Fields restricted to KampKiepie staff only
 var RESTRICTED_FIELDS = new Set([
-  'Resort- Header/DriveRef',
-  'Resort- Gallery/GalleryLinksArray',
-  'Resorts - Bookings/BookingLink',
-  'Resorts - Bookings/HasBookings',
-  'Resort - KKBook/Level',
-  'Resort - KKBook/Active',
-  'Resort - KKBook/BookingMode',
-  'Resort- Owner/OnBoard',
+  'drive_ref', 'gallery_links_array', 'booking_link', 'has_bookings',
+  'level', 'kk_book_active', 'booking_mode', 'on_board',
 ]);
+
+var ACCOM_TYPES = [
+  {i:0,  key:'POP',        bk:'opt_pop',         label:'POP',          lk:'amen_pop',         tk:'amen_pop_txt'},
+  {i:1,  key:'Camp',       bk:'opt_camp',        label:'Camping',      lk:'amen_camp',        tk:'amen_camp_txt'},
+  {i:2,  key:'Lankstaan',  bk:'opt_lankstaan',   label:'Lankstaan',    lk:'amen_lank_staan',  tk:'amen_lank_staan_txt'},
+  {i:3,  key:'Glamp',      bk:'opt_glamp',       label:'Glamping',     lk:'amen_glamp',       tk:'amen_glamp_txt'},
+  {i:4,  key:'Chalet',     bk:'opt_chalet',      label:'Chalet',       lk:'amen_chalet',      tk:'amen_chalet_txt'},
+  {i:5,  key:'Cottage',    bk:'opt_cottage',     label:'Cottage',      lk:'amen_cottage',     tk:'amen_cottage_txt'},
+  {i:6,  key:'Lodge',      bk:'opt_lodge',       label:'Lodge',        lk:'amen_lodge',       tk:'amen_lodge_txt'},
+  {i:7,  key:'Room',       bk:'opt_room',        label:'Room',         lk:'amen_room',        tk:'amen_room_txt'},
+  {i:8,  key:'BackPack',   bk:'opt_back_pack',   label:'Backpacker',   lk:'amen_back_pack',   tk:'amen_back_pack_txt'},
+  {i:9,  key:'BnB',        bk:'opt_bb',          label:'B&B',          lk:'amen_bb',          tk:'amen_bb_txt'},
+  {i:10, key:'Guesthouse', bk:'opt_guesthouse',  label:'Guesthouse',   lk:'amen_guest_house', tk:'amen_guest_house_txt'},
+  {i:11, key:'FamilyHome', bk:'opt_family_home', label:'Family Home',  lk:'amen_family_home', tk:'amen_family_home_txt'},
+  {i:12, key:'LankSlaap',  bk:'opt_lank_slaap',  label:'LankSlaap',    lk:'amen_lank_slaap',  tk:'amen_lank_slaap_txt'},
+  {i:13, key:'Niche',      bk:'opt_niche',       label:'Niche',        lk:'amen_niche',       tk:'amen_niche_txt'},
+  {i:14, key:'Wedding',    bk:'opt_wedding',     label:'Weddings',     lk:'amen_wedding',     tk:'amen_wedding_txt'},
+  {i:15, key:'Conference', bk:'opt_conference',  label:'Conference',   lk:'amen_conference',  tk:'amen_conference_txt'},
+  {i:16, key:'Functions',  bk:'opt_functions',   label:'Functions',    lk:'amen_functions',   tk:'amen_functions_txt'},
+  {i:17, key:'Hunting',    bk:'opt_hunting',     label:'Hunting',      lk:'amen_hunting',     tk:'amen_hunting_txt'},
+  {i:18, key:'Pets',       bk:'opt_pets',        label:'Pets Welcome', lk:'amen_pets',        tk:'amen_pets_txt'},
+  {i:19, key:'Excursions', bk:'opt_excursions',  label:'Excursions',   lk:'amen_excursions',  tk:'amen_excursions_txt'},
+  {i:20, key:'Off-Grid',   bk:'opt_off_grid',    label:'Off-Grid',     lk:'amen_off_grid',    tk:'amen_off_grid_txt'},
+];
+
 var GROUPS = [
   { title:'Basic Information', fields:[
-    { key:'Resort- Header/ResortName',         label:'Resort Name',           type:'text' },
-    { key:'Resort- Header/DriveRef',           label:'Drive Ref (e.g. NC SOL001)', type:'text' },
-    { key:'Resort- Header/Address',            label:'Address',               type:'text' },
-    { key:'Resort- Header/Coordinates',        label:'Coordinates (lat,lng)', type:'text' },
-    { key:'Resort- Header/ResortDescription',  label:'Description',           type:'textarea' },
+    { key:'resort_name',        label:'Resort Name',           type:'text' },
+    { key:'drive_ref',          label:'Drive Ref (e.g. NC SOL001)', type:'text' },
+    { key:'address',            label:'Address',               type:'text' },
+    { key:'coordinates',        label:'Coordinates (lat,lng)', type:'text' },
+    { key:'resort_description', label:'Description',           type:'textarea' },
   ]},
   { title:'Contact Details', fields:[
-    { key:'Resort- Header/ContactPersonName',        label:'Contact Person Name',   type:'text' },
-    { key:'Resort- Header/ContactPersonEmail',       label:'Contact Person Email',  type:'email' },
-    { key:'Resort- Header/ContactPersonPhoneNumber', label:'Contact Person Phone',  type:'text' },
-    { key:'Resort- Header/email',                    label:'Resort Email',          type:'email' },
-    { key:'Resort- Header/WhatsappPhone',            label:'WhatsApp Phone',        type:'text' },
-    { key:'Resort- Header/Website',                  label:'Website URL',           type:'url' },
+    { key:'contact_person_name',         label:'Contact Person Name',  type:'text' },
+    { key:'contact_person_email',        label:'Contact Person Email', type:'email' },
+    { key:'contact_person_phone_number', label:'Contact Person Phone', type:'text' },
+    { key:'email',                       label:'Resort Email',         type:'email' },
+    { key:'whatsapp_phone',              label:'WhatsApp Phone',       type:'text' },
+    { key:'website',                     label:'Website URL',          type:'url' },
   ]},
   { title:'Social Media', fields:[
-    { key:'Resort- Socials/Facebook',  label:'Facebook',  type:'text' },
-    { key:'Resort- Socials/Instagram', label:'Instagram', type:'text' },
-    { key:'Resort- Socials/TikTok',    label:'TikTok',    type:'text' },
+    { key:'facebook',  label:'Facebook',  type:'text' },
+    { key:'instagram', label:'Instagram', type:'text' },
+    { key:'tik_tok',   label:'TikTok',    type:'text' },
   ]},
   { title:'Photos', fields:[
-    { key:'Resort- Header/ResortExtraPhoto',   label:'Main Photo URL',               type:'url', showThumb:true },
-    { key:'Resort- Header/ResortProfilePhoto', label:'Logo / Profile Photo URL',     type:'url', showThumb:true },
-    { key:'Resort- Gallery/GalleryLinksArray', label:'Gallery (pipe-separated URLs)', type:'textarea', syncGallery:true },
-    { key:'Resort- Map/CampMap',               label:'Camp Map Image URL',            type:'url', viewMap:true },
+    { key:'resort_extra_photo',   label:'Main Photo URL',                type:'url', showThumb:true },
+    { key:'resort_profile_photo', label:'Logo / Profile Photo URL',      type:'url', showThumb:true },
+    { key:'gallery_links_array',  label:'Gallery (pipe-separated URLs)', type:'textarea', syncGallery:true },
+    { key:'camp_map',             label:'Camp Map Image URL',            type:'url', viewMap:true },
   ]},
   { title:'Accommodation Types', accomGroup:true, checkboxes:[
-    { key:'Resort - BookingOptions/POP?',       label:'POP' },
-    { key:'Resort - BookingOptions/Camp?',      label:'Camp' },
-    { key:'Resort - BookingOptions/Lankstaan?', label:'Lankstaan' },
-    { key:'Resort - BookingOptions/Glamp',      label:'Glamp' },
-    { key:'Resort - BookingOptions/Chalet',     label:'Chalet' },
-    { key:'Resort - BookingOptions/Cottage',    label:'Cottage' },
-    { key:'Resort - BookingOptions/Lodge',      label:'Lodge' },
-    { key:'Resort - BookingOptions/Room?',      label:'Room' },
-    { key:'Resort - BookingOptions/BackPack',   label:'Backpack' },
-    { key:'Resort - BookingOptions/B&B',        label:'B&B' },
-    { key:'Resort - BookingOptions/Guesthouse', label:'Guesthouse' },
-    { key:'Resort - BookingOptions/FamilyHome', label:'Family Home' },
-    { key:'Resort - BookingOptions/LankSlaap',  label:'LankSlaap' },
-    { key:'Resort - BookingOptions/Niche',      label:'Niche' },
-    { key:'Resort - BookingOptions/Wedding',    label:'Weddings' },
-    { key:'Resort - BookingOptions/Conference', label:'Conference' },
-    { key:'Resort - BookingOptions/Functions',  label:'Functions' },
-    { key:'Resort - BookingOptions/Hunting',    label:'Hunting' },
-    { key:'Resort - BookingOptions/Pets',       label:'Pets Welcome' },
-    { key:'Resort - BookingOptions/Excursions', label:'Excursions' },
-    { key:'Resort - BookingOptions/OffGrid',       label:'Off-Grid' },
+    { key:'opt_pop',         label:'POP' },
+    { key:'opt_camp',        label:'Camp' },
+    { key:'opt_lankstaan',   label:'Lankstaan' },
+    { key:'opt_glamp',       label:'Glamp' },
+    { key:'opt_chalet',      label:'Chalet' },
+    { key:'opt_cottage',     label:'Cottage' },
+    { key:'opt_lodge',       label:'Lodge' },
+    { key:'opt_room',        label:'Room' },
+    { key:'opt_back_pack',   label:'Backpack' },
+    { key:'opt_bb',          label:'B&B' },
+    { key:'opt_guesthouse',  label:'Guesthouse' },
+    { key:'opt_family_home', label:'Family Home' },
+    { key:'opt_lank_slaap',  label:'LankSlaap' },
+    { key:'opt_niche',       label:'Niche' },
+    { key:'opt_wedding',     label:'Weddings' },
+    { key:'opt_conference',  label:'Conference' },
+    { key:'opt_functions',   label:'Functions' },
+    { key:'opt_hunting',     label:'Hunting' },
+    { key:'opt_pets',        label:'Pets Welcome' },
+    { key:'opt_excursions',  label:'Excursions' },
+    { key:'opt_off_grid',    label:'Off-Grid' },
   ]},
-  { title:'POP Settings', fields:[{ key:'Resort- POP/POPMaxNights', label:'Max POP Nights', type:'number' }]},
+  { title:'POP Settings', fields:[{ key:'pop_max_nights', label:'Max POP Nights', type:'number' }]},
   { title:'Bookings', fields:[
-    { key:'Resorts - Bookings/BookingLink', label:'Booking Link URL', type:'url' },
+    { key:'booking_link', label:'Booking Link URL', type:'url' },
   ], checkboxes:[
-    { key:'Resorts - Bookings/HasBookings', label:'Has Online Bookings' },
+    { key:'has_bookings', label:'Has Online Bookings' },
   ]},
   { title:'Amenities', fields:[
-    { key:'Resort - Amenities/AmenitiesBasic',        label:'Basic Facilities (comma-separated)',  type:'textarea' },
-    { key:'Resort - Amenities/AmenitiesWork',         label:'Work & Connectivity',                 type:'textarea' },
-    { key:'Resort - Amenities/AmenitiesComfort',      label:'Comfort',                             type:'textarea' },
-    { key:'Resort - Amenities/AmenitiesRecreational', label:'Recreational',                        type:'textarea' },
-    { key:'Resort - Amenities/AmenitiesSafety',       label:'Safety & Security',                   type:'textarea' },
-    { key:'Resort - Amenities/AmenitiesAdditional',   label:'Additional',                          type:'textarea' },
-    { key:'Resort - Amenities/Pets',                  label:'Pet Policy',                          type:'text' },
-    { key:'Resort - Amenities/Nearby',                label:'Nearby Attractions',                  type:'textarea' },
+    { key:'amenities_basic',        label:'Basic Facilities (comma-separated)', type:'textarea' },
+    { key:'amenities_work',         label:'Work & Connectivity',                type:'textarea' },
+    { key:'amenities_comfort',      label:'Comfort',                            type:'textarea' },
+    { key:'amenities_recreational', label:'Recreational',                       type:'textarea' },
+    { key:'amenities_safety',       label:'Safety & Security',                  type:'textarea' },
+    { key:'amenities_additional',   label:'Additional',                         type:'textarea' },
+    { key:'amen_pets',              label:'Pet Policy',                         type:'text' },
+    { key:'nearby',                 label:'Nearby Attractions',                 type:'textarea' },
   ]},
   { title:'Content', fields:[
-    { key:'Resort - Host/MessageTXT', label:'Host Welcome Message',    type:'textarea' },
-    { key:'Resort - Rules/RulesTXT',  label:'Resort Rules',            type:'textarea' },
-    { key:'Resort - FAQ/FAQArray',    label:'FAQ (format: Q|A||Q|A)',  type:'textarea' },
-    { key:'Resort - More/MoreTXT',    label:'Additional Information',  type:'textarea' },
+    { key:'message_txt', label:'Host Welcome Message',   type:'textarea' },
+    { key:'rules_txt',   label:'Resort Rules',           type:'textarea' },
+    { key:'faq_array',   label:'FAQ (format: Q|A||Q|A)', type:'textarea' },
+    { key:'more_txt',    label:'Additional Information', type:'textarea' },
   ]},
   { title:'Branding', fields:[
-    { key:'Resort - config/CorpColour', label:'Primary Colour (e.g. #F97316)',   type:'text' },
-    { key:'Resort - config/SubColour',  label:'Secondary Colour (e.g. #16A34A)', type:'text' },
+    { key:'corp_colour', label:'Primary Colour (e.g. #F97316)',   type:'text' },
+    { key:'sub_colour',  label:'Secondary Colour (e.g. #16A34A)', type:'text' },
   ]},
   { title:'KKBook Settings', fields:[
-    { key:'Resort - KKBook/Level', label:'KKBook Level', type:'text' },
-    { key:'Resort - KKBook/BookingMode', label:'Booking Mode', type:'bookingmode' },
+    { key:'level',        label:'KKBook Level', type:'text' },
+    { key:'booking_mode', label:'Booking Mode', type:'bookingmode' },
   ], checkboxes:[
-    { key:'Resort - KKBook/Active', label:'KKBook Active' },
-    { key:'Resort- Owner/OnBoard', label:'OnBoard (Public Live)' },
+    { key:'kk_book_active', label:'KKBook Active' },
+    { key:'on_board',       label:'OnBoard (Public Live)' },
   ]},
 ];
 var SUPER_GROUPS = [
   { title:'Super Admin Settings', fields:[], checkboxes:[
-    { key:'Resorts - Switches/BetaActive?',   label:'Beta Active' },
-    { key:'Resorts - Switches/MembersOnly?',  label:'Members Only' },
+    { key:'beta_active',  label:'Beta Active' },
+    { key:'members_only', label:'Members Only' },
   ]},
 ];
+
 function safeId(key) { return key.replace(/[^a-zA-Z0-9]/g, '_'); }
 function isTrue(val) {
   return String(val||'').trim().toLowerCase() === 'true' ||
          String(val||'').trim() === '1' ||
          String(val||'').trim().toLowerCase() === 'yes';
 }
+
 function renderForm(resort) {
   var groups = GROUPS.slice();
   if (isKKUser()) groups = groups.concat(SUPER_GROUPS);
   var html = '<div class="edit-card">';
   groups.forEach(function(group) {
     var secId = 'sec_' + safeId(group.title);
-    html += '<div class="divider" onclick="toggleSection(\''+secId+'\')"><span class="sec-arrow" id="arr_'+secId+'">&#9654;</span> \uD83C\uDFF7\uFE0F ' + group.title + '</div>';
+    html += '<div class="divider" onclick="toggleSection(\'' + secId + '\')"><span class="sec-arrow" id="arr_' + secId + '">\u25B6</span> \uD83C\uDFF7\uFE0F ' + group.title + '</div>';
     html += '<div class="sec-body" id="' + secId + '"><div class="form-grid">';
     (group.fields||[]).forEach(function(f) {
-      var val = resort[f.key] !== undefined ? String(resort[f.key]) : '';
+      var val        = resort[f.key] !== undefined ? String(resort[f.key]) : '';
       var restricted = !isKKUser() && RESTRICTED_FIELDS.has(f.key);
-      var roStyle = restricted ? 'background:var(--bg);color:var(--subtle);cursor:not-allowed;border-style:dashed;' : '';
-      var roAttr  = restricted ? ' readonly' : '';
-      var lockIco = restricted ? '&#128274; ' : '';
+      var roStyle    = restricted ? 'background:var(--bg);color:var(--subtle);cursor:not-allowed;border-style:dashed;' : '';
+      var roAttr     = restricted ? ' readonly' : '';
+      var lockIco    = restricted ? '\uD83D\uDD12 ' : '';
       if (f.type === 'bookingmode') {
         var curMode = (val || 'live').toLowerCase();
         var bmId = 'bm_' + safeId(f.key);
@@ -733,16 +762,16 @@ function renderForm(resort) {
           + '<div class="booking-mode-pair">'
           + '<label class="bm-radio' + (curMode !== 'indirect' ? ' selected' : '') + '" id="' + bmId + '_live" onclick="setBookingMode(\'' + f.key + '\',\'live\')">'
           + '<input type="radio" name="' + bmId + '" value="live"' + (curMode !== 'indirect' ? ' checked' : '') + '>'
-          + '<div><div class="bm-radio-label">&#9989; Live</div><div class="bm-radio-sub">Fully managed in KampKiepie</div></div>'
+          + '<div><div class="bm-radio-label">\u2705 Live</div><div class="bm-radio-sub">Fully managed in KampKiepie</div></div>'
           + '</label>'
           + '<label class="bm-radio' + (curMode === 'indirect' ? ' selected' : '') + '" id="' + bmId + '_indirect" onclick="setBookingMode(\'' + f.key + '\',\'indirect\')">'
           + '<input type="radio" name="' + bmId + '" value="indirect"' + (curMode === 'indirect' ? ' checked' : '') + '>'
-          + '<div><div class="bm-radio-label">&#128232; Indirect</div><div class="bm-radio-sub">Enquiry only &#8212; resort manages booking</div></div>'
+          + '<div><div class="bm-radio-label">\uD83D\uDCE8 Indirect</div><div class="bm-radio-sub">Enquiry only \u2014 resort manages booking</div></div>'
           + '</label>'
           + '</div></div>';
       } else if (f.type === 'textarea') {
         var syncBtn = f.syncGallery
-          ? '<button type="button" onclick="syncGallery()" style="background:#EDE9FE;color:#7C3AED;border:none;border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;" id="syncGalleryBtn">↻ Sync from Drive</button>'
+          ? '<button type="button" onclick="syncGallery()" style="background:#EDE9FE;color:#7C3AED;border:none;border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;" id="syncGalleryBtn">\u21BB Sync from Drive</button>'
           : '';
         var taLabelRow = syncBtn
           ? '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><label style="margin:0">' + lockIco + f.label + '</label>' + syncBtn + '</div>'
@@ -751,39 +780,25 @@ function renderForm(resort) {
       } else {
         var viewMapHtml = '';
         if (f.viewMap) {
-          var mapBtnStyle = 'background:var(--green-l);color:var(--green);border:1.5px solid var(--green);'
-            + 'border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;'
-            + 'font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;';
+          var mapBtnStyle = 'background:var(--green-l);color:var(--green);border:1.5px solid var(--green);border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;';
           viewMapHtml = val
-            ? '<a id="maplink_'+safeId(f.key)+'" href="' + esc(val) + '" target="_blank" rel="noopener" style="' + mapBtnStyle + '">&#128506; View Map</a>'
-            : '<a id="maplink_'+safeId(f.key)+'" href="#" style="' + mapBtnStyle + 'opacity:.4;cursor:not-allowed;pointer-events:none;">&#128506; View Map</a>';
+            ? '<a id="maplink_' + safeId(f.key) + '" href="' + esc(val) + '" target="_blank" rel="noopener" style="' + mapBtnStyle + '">\uD83D\uDDFA View Map</a>'
+            : '<a id="maplink_' + safeId(f.key) + '" href="#" style="' + mapBtnStyle + 'opacity:.4;cursor:not-allowed;pointer-events:none;">\uD83D\uDDFA View Map</a>';
         }
         var drivePickBtn = f.showThumb
-          ? '<button type="button" onclick="openPhotoPicker(\'' + f.key + '\')" '
-            + 'style="background:#EDE9FE;color:#7C3AED;border:none;border-radius:7px;padding:3px 11px;'
-            + 'font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;">&#128247; Pick from Drive</button>'
+          ? '<button type="button" onclick="openPhotoPicker(\'' + f.key + '\')" style="background:#EDE9FE;color:#7C3AED;border:none;border-radius:7px;padding:3px 11px;font-family:\'Nunito\',sans-serif;font-size:11px;font-weight:800;cursor:pointer;">\uD83D\uDCF7 Pick from Drive</button>'
           : '';
         var thumbHtml = '';
         if (f.showThumb && val) {
-          thumbHtml = '<img id="thumb_' + safeId(f.key) + '" src="' + esc(driveImgUrl(val)) + '" '
-            + 'style="max-height:80px;max-width:100%;margin-top:6px;border-radius:6px;display:block;object-fit:contain" '
-            + 'onerror="this.style.display=\'none\'" onload="this.style.display=\'block\'">';
+          thumbHtml = '<img id="thumb_' + safeId(f.key) + '" src="' + esc(driveImgUrl(val)) + '" style="max-height:80px;max-width:100%;margin-top:6px;border-radius:6px;display:block;object-fit:contain" onerror="this.style.display=\'none\'" onload="this.style.display=\'block\'">';
         } else if (f.showThumb) {
-          thumbHtml = '<img id="thumb_' + safeId(f.key) + '" src="" '
-            + 'style="max-height:80px;max-width:100%;margin-top:6px;border-radius:6px;display:none;object-fit:contain" '
-            + 'onerror="this.style.display=\'none\'">';
+          thumbHtml = '<img id="thumb_' + safeId(f.key) + '" src="" style="max-height:80px;max-width:100%;margin-top:6px;border-radius:6px;display:none;object-fit:contain" onerror="this.style.display=\'none\'">';
         }
-        var thumbHandler = f.showThumb
-          ? 'var t=document.getElementById(\'thumb_'+safeId(f.key)+'\');if(t){t.src=driveImgUrl(el.value);t.style.display=el.value?\'block\':\'none\';}'
-          : '';
-        var mapHandler = f.viewMap
-          ? 'var m=document.getElementById(\'maplink_'+safeId(f.key)+'\');if(m){m.href=el.value||\'#\';m.style.opacity=el.value?\'1\':\'0.4\';m.style.pointerEvents=el.value?\'\':[\'none\'][0];}'
-          : '';
-        var onInput = (thumbHandler||mapHandler)
-          ? ' oninput="(function(el){'+thumbHandler+mapHandler+'}).call(this,this)"'
-          : '';
-        var extraBtn = viewMapHtml || drivePickBtn || '';
-        var elLabelRow = extraBtn
+        var thumbHandler = f.showThumb ? 'var t=document.getElementById(\'thumb_' + safeId(f.key) + '\');if(t){t.src=driveImgUrl(el.value);t.style.display=el.value?\'block\':\'none\';}' : '';
+        var mapHandler   = f.viewMap   ? 'var m=document.getElementById(\'maplink_' + safeId(f.key) + '\');if(m){m.href=el.value||\'#\';m.style.opacity=el.value?\'1\':\'0.4\';m.style.pointerEvents=el.value?\'\':[\'none\'][0];}' : '';
+        var onInput      = (thumbHandler||mapHandler) ? ' oninput="(function(el){' + thumbHandler + mapHandler + '}).call(this,this)"' : '';
+        var extraBtn     = viewMapHtml || drivePickBtn || '';
+        var elLabelRow   = extraBtn
           ? '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px"><label style="margin:0">' + lockIco + f.label + '</label>' + extraBtn + '</div>'
           : '<label>' + lockIco + f.label + '</label>';
         html += '<div class="fg">' + elLabelRow
@@ -796,11 +811,11 @@ function renderForm(resort) {
       html += '<div class="fg full"><label>Options</label><div class="cb-group">';
       cbs.forEach(function(f) {
         var restricted = !isKKUser() && RESTRICTED_FIELDS.has(f.key);
-        var disAttr  = restricted ? ' disabled' : '';
-        var disStyle = restricted ? 'style="opacity:.5;cursor:not-allowed;"' : '';
-        var lockIco  = restricted ? '&#128274; ' : '';
-        var onChange = group.accomGroup ? ' onchange="updateAccomPills()"' : '';
-        html += '<label class="cb-item" ' + disStyle + '><input type="checkbox" id="f_' + safeId(f.key) + '" ' + (isTrue(resort[f.key])?'checked':'') + disAttr + onChange + '> ' + lockIco + f.label + '</label>';
+        var disAttr    = restricted ? ' disabled' : '';
+        var disStyle   = restricted ? 'style="opacity:.5;cursor:not-allowed;"' : '';
+        var lockIco    = restricted ? '\uD83D\uDD12 ' : '';
+        var onChange   = group.accomGroup ? ' onchange="updateAccomPills()"' : '';
+        html += '<label class="cb-item" ' + disStyle + '><input type="checkbox" id="f_' + safeId(f.key) + '" ' + (isTrue(resort[f.key]) ? 'checked' : '') + disAttr + onChange + '> ' + lockIco + f.label + '</label>';
       });
       html += '</div></div>';
     }
@@ -808,7 +823,7 @@ function renderForm(resort) {
       html += '<div class="fg full"><div class="acc-pill-row" id="accPillRow"></div>';
       html += '<div class="acc-editor-panel" id="accEditorPanel">';
       html += '<div class="acc-editor-title" id="accEditorTitle"></div>';
-      html += '<div class="fg full"><label>Facilities &mdash; one per line</label>';
+      html += '<div class="fg full"><label>Facilities \u2014 one per line</label>';
       html += '<textarea id="accEditorList" rows="6" placeholder="e.g.\nAblution block\nBraai area\nSwimming pool"></textarea></div>';
       html += '<div class="fg full" style="margin-top:10px"><label>Description / more detail</label>';
       html += '<textarea id="accEditorTxt" rows="4" placeholder="Tell guests more about this accommodation type..."></textarea></div>';
@@ -823,14 +838,12 @@ function renderForm(resort) {
     html += '</div></div>';
   });
   html += '</div>';
-  // Save which sections are currently open before re-rendering
   var openSecs = [];
   document.querySelectorAll('.sec-body').forEach(function(b) {
     if (b.style.display === 'block') openSecs.push(b.id);
   });
   document.getElementById('editWrap').innerHTML = html;
   updateAccomPills();
-  // Restore previously open sections
   openSecs.forEach(function(id) {
     var body  = document.getElementById(id);
     var arrow = document.getElementById('arr_' + id);
@@ -838,11 +851,11 @@ function renderForm(resort) {
     if (arrow) arrow.classList.add('open');
   });
 }
+
 var _accActiveIdx = null;
 function accFlushEditor() {
   if (_accActiveIdx === null) return;
-  var t = ACCOM_TYPES[_accActiveIdx];
-  if (!t) return;
+  var t = ACCOM_TYPES[_accActiveIdx]; if (!t) return;
   var lel = document.getElementById('f_' + safeId(t.lk));
   var tel = document.getElementById('f_' + safeId(t.tk));
   var edList = document.getElementById('accEditorList');
@@ -851,31 +864,27 @@ function accFlushEditor() {
   if (tel && edTxt)  tel.value = edTxt.value;
 }
 function selectAccomPill(idx) {
-  accFlushEditor();
-  _accActiveIdx = idx;
-  var t = ACCOM_TYPES[idx];
-  if (!t) return;
+  accFlushEditor(); _accActiveIdx = idx;
+  var t = ACCOM_TYPES[idx]; if (!t) return;
   document.querySelectorAll('#accPillRow .acc-pill').forEach(function(p){ p.classList.remove('on'); });
   var pill = document.getElementById('accPill_' + idx);
   if (pill) pill.classList.add('on');
-  var lel   = document.getElementById('f_' + safeId(t.lk));
-  var tel   = document.getElementById('f_' + safeId(t.tk));
+  var lel     = document.getElementById('f_' + safeId(t.lk));
+  var tel     = document.getElementById('f_' + safeId(t.tk));
   var edList  = document.getElementById('accEditorList');
   var edTxt   = document.getElementById('accEditorTxt');
   var edTitle = document.getElementById('accEditorTitle');
   if (edTitle) edTitle.textContent = t.label;
-  if (edList)  edList.value  = lel ? lel.value.split(',').map(function(s){return s.trim();}).filter(Boolean).join('\n') : '';
-  if (edTxt)   edTxt.value   = tel ? tel.value : '';
+  if (edList)  edList.value = lel ? lel.value.split(',').map(function(s){return s.trim();}).filter(Boolean).join('\n') : '';
+  if (edTxt)   edTxt.value  = tel ? tel.value : '';
   var panel = document.getElementById('accEditorPanel');
   if (panel) panel.classList.add('on');
 }
 function updateAccomPills() {
-  var row = document.getElementById('accPillRow');
-  if (!row) return;
+  var row = document.getElementById('accPillRow'); if (!row) return;
   accFlushEditor();
   var ticked = ACCOM_TYPES.filter(function(t) {
-    var cb = document.getElementById('f_' + safeId(t.bk));
-    return cb && cb.checked;
+    var cb = document.getElementById('f_' + safeId(t.bk)); return cb && cb.checked;
   });
   row.innerHTML = ticked.length
     ? ticked.map(function(t) {
@@ -883,7 +892,6 @@ function updateAccomPills() {
         return '<button type="button" class="acc-pill' + on + '" id="accPill_' + t.i + '" onclick="selectAccomPill(' + t.i + ')">' + t.label + '</button>';
       }).join('')
     : '<span style="font-size:12px;color:var(--muted);font-weight:600">Tick accommodation types above to add details</span>';
-  // If active pill's type was unticked, close panel
   if (_accActiveIdx !== null && !ticked.find(function(t){ return t.i === _accActiveIdx; })) {
     _accActiveIdx = null;
     var panel = document.getElementById('accEditorPanel');
@@ -895,20 +903,18 @@ function toggleSection(secId) {
   var arrow = document.getElementById('arr_' + secId);
   if (!body) return;
   var isOpen = body.style.display !== 'none' && body.style.display !== '';
-  body.style.display  = isOpen ? 'none' : 'block';
+  body.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.classList.toggle('open', !isOpen);
 }
+
 var _photoPickerTarget = null;
 function openPhotoPicker(fieldKey) {
   _photoPickerTarget = fieldKey;
-  var folderLink = (CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink']) || '';
-  if (!folderLink) {
-    alert('No Drive folder link configured for this resort (Resort- Header/DriveFolderLink is empty).');
-    return;
-  }
-  document.getElementById('photoPickerTitle').textContent = fieldKey.includes('ProfilePhoto') ? 'Choose Logo / Profile Photo' : 'Choose Main Photo';
+  var folderLink = (CURRENT_RESORT && CURRENT_RESORT['drive_folder_link']) || '';
+  if (!folderLink) { alert('No Drive folder link configured for this resort.'); return; }
+  document.getElementById('photoPickerTitle').textContent = fieldKey.includes('profile_photo') ? 'Choose Logo / Profile Photo' : 'Choose Main Photo';
   var body = document.getElementById('photoPickerBody');
-  body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">Loading images…</div>';
+  body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">Loading images\u2026</div>';
   document.getElementById('photoPickerModal').style.display = 'block';
   apiBackend({ action:'listDriveFolderImages', folderLink:folderLink }, 'GET')
     .then(function(res) {
@@ -917,7 +923,7 @@ function openPhotoPicker(fieldKey) {
         return;
       }
       body.innerHTML = '<div style="font-size:11px;color:var(--muted);margin-bottom:10px">'
-        + res.images.length + ' image' + (res.images.length!==1?'s':'') + ' in ' + esc(res.folderName||'Drive folder') + '</div>'
+        + res.images.length + ' image' + (res.images.length !== 1 ? 's' : '') + ' in ' + esc(res.folderName || 'Drive folder') + '</div>'
         + '<div class="photo-grid">'
         + res.images.map(function(img) {
             return '<div class="photo-card" onclick="pickPhoto(\'' + esc(img.url) + '\')">'
@@ -928,7 +934,7 @@ function openPhotoPicker(fieldKey) {
         + '</div>';
     })
     .catch(function(err) {
-      body.innerHTML = '<div style="padding:16px;color:var(--bad)">Could not load images: ' + esc(err.message||String(err)) + '</div>';
+      body.innerHTML = '<div style="padding:16px;color:#DC2626">Could not load images: ' + esc(err.message || String(err)) + '</div>';
     });
 }
 function pickPhoto(url) {
@@ -936,10 +942,8 @@ function pickPhoto(url) {
   var input = document.getElementById('f_' + safeId(_photoPickerTarget));
   if (input) {
     input.value = url;
-    // Update thumbnail
-    var thumb = document.getElementById('thumb_' + safeId(_photoPickerTarget));
+    var thumb   = document.getElementById('thumb_' + safeId(_photoPickerTarget));
     if (thumb) { thumb.src = driveImgUrl(url); thumb.style.display = 'block'; }
-    // Update view-map link if present
     var mapLink = document.getElementById('maplink_' + safeId(_photoPickerTarget));
     if (mapLink) { mapLink.href = url || '#'; mapLink.style.opacity = url ? '1' : '0.4'; }
   }
@@ -949,39 +953,38 @@ function closePhotoPicker() {
   document.getElementById('photoPickerModal').style.display = 'none';
   _photoPickerTarget = null;
 }
+
 async function setBookingMode(fieldKey, newVal) {
   if (!SESSION || !CURRENT_RESORT) return;
-  var resortId = CURRENT_RESORT['ResortID'];
+  var resortId = CURRENT_RESORT['resort_id'];
   var bmId = 'bm_' + safeId(fieldKey);
-  var fId  = 'f_' + safeId(fieldKey);
   ['live','indirect'].forEach(function(v) {
     var el = document.getElementById(bmId + '_' + v);
     if (el) el.classList.toggle('selected', v === newVal);
   });
-  var hidden = document.getElementById(fId);
+  var hidden = document.getElementById('f_' + safeId(fieldKey));
   if (hidden) hidden.value = newVal;
-  try {
-    var fields = {}; fields[fieldKey] = newVal;
-    var res = await api({ action:'updateResort', token:SESSION.token, resortId:resortId, fields:JSON.stringify(fields) });
-    if (res && res.success) {
-      if (CURRENT_RESORT) CURRENT_RESORT[fieldKey] = newVal;
-      showMsg('editMsg', '&#10003; Booking Mode saved', 'ok');
-      setTimeout(function(){ showMsg('editMsg',''); }, 2500);
-    } else { showMsg('editMsg', '&#10060; Could not save: ' + ((res && res.error) || 'unknown'), 'error'); }
-  } catch(e) { showMsg('editMsg', '&#10060; Save error: ' + e.message, 'error'); }
+  const { error } = await sb.from('resorts').update({ [fieldKey]: newVal }).eq('resort_id', resortId);
+  if (!error) {
+    if (CURRENT_RESORT) CURRENT_RESORT[fieldKey] = newVal;
+    showMsg('editMsg', '\u2713 Booking Mode saved', 'ok');
+    setTimeout(function(){ showMsg('editMsg',''); }, 2500);
+  } else {
+    showMsg('editMsg', '\u274C Could not save: ' + error.message, 'err');
+  }
 }
+
 function driveImgUrl(url) {
   if (!url) return '';
-  // Already a renderable URL
   if (!url.includes('drive.google.com') && !url.includes('docs.google.com')) return url;
   if (url.includes('drive.google.com/thumbnail') || url.includes('lh3.googleusercontent.com')) return url;
-  // Extract file ID from /file/d/ID or ?id=ID or /d/ID patterns
   var m = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
   if (!m) m = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
   if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w400';
   return url;
 }
-function saveResort() {
+
+async function saveResort() {
   accFlushEditor();
   var allFields = [];
   var groups = GROUPS.slice();
@@ -996,58 +999,52 @@ function saveResort() {
     if (!el) return;
     fields[f.key] = (f.type === 'checkbox') ? el.checked : el.value;
   });
-  // Collect accommodation amenity hidden fields
   ACCOM_TYPES.forEach(function(t) {
     var lel = document.getElementById('f_' + safeId(t.lk));
     var tel = document.getElementById('f_' + safeId(t.tk));
     if (lel) fields[t.lk] = lel.value;
     if (tel) fields[t.tk] = tel.value;
   });
-  var resortId = (SESSION.role === 'superadmin') ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '') : SESSION.resortId;
-  // Stamp the last-update time so the sheet always records when this resort was last edited
-  fields['Scoring/LastUpdate'] = new Date().toISOString();
+  var resortId = (SESSION.role === 'KampKiepie')
+    ? (CURRENT_RESORT ? CURRENT_RESORT['resort_id'] : '')
+    : SESSION.resortId;
+  fields['last_update'] = new Date().toISOString();
   var saveBtn = document.querySelector('.btn-save');
-  saveBtn.disabled = true; saveBtn.textContent = 'Saving...';
-  api({ action:'updateResort', resortId, token:SESSION.token, fields }).then(res => {
-    saveBtn.disabled = false; saveBtn.textContent = '\uD83D\uDCBE Save Changes';
-    if (res.success) {
-      // Bust the cache so the next visit shows fresh data
-      try { sessionStorage.removeItem('kkResortCache_' + resortId); } catch(e) {}
-      kkBust(); // invalidate guest-side CSV and boot caches
-      showMsg('editMsg', '\u2705 Changes saved successfully!', 'ok'); window.scrollTo(0,0); }
-    else showMsg('editMsg', '\u274C ' + (res.error || 'Save failed'), 'err');
-  });
+  saveBtn.disabled = true; saveBtn.textContent = 'Saving\u2026';
+  const { error } = await sb.from('resorts').update(fields).eq('resort_id', resortId);
+  saveBtn.disabled = false; saveBtn.textContent = '\uD83D\uDCBE Save Changes';
+  if (!error) {
+    kkBust();
+    showMsg('editMsg', '\u2705 Changes saved successfully!', 'ok');
+    window.scrollTo(0, 0);
+  } else {
+    showMsg('editMsg', '\u274C ' + (error.message || 'Save failed'), 'err');
+  }
 }
 
 // ── IMAGE MANAGER ─────────────────────────────────────────────────────────────
 async function openImageManager() {
   if (!BACKEND_URL) { alert('Booking backend URL not found in config.txt'); return; }
-  const folderLink = CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink'];
-  if (!folderLink) { alert('No Drive folder link found for this resort (Resort- Header/DriveFolderLink).'); return; }
-
-  // Show modal immediately with loading state
+  const folderLink = CURRENT_RESORT && CURRENT_RESORT['drive_folder_link'];
+  if (!folderLink) { alert('No Drive folder link found for this resort.'); return; }
   document.getElementById('imgModal').classList.add('on');
   const folderEl = document.getElementById('imgModalFolder');
   if (folderEl) folderEl.textContent = '';
-  document.getElementById('imgGridWrap').innerHTML =
-    '<div style="text-align:center;padding:30px 0;color:var(--muted);font-weight:700;">Loading images\u2026</div>';
+  document.getElementById('imgGridWrap').innerHTML = '<div style="text-align:center;padding:30px 0;color:var(--muted);font-weight:700;">Loading images\u2026</div>';
   document.getElementById('imgUploadProgress').innerHTML = '';
-
   try {
     const session = await getBackendSession();
     await loadImages(folderLink, session);
   } catch(err) {
-    document.getElementById('imgGridWrap').innerHTML =
-      '<div class="msg msg-err">' + esc(err.message || String(err)) + '</div>';
+    document.getElementById('imgGridWrap').innerHTML = '<div class="msg msg-err">' + esc(err.message || String(err)) + '</div>';
   }
 }
 function closeImgModal() {
   document.getElementById('imgModal').classList.remove('on');
   document.getElementById('imgFileInput').value = '';
 }
-
 async function loadImages(folderLink, session) {
-  folderLink = folderLink || (CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink']);
+  folderLink = folderLink || (CURRENT_RESORT && CURRENT_RESORT['drive_folder_link']);
   session    = session    || await getBackendSession();
   try {
     const res = await apiBackend({ action:'listDriveFolderImages', folderLink, session });
@@ -1057,42 +1054,36 @@ async function loadImages(folderLink, session) {
     if (folderEl && res.folderName) folderEl.textContent = res.folderName;
     renderImageGrid(IMG_LIST);
   } catch(err) {
-    document.getElementById('imgGridWrap').innerHTML =
-      '<div class="msg msg-err">' + esc(err.message || String(err)) + '</div>';
+    document.getElementById('imgGridWrap').innerHTML = '<div class="msg msg-err">' + esc(err.message || String(err)) + '</div>';
   }
 }
-
 function renderImageGrid(images) {
   const wrap = document.getElementById('imgGridWrap');
   if (!images.length) {
     wrap.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);font-weight:700;">No images in this folder yet. Upload some above!</div>';
     return;
   }
-  wrap.innerHTML = '<div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px">' +
-    images.length + ' image' + (images.length!==1?'s':'') + '</div>' +
-    '<div class="img-grid-wrap">' +
-    images.map(img => `
-      <div class="img-card" id="imgcard_${esc(img.id)}">
-        <img src="${esc(img.thumbnail)}" alt="${esc(img.name)}"
-             onerror="this.style.height='60px';this.style.background='var(--bg)'">
-        <div class="img-card-name" title="${esc(img.name)}">${esc(img.name)}</div>
-        <div class="img-card-acts">
-          <button class="btn-img-rename" onclick="renameImage('${esc(img.id)}','${esc(img.name)}')">Rename</button>
-          <button class="btn-img-delete" onclick="deleteImage('${esc(img.id)}','${esc(img.name)}')">Delete</button>
-        </div>
-      </div>`).join('') +
-    '</div>';
+  wrap.innerHTML = '<div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px">'
+    + images.length + ' image' + (images.length !== 1 ? 's' : '') + '</div>'
+    + '<div class="img-grid-wrap">'
+    + images.map(function(img) {
+        return '<div class="img-card" id="imgcard_' + esc(img.id) + '">'
+          + '<img src="' + esc(img.thumbnail) + '" alt="' + esc(img.name) + '" onerror="this.style.height=\'60px\';this.style.background=\'var(--bg)\'">'
+          + '<div class="img-card-name" title="' + esc(img.name) + '">' + esc(img.name) + '</div>'
+          + '<div class="img-card-acts">'
+          + '<button class="btn-img-rename" onclick="renameImage(\'' + esc(img.id) + '\',\'' + esc(img.name) + '\')">Rename</button>'
+          + '<button class="btn-img-delete" onclick="deleteImage(\'' + esc(img.id) + '\',\'' + esc(img.name) + '\')">Delete</button>'
+          + '</div></div>';
+      }).join('')
+    + '</div>';
 }
-
-// Upload one or more files
 async function handleUpload(files) {
   if (!files || !files.length) return;
-  const folderLink = CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveFolderLink'];
+  const folderLink = CURRENT_RESORT && CURRENT_RESORT['drive_folder_link'];
   const prog = document.getElementById('imgUploadProgress');
   prog.innerHTML = '';
   let session;
   try { session = await getBackendSession(); } catch(err) { prog.innerHTML = '<div class="msg msg-err">' + esc(err.message) + '</div>'; return; }
-
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (!file.type.startsWith('image/')) continue;
@@ -1100,46 +1091,34 @@ async function handleUpload(files) {
       prog.innerHTML += '<div class="upload-item"><span class="upload-item-status">\u26A0\uFE0F</span>' + esc(file.name) + ' \u2014 too large (max 10 MB)</div>';
       continue;
     }
-    // Show "uploading" row
     const rowId = 'urow_' + i;
-    prog.innerHTML += '<div class="upload-item" id="' + rowId + '"><span class="upload-item-status">&#8987;</span>' + esc(file.name) + ' \u2014 uploading\u2026</div>';
+    prog.innerHTML += '<div class="upload-item" id="' + rowId + '"><span class="upload-item-status">\u231B</span>' + esc(file.name) + ' \u2014 uploading\u2026</div>';
     try {
       const base64 = await readFileAsBase64(file);
-      const res = await apiBackend({
-        action:      'uploadImageToDrive',
-        folderLink,
-        session,
-        fileName:    file.name,
-        mimeType:    file.type,
-        imageBase64: base64
-      }, 'POST');
+      const res = await apiBackend({ action:'uploadImageToDrive', folderLink, session, fileName:file.name, mimeType:file.type, imageBase64:base64 }, 'POST');
       const row = document.getElementById(rowId);
       if (res.success) {
         if (row) row.innerHTML = '<span class="upload-item-status">\u2705</span>' + esc(file.name) + ' \u2014 uploaded';
-        // Add to grid immediately
         IMG_LIST.push({ id:res.id, name:res.name, url:res.url, thumbnail:res.thumbnail });
         renderImageGrid(IMG_LIST);
       } else {
-        if (row) row.innerHTML = '<span class="upload-item-status">\u274C</span>' + esc(file.name) + ' \u2014 ' + esc(res.error||'Upload failed');
+        if (row) row.innerHTML = '<span class="upload-item-status">\u274C</span>' + esc(file.name) + ' \u2014 ' + esc(res.error || 'Upload failed');
       }
     } catch(err) {
       const row = document.getElementById(rowId);
-      if (row) row.innerHTML = '<span class="upload-item-status">\u274C</span>' + esc(file.name) + ' \u2014 ' + esc(err.message||String(err));
+      if (row) row.innerHTML = '<span class="upload-item-status">\u274C</span>' + esc(file.name) + ' \u2014 ' + esc(err.message || String(err));
     }
   }
-  // Reset file input so same file can be uploaded again
   document.getElementById('imgFileInput').value = '';
 }
-
 function readFileAsBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload  = e => resolve(e.target.result.split(',')[1]); // strip data-URI prefix
+    reader.onload  = e => resolve(e.target.result.split(',')[1]);
     reader.onerror = () => reject(new Error('Could not read file'));
     reader.readAsDataURL(file);
   });
 }
-
 async function deleteImage(fileId, name) {
   if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
   const card = document.getElementById('imgcard_' + fileId);
@@ -1147,137 +1126,101 @@ async function deleteImage(fileId, name) {
   try {
     const session = await getBackendSession();
     const res = await apiBackend({ action:'deleteImageFromDrive', fileId, session }, 'POST');
-    if (res.success) {
-      IMG_LIST = IMG_LIST.filter(img => img.id !== fileId);
-      renderImageGrid(IMG_LIST);
-    } else {
-      if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
-      alert('Delete failed: ' + (res.error || 'unknown error'));
-    }
+    if (res.success) { IMG_LIST = IMG_LIST.filter(img => img.id !== fileId); renderImageGrid(IMG_LIST); }
+    else { if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; } alert('Delete failed: ' + (res.error || 'unknown error')); }
   } catch(err) {
     if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
     alert('Delete failed: ' + (err.message || String(err)));
   }
 }
-
 async function renameImage(fileId, currentName) {
   const ext      = currentName.includes('.') ? '.' + currentName.split('.').pop() : '';
   const baseName = currentName.includes('.') ? currentName.slice(0, currentName.lastIndexOf('.')) : currentName;
   const newBase  = prompt('Rename "' + currentName + '" to:', baseName);
   if (!newBase || newBase.trim() === baseName) return;
   const newName = newBase.trim() + ext;
-  const card    = document.getElementById('imgcard_' + fileId);
+  const card = document.getElementById('imgcard_' + fileId);
   if (card) { card.style.opacity = '0.5'; card.style.pointerEvents = 'none'; }
   try {
     const session = await getBackendSession();
     const res = await apiBackend({ action:'renameImageInDrive', fileId, newName, session }, 'POST');
-    if (res.success) {
-      const img = IMG_LIST.find(i => i.id === fileId);
-      if (img) img.name = newName;
-      renderImageGrid(IMG_LIST);
-    } else {
-      if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
-      alert('Rename failed: ' + (res.error || 'unknown error'));
-    }
+    if (res.success) { const img = IMG_LIST.find(i => i.id === fileId); if (img) img.name = newName; renderImageGrid(IMG_LIST); }
+    else { if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; } alert('Rename failed: ' + (res.error || 'unknown error')); }
   } catch(err) {
     if (card) { card.style.opacity = ''; card.style.pointerEvents = ''; }
     alert('Rename failed: ' + (err.message || String(err)));
   }
 }
 
-
 // ── GALLERY SYNC ──────────────────────────────────────────────────────────────
 async function syncGallery() {
-  const driveRef = CURRENT_RESORT && CURRENT_RESORT['Resort- Header/DriveRef'];
+  const driveRef = CURRENT_RESORT && CURRENT_RESORT['drive_ref'];
   if (!driveRef || !driveRef.trim()) {
-    alert('No DriveRef set for this resort.\nAdd it in the “Drive Ref” field (Basic Information section) and save first.');
+    alert('No DriveRef set for this resort.\nAdd it in the "Drive Ref" field (Basic Information section) and save first.');
     return;
   }
   const btn = document.getElementById('syncGalleryBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '↻ Syncing…'; }
+  if (btn) { btn.disabled = true; btn.textContent = '\u21BB Syncing\u2026'; }
   showMsg('editMsg', '');
   try {
     const session = await getBackendSession();
-    const res = await apiBackend({ action: 'syncGalleryFromDrive', driveRef: driveRef.trim(), session });
-    if (!res.success) {
-      showMsg('editMsg', '❌ Gallery sync failed: ' + esc(res.error || 'unknown error'), 'err');
-      window.scrollTo(0, 0);
-      return;
-    }
-    // Populate the textarea
-    const fieldId = 'f_' + safeId('Resort- Gallery/GalleryLinksArray');
-    const ta = document.getElementById(fieldId);
-    if (ta) {
-      ta.value = res.content;
-      ta.style.borderColor = '#16A34A';
-      setTimeout(() => { ta.style.borderColor = ''; }, 4000);
-    }
-    showMsg('editMsg',
-      '✅ Gallery synced — <strong>' + esc(res.imageCount) + ' image' + (res.imageCount !== 1 ? 's' : '') + '</strong> from <em>' + esc(res.fileName) + '</em> (last updated ' + esc(res.lastUpdated) + '). Review and click “Save Changes” to persist.',
-      'ok');
-    window.scrollTo(0, 0);
+    const res = await apiBackend({ action:'syncGalleryFromDrive', driveRef: driveRef.trim(), session });
+    if (!res.success) { showMsg('editMsg', '\u274C Gallery sync failed: ' + esc(res.error || 'unknown error'), 'err'); window.scrollTo(0,0); return; }
+    const ta = document.getElementById('f_' + safeId('gallery_links_array'));
+    if (ta) { ta.value = res.content; ta.style.borderColor = '#16A34A'; setTimeout(() => { ta.style.borderColor = ''; }, 4000); }
+    showMsg('editMsg', '\u2705 Gallery synced \u2014 <strong>' + esc(res.imageCount) + ' image' + (res.imageCount !== 1 ? 's' : '') + '</strong> from <em>' + esc(res.fileName) + '</em> (last updated ' + esc(res.lastUpdated) + '). Review and click "Save Changes" to persist.', 'ok');
+    window.scrollTo(0,0);
   } catch(err) {
-    showMsg('editMsg', '❌ Sync error: ' + esc(err.message || String(err)), 'err');
-    window.scrollTo(0, 0);
+    showMsg('editMsg', '\u274C Sync error: ' + esc(err.message || String(err)), 'err');
+    window.scrollTo(0,0);
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '↻ Sync from Drive'; }
+    if (btn) { btn.disabled = false; btn.textContent = '\u21BB Sync from Drive'; }
+  }
+}
+
+// ── SITEMAP ───────────────────────────────────────────────────────────────────
+async function updateResortSitemap() {
+  if (!SESSION || SESSION.role !== 'KampKiepie') return;
+  if (!SITEMAP_SECRET) { alert('sitemap_secret is not set in config.txt.'); return; }
+  var btn = document.getElementById('btnSitemap');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating\u2026'; }
+  try {
+    if (!BACKEND_URL) throw new Error('adminbackend_script not set in config.txt');
+    var params = new URLSearchParams({ action:'generateSitemap', siteBase:'https://kampkiepie.co.za/NewKiepie', _ts: Date.now() });
+    var genRes  = await fetch(BACKEND_URL + '?' + params.toString(), { cache:'no-store' });
+    var genData = await genRes.json();
+    if (!genData.success) throw new Error('Sitemap generation failed: ' + genData.error);
+    if (btn) btn.textContent = 'Uploading\u2026';
+    var uploadRes  = await fetch('../update-sitemap.php', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: new URLSearchParams({ key:SITEMAP_SECRET, xml:genData.xml, file:'sitemap-resorts.xml' }) });
+    var uploadData = await uploadRes.json();
+    if (!uploadData.success) throw new Error('Upload failed: ' + uploadData.error);
+    alert('\u2705 sitemap-resorts.xml updated\n' + genData.count + ' resort URLs \u2014 ' + uploadData.bytes + ' bytes\nUpdated: ' + uploadData.updated);
+  } catch(err) {
+    alert('\u274C ' + (err.message || err));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '\uD83D\uDDFA\uFE0F Update Resort Sitemap'; }
   }
 }
 
 // ── BOOKING BACKEND HANDOFF ───────────────────────────────────────────────────
-
-// ── Sitemap updater (superadmin only) ─────────────────────────────────────────
-async function updateResortSitemap() {
-  if (!SESSION || SESSION.role !== 'superadmin') return;
-  if (!SITEMAP_SECRET) {
-    alert('sitemap_secret is not set in config.txt. Add a line:\nsitemap_secret: your-random-key\nand make sure update-sitemap.php is deployed.');
-    return;
-  }
-  var btn = document.getElementById('btnSitemap');
-  if (btn) { btn.disabled = true; btn.textContent = 'Generating\u2026'; }
-  try {
-    // 1. Call KKAdminBackend to generate the sitemap XML
-    var backendUrl = BACKEND_URL;
-    if (!backendUrl) throw new Error('adminbackend_script not set in config.txt');
-    var params = new URLSearchParams({
-      action:   'generateSitemap',
-      siteBase: 'https://kampkiepie.co.za/NewKiepie',
-      _ts:      Date.now()
-    });
-    var genRes = await fetch(backendUrl + '?' + params.toString(), { cache: 'no-store' });
-    var genData = await genRes.json();
-    if (!genData.success) throw new Error('Sitemap generation failed: ' + genData.error);
-
-    // 2. POST the XML to update-sitemap.php on the server
-    if (btn) btn.textContent = 'Uploading\u2026';
-    var uploadRes = await fetch('update-sitemap.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ key: SITEMAP_SECRET, xml: genData.xml, file: 'sitemap-resorts.xml' })
-    });
-    var uploadData = await uploadRes.json();
-    if (!uploadData.success) throw new Error('Upload failed: ' + uploadData.error);
-
-    alert('\u2705 sitemap-resorts.xml updated on server\n' +
-          genData.count + ' resort URLs \u2014 ' + uploadData.bytes + ' bytes\n' +
-          'Updated: ' + uploadData.updated);
-  } catch(err) {
-    alert('\u274C ' + (err.message || err));
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '\ud83d\uddfa\ufe0f Update Resort Sitemap'; }
-  }
-}
-
-function goToBookingBackend() {
+async function goToBookingBackend() {
   if (!SESSION) return;
-  var resortId = (SESSION.role === 'superadmin') ? (CURRENT_RESORT ? CURRENT_RESORT['ResortID'] : '') : SESSION.resortId;
-  var btn = document.getElementById('btnManageBookings');
+  const resortId = SESSION.role === 'KampKiepie'
+    ? (CURRENT_RESORT ? CURRENT_RESORT['resort_id'] : '')
+    : SESSION.resortId;
+  const btn = document.getElementById('btnManageBookings');
   if (btn) { btn.disabled = true; btn.textContent = 'Opening\u2026'; }
-  api({ action:'mintBootstrapToken', token:SESSION.token, resortId }).then(res => {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) throw new Error('Not authenticated');
+    const res = await apiBackend({ action:'mintBootstrapFromJWT', token: session.access_token, resortId });
+    if (!res.success) throw new Error(res.error || 'Could not open booking system');
+    window.location.href = '../adminbackend.html?resort=' + encodeURIComponent(resortId) + '&token=' + encodeURIComponent(res.token);
+  } catch(err) {
+    alert('Could not open booking system: ' + (err.message || err));
+  } finally {
     if (btn) { btn.disabled = false; btn.textContent = '\uD83D\uDCC5 Manage Bookings'; }
-    if (!res.success) { alert('Could not open booking system: ' + (res.error||'unknown error')); return; }
-    window.location.href = 'adminbackend.html?resort=' + encodeURIComponent(resortId) + '&token=' + encodeURIComponent(res.token);
-  });
+  }
 }
 
 // ── UTILITIES ─────────────────────────────────────────────────────────────────
@@ -1289,22 +1232,22 @@ function esc(s) {
 document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') handleLogin(); });
   document.getElementById('loginEmail').addEventListener('keydown',    e => { if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
-
-  await loadConfig(); // load KKAdminBackend URL from config.txt
-
-  var saved = sessionStorage.getItem('kkAdmin');
-  if (saved) {
-    try {
-      SESSION = JSON.parse(saved);
-      document.getElementById('hdrUser').style.display = 'flex';
-      document.getElementById('hdrName').textContent = SESSION.name;
-      if (SESSION.role === 'superadmin') { show('screenList'); loadList(); }
-      else { show('screenEdit'); document.getElementById('editTitle').textContent = SESSION.name; loadEdit(SESSION.resortId); }
-    } catch(e) { sessionStorage.removeItem('kkAdmin'); show('screenLogin'); }
-  } else {
-    show('screenLogin');
-  }
+  var npf = document.getElementById('newPassField');
+  var cpf = document.getElementById('confirmPassField');
+  if (npf) npf.remove();
+  if (cpf) cpf.remove();
+  await loadConfig();
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) { startSession(session.user); } else { show('screenLogin'); }
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      SESSION = null; BACKEND_SESSION = null;
+      show('screenLogin');
+      document.getElementById('hdrUser').style.display = 'none';
+    }
+  });
 });
+
 </script>
 <div id="photoPickerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;overflow:auto;padding:20px">
   <div style="background:#fff;border-radius:16px;max-width:680px;margin:auto;padding:0;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.3)">

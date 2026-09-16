@@ -226,7 +226,7 @@ tr:hover td{background:#fffdfa}
       <input class="input" id="apiUrl" placeholder="config.txt or Apps Script /exec URL">
       <button class="btn btn-brand" style="width:100%;margin-top:10px" onclick="connectApi()">Connect</button>
     </div>
-    <a href="admin.html" id="connectGateReturnBtn" class="btn btn-brand hidden" style="width:100%;margin-top:14px;text-decoration:none;box-sizing:border-box">Return to Admin Portal</a>
+    <a href="../admin/admin.html" id="connectGateReturnBtn" class="btn btn-brand hidden" style="width:100%;margin-top:14px;text-decoration:none;box-sizing:border-box">Return to Admin Portal</a>
   </div>
 </div>
 <div class="wrap hidden" id="wrapMain">
@@ -284,6 +284,7 @@ tr:hover td{background:#fffdfa}
 <div class="modal" id="resetModal" onclick="modalBackdrop(event,'resetModal')"><div class="modal-box" style="max-width:500px"><div class="modal-h"><div class="panel-t" style="color:var(--bad)">Reset Resort Data</div><button class="btn btn-soft" onclick="closeModal('resetModal')">Cancel</button></div><div class="modal-b"><div class="notice bad" style="margin-bottom:14px">This permanently hard-deletes records. This cannot be undone.</div><div class="form-grid" style="margin-bottom:14px"><label class="check"><input type="checkbox" id="rst_Bookings"> Bookings</label><label class="check"><input type="checkbox" id="rst_Payments"> Payments</label><label class="check"><input type="checkbox" id="rst_BookingEvents"> Booking Events</label><label class="check"><input type="checkbox" id="rst_CalendarBlocks"> Calendar Blocks</label><label class="check"><input type="checkbox" id="rst_Stands" onchange="document.getElementById('rst_StandTypes').disabled=!this.checked"> Stands</label><label class="check"><input type="checkbox" id="rst_StandTypes" disabled> Stand Types</label><label class="check"><input type="checkbox" id="rst_ResortDefaults"> Resort Defaults</label><label class="check"><input type="checkbox" id="rst_AuditLog"> Audit Log</label><label class="check"><input type="checkbox" id="rst_NewsletterSignups"> Newsletter Signups</label></div><div class="field" style="margin-bottom:14px"><label>Type <strong>Delete Forever!</strong> to confirm</label><input class="input" id="resetConfirmInput" oninput="document.getElementById('resetConfirmBtn').disabled=this.value!=='Delete Forever!'"></div><button class="btn btn-bad" id="resetConfirmBtn" disabled style="width:100%" onclick="submitReset()">Delete Selected Data</button><div id="resetMsg" style="margin-top:10px"></div></div></div></div>
 <div class="action-modal-ovl" id="actionModal"><div class="action-modal-box"><div class="action-modal-spin" id="actionModalSpin"></div><div class="action-modal-msg" id="actionModalMsg">Processing…</div><div class="action-modal-err" id="actionModalErr" style="display:none"></div><button class="action-modal-close" id="actionModalClose" style="display:none" onclick="closeActionModal()">Close</button></div></div>
 <script>window.KK_PAGE="operations";</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="adminbackend.js?v=20260901.6"></script>
 </body>
 </html>
