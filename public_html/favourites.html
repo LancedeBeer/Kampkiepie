@@ -103,7 +103,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 <header class="hdr">
   <div class="hdr-logo">&#127957;&#65039;</div>
   <div class="hdr-brand">Kamp<em>Kiepie</em></div>
-  <a class="back-btn" href="index2.html">&#8592; Directory</a>
+  <a class="back-btn" href="explore.html">&#8592; Directory</a>
 </header>
 
 <div class="page">
@@ -122,61 +122,17 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ── KampKiepie localStorage cache ─────────────────────────────────────────────
-// kkGet: returns cached value or null if missing/expired/busted
-// kkSet: stores value with TTL (ms) and optional bust-flag
-// kkBust: admin calls this on save to invalidate all bustable entries
-const _KK_BUST = 'kkC_bust';
-const _KK_D30  = 30*24*60*60*1000;   // Province & City CSVs
-const _KK_D7   =  7*24*60*60*1000;   // Resort CSV   // 30 days in ms
-const _KK_H4   =  4*60*60*1000;      //  4 hours in ms
-function kkGet(key) {
-  try {
-    const e = JSON.parse(localStorage.getItem(key) || 'null');
-    if (!e || !e.v || !e.ts || !e.ttl) return null;
-    if (e.bustable && Number(localStorage.getItem(_KK_BUST)||0) > e.ts) return null;
-    if (Date.now() - e.ts > e.ttl) return null;
-    return e.v;
-  } catch(_) { return null; }
-}
-function kkSet(key, val, ttlMs, bustable) {
-  try {
-    localStorage.setItem(key, JSON.stringify({ v:val, ts:Date.now(), ttl:ttlMs, bustable:!!bustable }));
-  } catch(_) {}  // quota exceeded — just skip caching
-}
-function kkBust() {
-  try { localStorage.setItem(_KK_BUST, String(Date.now())); } catch(_) {}
-}
-// ─────────────────────────────────────────────────────────────────────────────
+const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-async function fetchCsvCached(cacheKey, url, ttlMs, bustable) {
-  const hit = kkGet(cacheKey);
-  if (hit !== null) return hit;
-  const text = await fetchCsv(url);
-  kkSet(cacheKey, text, ttlMs, bustable);
-  return text;
-}
-const SHEET_RESORT   = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Resorts';
-const SHEET_PROVINCE = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=Province';
-const SHEET_CITY     = 'https://docs.google.com/spreadsheets/d/1EHm0tWSyunnYpQTfTXx1-Iu4sfWaFWQ8KOrpnqId99c/gviz/tq?tqx=out:csv&sheet=City';
 const PLACEHOLDER_ID = '1DTvWTjU8nYUrhD-dt_aYPpk2JFt6jU6r';
 
 const OPT_KEYS = ['POP','Camp','Lankstaan','Glamp','Chalet','Cottage','Lodge','Room',
   'BackPack','B&B','Guesthouse','FamilyHome','LankSlaap','Niche',
   'Wedding','Conference','Functions','Hunting','Pets','Excursions'];
-const OPT_COLS = {
-  POP:'Resort - BookingOptions/POP?', Camp:'Resort - BookingOptions/Camp?',
-  Lankstaan:'Resort - BookingOptions/Lankstaan?', Glamp:'Resort - BookingOptions/Glamp',
-  Chalet:'Resort - BookingOptions/Chalet', Cottage:'Resort - BookingOptions/Cottage',
-  Lodge:'Resort - BookingOptions/Lodge', Room:'Resort - BookingOptions/Room?',
-  BackPack:'Resort - BookingOptions/BackPack', 'B&B':'Resort - BookingOptions/B&B',
-  Guesthouse:'Resort - BookingOptions/Guesthouse', FamilyHome:'Resort - BookingOptions/FamilyHome',
-  LankSlaap:'Resort - BookingOptions/LankSlaap', Niche:'Resort - BookingOptions/Niche',
-  Wedding:'Resort - BookingOptions/Wedding', Conference:'Resort - BookingOptions/Conference',
-  Functions:'Resort - BookingOptions/Functions', Hunting:'Resort - BookingOptions/Hunting',
-  Pets:'Resort - BookingOptions/Pets', Excursions:'Resort - BookingOptions/Excursions'
-};
 
 // ── FAVOURITES ────────────────────────────────────────────────────────────────
 function getFavs() {
@@ -207,30 +163,7 @@ function clearAll() {
   showEmpty();
 }
 
-// ── DATA ──────────────────────────────────────────────────────────────────────
-async function fetchCsv(url) {
-  const res = await fetch(url + (url.includes('?') ? '&' : '?') + '_ts=' + Date.now(), { cache:'no-store' });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.text();
-}
-function parseCsv(text) {
-  const rows = []; let row = [], cur = '', inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"') { if (text[i+1] === '"') { cur += '"'; i++; } else inQ = false; }
-      else cur += c;
-    } else {
-      if (c === '"') inQ = true;
-      else if (c === ',') { row.push(cur); cur = ''; }
-      else if (c === '\r') { /* skip */ }
-      else if (c === '\n') { row.push(cur); cur = ''; rows.push(row); row = []; }
-      else cur += c;
-    }
-  }
-  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
-  return rows;
-}
+// ── HELPERS ───────────────────────────────────────────────────────────────────
 function photoUrl(raw) {
   if (!raw || !raw.trim()) return null;
   const url = raw.trim();
@@ -241,7 +174,6 @@ function photoUrl(raw) {
   if (/pexels|fbcdn|unsplash|imgix|cloudinary|amazonaws|googleusercontent/i.test(url)) return url;
   return null;
 }
-function isTrue(v) { const s = String(v||'').toLowerCase(); return s==='true'||s==='1'||s==='yes'; }
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -264,7 +196,7 @@ function renderCard(r) {
       <div class="rc-body">
         <div class="rc-name">${esc(r.name)}</div>
         ${loc ? `<div class="rc-loc">&#128205; ${esc(loc)}</div>` : ''}
-        ${tags.length ? `<div class="rc-tags">${tags.map(t => `<span class="rc-tag">${esc(t)}</span>`).join('')}${r.options && OPT_KEYS.filter(k=>r.options[k]).length > 5 ? `<span class="rc-tag">+${OPT_KEYS.filter(k=>r.options[k]).length - 5} more</span>` : ''}</div>` : ''}
+        ${tags.length ? `<div class="rc-tags">${tags.map(t => `<span class="rc-tag">${esc(t)}</span>`).join('')}${OPT_KEYS.filter(k=>r.options[k]).length > 5 ? `<span class="rc-tag">+${OPT_KEYS.filter(k=>r.options[k]).length - 5} more</span>` : ''}</div>` : ''}
         <div class="rc-actions">
           <a class="rc-view" href="resort.html?id=${encodeURIComponent(r.resortId)}">
             View resort &#8599;
@@ -280,7 +212,7 @@ function showEmpty() {
       <div class="empty-icon">&#127957;&#65039;</div>
       <div class="empty-title">No saved resorts yet</div>
       <div class="empty-sub">When you click &#10084;&#65039; Save on a resort page, it will appear here so you can find it again easily.</div>
-      <a class="browse-btn" href="index2.html">&#128269; Browse resorts</a>
+      <a class="browse-btn" href="explore.html">&#128269; Browse resorts</a>
     </div>`;
   document.getElementById('pageSubtitle').textContent = 'Save resorts from their pages to see them here.';
   document.getElementById('hdrActions').style.display = 'none';
@@ -321,69 +253,74 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   if (!favIds.length) { showEmpty(); return; }
 
-  // Show skeletons while loading
   showSkeletons(Math.min(favIds.length, 8));
   document.getElementById('pageSubtitle').textContent =
     'Loading ' + favIds.length + ' saved resort' + (favIds.length !== 1 ? 's' : '') + '\u2026';
 
   try {
-    const [provCsv, cityCsv, resortCsv] = await Promise.all([
-      fetchCsvCached('kkC_prov',    SHEET_PROVINCE, _KK_D30, false), fetchCsvCached('kkC_city',    SHEET_CITY,     _KK_D30, false), fetchCsvCached('kkC_resorts', SHEET_RESORT,   _KK_D7,  true)
+    // Fetch only the saved resorts by ID — no need to download the whole sheet
+    const [resortRes, cityRes, provRes] = await Promise.all([
+      sb.from('resorts')
+        .select('resort_id, resort_name, resort_extra_photo, city_row_id, kk_book_active, ' +
+          'opt_pop, opt_camp, opt_lankstaan, opt_glamp, opt_chalet, opt_cottage, ' +
+          'opt_lodge, opt_room, opt_back_pack, opt_bb, opt_guesthouse, opt_family_home, ' +
+          'opt_lank_slaap, opt_niche, opt_wedding, opt_conference, opt_functions, ' +
+          'opt_hunting, opt_pets, opt_excursions')
+        .in('resort_id', favIds),
+      sb.from('city').select('row_id, city_name, province_row_id'),
+      sb.from('province').select('row_id, name')
     ]);
+
+    if (resortRes.error) throw new Error(resortRes.error.message);
 
     // Build lookup maps
     const PROV = {}, CITY = {};
-    parseCsv(provCsv).slice(1).forEach(r => { if (r[0] && r[1]) PROV[r[0].trim()] = r[1].trim(); });
-    parseCsv(cityCsv).slice(1).forEach(r => {
-      if (r[0] && r[1]) CITY[r[0].trim()] = { name: r[1].trim(), provId: (r[2]||'').trim() };
+    (provRes.data || []).forEach(p => { PROV[p.row_id] = p.name; });
+    (cityRes.data || []).forEach(c => { CITY[c.row_id] = { name: c.city_name, provId: c.province_row_id }; });
+
+    // Map to internal shape
+    const resortMap = {};
+    (resortRes.data || []).forEach(r => {
+      const cityObj  = CITY[r.city_row_id] || {};
+      const province = PROV[cityObj.provId] || '';
+      resortMap[String(r.resort_id).toLowerCase()] = {
+        resortId: r.resort_id,
+        name:     r.resort_name || r.resort_id,
+        city:     cityObj.name  || '',
+        province,
+        photo:    photoUrl(r.resort_extra_photo || ''),
+        kkBook:   !!r.kk_book_active,
+        options: {
+          POP:        !!r.opt_pop,
+          Camp:       !!r.opt_camp,
+          Lankstaan:  !!r.opt_lankstaan,
+          Glamp:      !!r.opt_glamp,
+          Chalet:     !!r.opt_chalet,
+          Cottage:    !!r.opt_cottage,
+          Lodge:      !!r.opt_lodge,
+          Room:       !!r.opt_room,
+          BackPack:   !!r.opt_back_pack,
+          'B&B':      !!r.opt_bb,
+          Guesthouse: !!r.opt_guesthouse,
+          FamilyHome: !!r.opt_family_home,
+          LankSlaap:  !!r.opt_lank_slaap,
+          Niche:      !!r.opt_niche,
+          Wedding:    !!r.opt_wedding,
+          Conference: !!r.opt_conference,
+          Functions:  !!r.opt_functions,
+          Hunting:    !!r.opt_hunting,
+          Pets:       !!r.opt_pets,
+          Excursions: !!r.opt_excursions
+        }
+      };
     });
 
-    // Parse resorts
-    const rows    = parseCsv(resortCsv);
-    const headers = rows[0].map(h => (h||'').trim());
-    const favSet  = new Set(favIds.map(id => String(id).trim().toLowerCase()));
-
-    function g(row, name) {
-      const i = headers.indexOf(name);
-      return (i >= 0 && i < row.length) ? String(row[i]||'').trim() : '';
-    }
-
-    const iID = headers.indexOf('ResortID');
-    const resorts = [];
-
-    for (const row of rows.slice(1)) {
-      const rowId = (iID >= 0 ? String(row[iID]||'') : '').trim();
-      if (!rowId || !favSet.has(rowId.toLowerCase())) continue;
-
-      const cityRef = g(row,'Resort- Header/CityRowID');
-      const cityObj = CITY[cityRef] || {};
-      let province  = g(row,'Resort- Header/ProvinceRel');
-      if (province && PROV[province]) province = PROV[province];
-      else if (!province && cityObj.provId) province = PROV[cityObj.provId] || '';
-
-      const options = {};
-      OPT_KEYS.forEach(k => { options[k] = isTrue(g(row, OPT_COLS[k])); });
-
-      resorts.push({
-        resortId: rowId,
-        name:     g(row,'Resort- Header/ResortName') || rowId,
-        city:     cityObj.name || '',
-        province,
-        photo:    photoUrl(g(row,'Resort- Header/ResortExtraPhoto')),
-        kkBook:   isTrue(g(row,'Resort - KKBook/Active')),
-        options
-      });
-    }
-
-    // Preserve the order the user saved them in (most recent first)
+    // Preserve user's save order (most recent first)
     const ordered = favIds
-      .map(id => resorts.find(r => r.resortId.toLowerCase() === id.toLowerCase()))
+      .map(id => resortMap[String(id).toLowerCase()])
       .filter(Boolean);
 
-    if (!ordered.length) {
-      showEmpty();
-      return;
-    }
+    if (!ordered.length) { showEmpty(); return; }
 
     document.getElementById('content').innerHTML =
       '<div class="grid">' + ordered.map(renderCard).join('') + '</div>';
@@ -394,7 +331,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('content').innerHTML =
       `<div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:12px;padding:20px;color:#B91C1C;font-weight:600;">
          &#9888;&#65039; Could not load resort data: ${esc(err.message)}<br><br>
-         <a href="index2.html" style="color:var(--brand);font-weight:800;">&#8592; Back to directory</a>
+         <a href="explore.html" style="color:var(--brand);font-weight:800;">&#8592; Back to directory</a>
        </div>`;
     document.getElementById('pageSubtitle').textContent = 'Error loading data.';
   }

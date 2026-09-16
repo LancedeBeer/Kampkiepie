@@ -207,7 +207,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
     </div>
   </a>
   <nav class="topbar-nav">
-    <a href="index2.html">Resorts</a>
+    <a href="explore.html">Resorts</a>
     <a href="map.html">Map</a>
     <a href="about.html" class="current">About</a>
     <a href="blog.html">Blog</a>
@@ -353,7 +353,7 @@ h1,h2,h3{font-family:'Poppins',sans-serif;}
     </div>
     <div class="footer-col">
       <div class="footer-col-h">Explore</div>
-      <a href="index2.html">All Resorts</a>
+      <a href="explore.html">All Resorts</a>
       <a href="map.html">Map</a>
     </div>
     <div class="footer-col">
@@ -393,26 +393,49 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadStats() {
-  const [resortRes, cityRes] = await Promise.all([
+  const [resortRes, cityRes, provRes] = await Promise.all([
     sb.from('resorts')
       .select('total_views, city_row_id')
-      .eq('beta_active', true)
-      .eq('active', true),
+      .eq('beta_active', true),
     sb.from('city')
-      .select('row_id, province_row_id')
+      .select('row_id, province_row_id'),
+    sb.from('province')
+      .select('row_id, name')
   ]);
 
   if (resortRes.error) throw new Error(resortRes.error.message);
 
   const data = resortRes.data || [];
 
-  // Map city -> province so we can count unique provinces
+  // Build city → province map using string comparison on both sides
   const cityProvMap = {};
-  (cityRes.data || []).forEach(c => { cityProvMap[c.row_id] = c.province_row_id; });
+  (cityRes.data || []).forEach(c => {
+    cityProvMap[String(c.row_id).trim()] = String(c.province_row_id || '').trim();
+  });
+
+  // Build province id → name map
+  const provNames = {};
+  (provRes.data || []).forEach(p => {
+    provNames[String(p.row_id).trim()] = p.name;
+  });
 
   const activeCount = data.length;
   const totalViews  = data.reduce((s, r) => s + (Number(r.total_views) || 0), 0);
-  const provsSeen   = new Set(data.map(r => cityProvMap[r.city_row_id]).filter(Boolean));
+
+  // DEBUG — remove after confirming province count is correct
+  console.log('Sample city_row_id from resort:', String(data[0]?.city_row_id || '').trim());
+  console.log('Sample city row_id from city table:', Object.keys(cityProvMap)[0]);
+  console.log('cityProvMap size:', Object.keys(cityProvMap).length);
+  console.log('provNames size:', Object.keys(provNames).length);
+
+  // Count unique provinces seen across all resorts
+  const provsSeen = new Set(
+    data
+      .map(r => cityProvMap[String(r.city_row_id || '').trim()])
+      .filter(Boolean)
+      .map(provId => provNames[provId])
+      .filter(Boolean)
+  );
 
   document.getElementById('resortCountPill').textContent = activeCount + ' resorts';
   document.getElementById('statResorts').textContent     = activeCount.toLocaleString() + '+';
