@@ -1,16 +1,604 @@
-// adminbackend.js — KampKiepie Admin Backend JavaScript
-// Loaded by adminbackend.html via <script src="adminbackend.js"></script>
-//
-// Roles: KampKiepie Super Admin (hardcoded admin@kampkiepie.co.za),
-//         Super | Manager | Admin | Finance  (from Users tab)
-// TODO: User Management portal → adminsetup.html
-// REMINDER: cache-busting via URL versioning for resort CSV
+// adminbackend.js — KampKiepie Admin Backend (Supabase edition)
+// Loaded by adminbackend.html and adminsetup.html
 
-// Detect which page we're on and set the first nav view as default
+// ── Supabase client ───────────────────────────────────────────────────────────
+const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── GAS backend URL (still used for emails and user management) ───────────────
+let GAS_URL = '';
+async function loadConfig() {
+  try {
+    const res = await fetch('../config.txt', { cache: 'no-store' });
+    if (!res.ok) return;
+    const text = await res.text();
+    text.split(/\r?\n/).forEach(line => {
+      const t = line.trim(); if (!t || t.startsWith('#')) return;
+      const ix = t.indexOf(':'); if (ix < 0) return;
+      const k = t.slice(0, ix).trim(), v = t.slice(ix + 1).trim();
+      if (k === 'adminbackend_script') GAS_URL = v;
+    });
+  } catch(_) {}
+}
+
+// ── Column mapping: Supabase snake_case → PascalCase (for APP.state arrays) ──
+const sbToStand     = function(r){
+  const out={};
+  if(r.stand_id!==undefined)out.StandID=r.stand_id;
+  if(r.resort_id!==undefined)out.ResortID=r.resort_id;
+  if(r.stand_number!==undefined)out.StandNumber=r.stand_number;
+  if(r.stand_name!==undefined)out.StandName=r.stand_name;
+  if(r.stand_type_id!==undefined)out.StandTypeID=r.stand_type_id;
+  if(r.display_name!==undefined)out.DisplayName=r.display_name;
+  if(r.description!==undefined)out.Description=r.description;
+  if(r.active!==undefined)out.Active=r.active;
+  if(r.soft_deleted!==undefined)out.SoftDeleted=r.soft_deleted;
+  if(r.base_rate!==undefined)out.BaseRate=r.base_rate;
+  if(r.peak_rate!==undefined)out.PeakRate=r.peak_rate;
+  if(r.off_peak_rate!==undefined)out.OffPeakRate=r.off_peak_rate;
+  if(r.weekend_rate!==undefined)out.WeekendRate=r.weekend_rate;
+  if(r.shoulder_rate!==undefined)out.ShoulderRate=r.shoulder_rate;
+  if(r.currency!==undefined)out.Currency=r.currency;
+  if(r.max_adults!==undefined)out.MaxAdults=r.max_adults;
+  if(r.max_children!==undefined)out.MaxChildren=r.max_children;
+  if(r.max_toddlers!==undefined)out.MaxToddlers=r.max_toddlers;
+  if(r.max_guests!==undefined)out.MaxGuests=r.max_guests;
+  if(r.max_vehicles!==undefined)out.MaxVehicles=r.max_vehicles;
+  if(r.deposit_mode!==undefined)out.DepositMode=r.deposit_mode;
+  if(r.deposit_value!==undefined)out.DepositValue=r.deposit_value;
+  if(r.amenities_json!==undefined)out.AmenitiesJSON=r.amenities_json;
+  if(r.features_json!==undefined)out.FeaturesJSON=r.features_json;
+  if(r.extras_json!==undefined)out.ExtrasJSON=r.extras_json;
+  if(r.pricing_json!==undefined)out.PricingJSON=r.pricing_json;
+  if(r.occupancy_json!==undefined)out.OccupancyJSON=r.occupancy_json;
+  if(r.stand_image_url!==undefined)out.StandImageURL=r.stand_image_url;
+  if(r.created_at!==undefined)out.CreatedAt=r.created_at;
+  if(r.updated_at!==undefined)out.UpdatedAt=r.updated_at;
+  return out;
+};
+const sbToBooking   = function(r){
+  const out={};
+  if(r.booking_id!==undefined)out.BookingID=r.booking_id;
+  if(r.resort_id!==undefined)out.ResortID=r.resort_id;
+  if(r.stand_id!==undefined)out.StandID=r.stand_id;
+  if(r.stand_type_id!==undefined)out.StandTypeID=r.stand_type_id;
+  if(r.booking_ref!==undefined)out.BookingRef=r.booking_ref;
+  if(r.guest_first_name!==undefined)out.GuestFirstName=r.guest_first_name;
+  if(r.guest_last_name!==undefined)out.GuestLastName=r.guest_last_name;
+  if(r.guest_full_name!==undefined)out.GuestFullName=r.guest_full_name;
+  if(r.guest_email!==undefined)out.GuestEmail=r.guest_email;
+  if(r.guest_phone!==undefined)out.GuestPhone=r.guest_phone;
+  if(r.adults!==undefined)out.Adults=r.adults;
+  if(r.children!==undefined)out.Children=r.children;
+  if(r.toddlers!==undefined)out.Toddlers=r.toddlers;
+  if(r.check_in_date!==undefined)out.CheckInDate=r.check_in_date;
+  if(r.check_out_date!==undefined)out.CheckOutDate=r.check_out_date;
+  if(r.nights!==undefined)out.Nights=r.nights;
+  if(r.status!==undefined)out.Status=r.status;
+  if(r.source!==undefined)out.Source=r.source;
+  if(r.booking_channel!==undefined)out.BookingChannel=r.booking_channel;
+  if(r.guest_notes!==undefined)out.GuestNotes=r.guest_notes;
+  if(r.internal_notes!==undefined)out.InternalNotes=r.internal_notes;
+  if(r.total_snapshot!==undefined)out.TotalSnapshot=r.total_snapshot;
+  if(r.deposit_required_snapshot!==undefined)out.DepositRequiredSnapshot=r.deposit_required_snapshot;
+  if(r.deposit_paid_snapshot!==undefined)out.DepositPaidSnapshot=r.deposit_paid_snapshot;
+  if(r.balance_snapshot!==undefined)out.BalanceSnapshot=r.balance_snapshot;
+  if(r.currency!==undefined)out.Currency=r.currency;
+  if(r.pricing_snapshot_json!==undefined)out.PricingSnapshotJSON=r.pricing_snapshot_json;
+  if(r.extras_snapshot_json!==undefined)out.ExtrasSnapshotJSON=r.extras_snapshot_json;
+  if(r.tax_snapshot_json!==undefined)out.TaxSnapshotJSON=r.tax_snapshot_json;
+  if(r.fee_snapshot_json!==undefined)out.FeeSnapshotJSON=r.fee_snapshot_json;
+  if(r.discount_snapshot_json!==undefined)out.DiscountSnapshotJSON=r.discount_snapshot_json;
+  if(r.comms_snapshot!==undefined)out.CommsSnapshot=r.comms_snapshot;
+  if(r.kkbook_level!==undefined)out.kkbookLevel=r.kkbook_level;
+  if(r.hold_expires_at!==undefined)out.HoldExpiresAt=r.hold_expires_at;
+  if(r.soft_deleted!==undefined)out.SoftDeleted=r.soft_deleted;
+  if(r.created_at!==undefined)out.CreatedAt=r.created_at;
+  if(r.updated_at!==undefined)out.UpdatedAt=r.updated_at;
+  return out;
+};
+const sbToBlock     = function(r){
+  const out={};
+  if(r.block_id!==undefined)out.BlockID=r.block_id;
+  if(r.resort_id!==undefined)out.ResortID=r.resort_id;
+  if(r.stand_id!==undefined)out.StandID=r.stand_id;
+  if(r.block_type!==undefined)out.BlockType=r.block_type;
+  if(r.start_date!==undefined)out.StartDate=r.start_date;
+  if(r.end_date!==undefined)out.EndDate=r.end_date;
+  if(r.reason!==undefined)out.Reason=r.reason;
+  if(r.soft_deleted!==undefined)out.SoftDeleted=r.soft_deleted;
+  if(r.created_at!==undefined)out.CreatedAt=r.created_at;
+  if(r.updated_at!==undefined)out.UpdatedAt=r.updated_at;
+  return out;
+};
+const sbToStandType = function(r){
+  const out={};
+  if(r.stand_type_id!==undefined)out.StandTypeID=r.stand_type_id;
+  if(r.resort_id!==undefined)out.ResortID=r.resort_id;
+  if(r.stand_type_name!==undefined)out.StandTypeName=r.stand_type_name;
+  if(r.pricing_mode!==undefined)out.PricingMode=r.pricing_mode;
+  if(r.pricing_json!==undefined)out.PricingJSON=r.pricing_json;
+  if(r.default_deposit_mode!==undefined)out.DefaultDepositMode=r.default_deposit_mode;
+  if(r.default_deposit_value!==undefined)out.DefaultDepositValue=r.default_deposit_value;
+  if(r.default_min_nights!==undefined)out.DefaultMinNights=r.default_min_nights;
+  if(r.default_max_nights!==undefined)out.DefaultMaxNights=r.default_max_nights;
+  if(r.default_lead_time_days!==undefined)out.DefaultLeadTimeDays=r.default_lead_time_days;
+  if(r.default_hold_minutes!==undefined)out.DefaultHoldMinutes=r.default_hold_minutes;
+  if(r.default_base_rate!==undefined)out.DefaultBaseRate=r.default_base_rate;
+  if(r.default_peak_rate!==undefined)out.DefaultPeakRate=r.default_peak_rate;
+  if(r.default_off_peak_rate!==undefined)out.DefaultOffPeakRate=r.default_off_peak_rate;
+  if(r.default_weekend_rate!==undefined)out.DefaultWeekendRate=r.default_weekend_rate;
+  if(r.default_shoulder_rate!==undefined)out.DefaultShoulderRate=r.default_shoulder_rate;
+  if(r.default_amenities_json!==undefined)out.DefaultAmenitiesJSON=r.default_amenities_json;
+  if(r.default_features_json!==undefined)out.DefaultFeaturesJSON=r.default_features_json;
+  if(r.default_extras_json!==undefined)out.DefaultExtrasJSON=r.default_extras_json;
+  if(r.default_occupancy_json!==undefined)out.DefaultOccupancyJSON=r.default_occupancy_json;
+  if(r.active!==undefined)out.Active=r.active;
+  if(r.soft_deleted!==undefined)out.SoftDeleted=r.soft_deleted;
+  if(r.created_at!==undefined)out.CreatedAt=r.created_at;
+  if(r.updated_at!==undefined)out.UpdatedAt=r.updated_at;
+  return out;
+};
+const sbToDefaults  = function(r){
+  const out={};
+  if(r.resort_id!==undefined)out.ResortID=r.resort_id;
+  if(r.default_currency!==undefined)out.DefaultCurrency=r.default_currency;
+  if(r.default_check_in_time!==undefined)out.DefaultCheckInTime=r.default_check_in_time;
+  if(r.default_check_out_time!==undefined)out.DefaultCheckOutTime=r.default_check_out_time;
+  if(r.default_hold_minutes!==undefined)out.DefaultHoldMinutes=r.default_hold_minutes;
+  if(r.default_min_nights!==undefined)out.DefaultMinNights=r.default_min_nights;
+  if(r.default_max_nights!==undefined)out.DefaultMaxNights=r.default_max_nights;
+  if(r.default_deposit_mode!==undefined)out.DefaultDepositMode=r.default_deposit_mode;
+  if(r.default_deposit_value!==undefined)out.DefaultDepositValue=r.default_deposit_value;
+  if(r.age_toddler_max!==undefined)out.AgeToddlerMax=r.age_toddler_max;
+  if(r.age_child_max!==undefined)out.AgeChildMax=r.age_child_max;
+  if(r.pre_holiday_treatment!==undefined)out.PreHolidayTreatment=r.pre_holiday_treatment;
+  if(r.season_rules_json!==undefined)out.SeasonRulesJSON=r.season_rules_json;
+  if(r.public_holidays_list!==undefined)out.PublicHolidaysList=r.public_holidays_list;
+  if(r.soft_deleted!==undefined)out.SoftDeleted=r.soft_deleted;
+  if(r.active!==undefined)out.Active=r.active;
+  return out;
+};
+const sbToPayment   = function(r){
+  const out={};
+  if(r.payment_id!==undefined)out.PaymentID=r.payment_id;
+  if(r.booking_id!==undefined)out.BookingID=r.booking_id;
+  if(r.resort_id!==undefined)out.ResortID=r.resort_id;
+  if(r.payment_type!==undefined)out.PaymentType=r.payment_type;
+  if(r.payment_status!==undefined)out.PaymentStatus=r.payment_status;
+  if(r.payment_method!==undefined)out.PaymentMethod=r.payment_method;
+  if(r.amount!==undefined)out.Amount=r.amount;
+  if(r.currency!==undefined)out.Currency=r.currency;
+  if(r.reference!==undefined)out.Reference=r.reference;
+  if(r.paid_at!==undefined)out.PaidAt=r.paid_at;
+  if(r.captured_at!==undefined)out.CapturedAt=r.captured_at;
+  if(r.received_by!==undefined)out.ReceivedBy=r.received_by;
+  if(r.notes!==undefined)out.Notes=r.notes;
+  if(r.soft_deleted!==undefined)out.SoftDeleted=r.soft_deleted;
+  if(r.created_at!==undefined)out.CreatedAt=r.created_at;
+  if(r.updated_at!==undefined)out.UpdatedAt=r.updated_at;
+  return out;
+};
+const sbToTier      = function(r){
+  const out={};
+  if(r.tier_id!==undefined)out.TierID=r.tier_id;
+  if(r.tier_name!==undefined)out.TierName=r.tier_name;
+  if(r.commission_rate!==undefined)out.CommissionRate=r.commission_rate;
+  if(r.admin_rate!==undefined)out.AdminRate=r.admin_rate;
+  if(r.promo_rate!==undefined)out.PromoRate=r.promo_rate;
+  if(r.description!==undefined)out.Description=r.description;
+  if(r.active!==undefined)out.Active=r.active;
+  return out;
+};
+
+// PascalCase → snake_case for upsert (invert the maps)
+function pascalToSnake(obj, mapping) {
+  const inv = Object.fromEntries(Object.entries(mapping).map(([k,v])=>[v,k]));
+  const out = {};
+  Object.entries(obj).forEach(([k,v]) => { if (inv[k]) out[inv[k]] = v; });
+  return out;
+}
+
+// ── GAS API call (emails and user management only) ────────────────────────────
+async function gasCall(action, params={}, method='GET') {
+  if (!GAS_URL) throw new Error('GAS URL not configured');
+  const payload = Object.assign({ action, resortId: APP.resortId }, params);
+  if (method === 'GET') {
+    const url = new URL(GAS_URL);
+    Object.entries(payload).forEach(([k,v]) => url.searchParams.set(k, typeof v==='object'?JSON.stringify(v):String(v)));
+    url.searchParams.set('_ts', Date.now());
+    const res = await fetch(url.toString(), { method:'GET', redirect:'follow', cache:'no-store' });
+    return JSON.parse(await res.text());
+  }
+  const form = new URLSearchParams();
+  Object.entries(payload).forEach(([k,v]) => form.set(k, typeof v==='object'?JSON.stringify(v):String(v)));
+  const res = await fetch(GAS_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'}, body: form.toString() });
+  return JSON.parse(await res.text());
+}
+
+// ── Session ───────────────────────────────────────────────────────────────────
+function setApiState(text, ok) {
+  const el = document.getElementById('apiStatePill'); if (!el) return;
+  el.textContent = text;
+  if (ok === true)  { el.style.background='var(--ok-l)';  el.style.color='var(--ok)';   }
+  else if(ok===false){el.style.background='var(--bad-l)'; el.style.color='var(--bad)';  }
+  else              { el.style.background='var(--bg)';    el.style.color='var(--muted)';}
+}
+let sessionRedirectTriggered = false;
+function logout() {
+  if (!confirm('Log out and return to the Admin Portal?')) return;
+  sb.auth.signOut().then(() => { window.location.href = '../admin/admin.html'; });
+}
+function clearSessionAndReturnToPortal(message) {
+  sessionRedirectTriggered = true;
+  sb.auth.signOut().then(() => {
+    showAuthRequired(message || 'Your session has ended.');
+    setTimeout(() => { window.location.href = '../admin/admin.html'; }, 2000);
+  });
+}
+
+// ── Connect gate UI ───────────────────────────────────────────────────────────
+function showConnectMessage(msg) {
+  const gate = document.getElementById('connectGate');
+  const msgEl = document.getElementById('connectGateMsg');
+  gate?.classList.remove('hidden');
+  if (msgEl) { msgEl.textContent = msg; msgEl.className = 'notice info'; }
+  document.getElementById('connectGateRetry')?.classList.add('hidden');
+  document.getElementById('connectGateReturnBtn')?.classList.add('hidden');
+  setConnectProgress('Loading\u2026');
+}
+function showConnectRetry(msg) {
+  const gate = document.getElementById('connectGate');
+  const msgEl = document.getElementById('connectGateMsg');
+  gate?.classList.remove('hidden');
+  if (msgEl) { msgEl.textContent = msg; msgEl.className = 'notice bad'; }
+  document.getElementById('connectGateRetry')?.classList.add('hidden');
+  document.getElementById('connectGateReturnBtn')?.classList.remove('hidden');
+  setConnectProgress('Could not connect.');
+}
+function showAuthRequired(msg) {
+  const gate = document.getElementById('connectGate');
+  const msgEl = document.getElementById('connectGateMsg');
+  gate?.classList.remove('hidden');
+  document.getElementById('wrapMain')?.classList.add('hidden');
+  if (msgEl) { msgEl.textContent = msg; msgEl.className = 'notice warn'; }
+  document.getElementById('connectGateRetry')?.classList.add('hidden');
+  document.getElementById('connectGateReturnBtn')?.classList.remove('hidden');
+  setConnectProgress('Please sign in again.');
+}
+function hideConnectGate() {
+  document.getElementById('connectGate')?.classList.add('hidden');
+  document.getElementById('wrapMain')?.classList.remove('hidden');
+}
+function setConnectProgress(msg) {
+  const el = document.getElementById('connectGateProgress'); if (el) el.textContent = msg;
+}
+
+// ── No-op stubs for removed GAS session management ───────────────────────────
+function startSessionWatcher()  {}
+function stopSessionWatcher()   {}
+function clickExtendSession()   {}
+function clickRefreshSession()  { window.location.href = '../admin/admin.html'; }
+function connectApi()           {}
+function getSession()           { return ''; }   // kept so old call sites don't crash
+function setSession()           {}
+
+// ── Live polling ──────────────────────────────────────────────────────────────
+let livePollTimer = null, lastLiveUpdate = null;
+const LIVE_POLL_INTERVAL_MS = 10 * 60 * 1000;
+function startLivePolling() {
+  if (livePollTimer) clearInterval(livePollTimer);
+  livePollTimer = setInterval(livePoll, LIVE_POLL_INTERVAL_MS);
+}
+function stopLivePolling() { if (livePollTimer) clearInterval(livePollTimer); livePollTimer = null; }
+
+// ── Identity ──────────────────────────────────────────────────────────────────
+function applySessionIdentity() {
+  const pill = document.getElementById('rolePill');
+  if (pill) {
+    const label = APP.role === 'superadmin' ? 'KampKiepie Super Admin' : (APP.resortRole || APP.role);
+    pill.textContent = label; pill.title = APP.userEmail;
+  }
+  applyRoleToNav();
+  showResetButtonIfSuperAdmin();
+}
+
+// ── Data loading (Supabase) ───────────────────────────────────────────────────
+async function initLiveData() {
+  setConnectProgress('Loading data\u2026');
+  const resortId = APP.resortId;
+
+  const [resortR, standsR, bookingsR, blocksR, standTypesR, defaultsR, paymentsR] =
+    await Promise.allSettled([
+      sb.from('resorts').select('resort_name, total_views, level').eq('resort_id', resortId).maybeSingle(),
+      sb.from('stands').select('*').eq('resort_id', resortId),
+      sb.from('bookings').select('*').eq('resort_id', resortId),
+      sb.from('calendar_blocks').select('*').eq('resort_id', resortId),
+      sb.from('stand_types').select('*').eq('resort_id', resortId),
+      sb.from('resort_defaults').select('*').eq('resort_id', resortId).maybeSingle(),
+      sb.from('booking_payments').select('*').eq('resort_id', resortId),
+    ]);
+
+  function fromSb(settled, mapFn, fallback) {
+    if (settled.status === 'fulfilled' && !settled.value.error) {
+      const d = settled.value.data;
+      if (!d) return fallback;
+      return Array.isArray(d) ? d.map(mapFn) : mapFn(d);
+    }
+    console.warn('Supabase load error:', settled.reason || settled.value?.error);
+    return fallback;
+  }
+
+  // Resort info
+  if (resortR.status === 'fulfilled' && resortR.value.data) {
+    const r = resortR.value.data;
+    APP.resortName       = r.resort_name || ('Resort ' + resortId);
+    APP.resortTotalViews = Number(r.total_views) || 0;
+    APP.kkbookLevel      = String(r.level || '').trim().toUpperCase();
+    const lbl = document.getElementById('resortIdLabel');
+    if (lbl) lbl.textContent = resortId;
+  }
+
+  APP.state.stands       = fromSb(standsR,     sbToStand,     APP.state.stands     || []).filter(s => !s.SoftDeleted);
+  APP.state.bookings     = fromSb(bookingsR,    sbToBooking,   APP.state.bookings   || []).filter(b => !b.SoftDeleted);
+  APP.state.blocks       = fromSb(blocksR,      sbToBlock,     APP.state.blocks     || []).filter(b => !b.SoftDeleted);
+  APP.state.standTypes   = fromSb(standTypesR,  sbToStandType, APP.state.standTypes || []).filter(t => !t.SoftDeleted);
+  APP.state.payments     = fromSb(paymentsR,    sbToPayment,   APP.state.payments   || []).filter(p => !p.SoftDeleted);
+
+  const defRaw = defaultsR.status === 'fulfilled' && !defaultsR.value.error && defaultsR.value.data
+    ? sbToDefaults(defaultsR.value.data) : APP.state.resortDefaults || {};
+  APP.state.resortDefaults = defRaw;
+
+  // Load tiers and public holidays in background
+  sb.from('tiers').select('*').then(({ data }) => {
+    if (data) { APP.state.tiers = data.map(sbToTier); TIERS_DATA = APP.state.tiers; }
+  }).catch(() => {});
+
+  sb.from('sa_public_holidays')
+    .select('holiday_date, name')
+    .order('holiday_date')
+    .then(({ data }) => {
+      if (data) {
+        const holidays = data.map(h => ({ date: h.holiday_date, name: h.name }));
+        if (!APP.state.resortDefaults) APP.state.resortDefaults = {};
+        APP.state.resortDefaults.PublicHolidaysList = holidays;
+        // Re-render now that holidays are available — this populates the dashgrid tiles
+        buildBulk();
+        renderStats();
+        renderActive();
+        renderInspector(null);
+        if (typeof renderStandsMatrix === 'function') try { renderStandsMatrix(); } catch(_) {}
+        if (typeof renderInspector === 'function' && APP.activeView === 'settings') try { renderInspector(null); } catch(_) {}
+      }
+    }).catch(() => {});
+
+  buildBulk();
+  setApiState('Connected', true);
+  renderStats(); renderActive(); renderInspector(null);
+}
+
+// ── Write operations (Supabase) ───────────────────────────────────────────────
+async function sbUpsertStand(body) {
+  const row = pascalToSnake(body, Object.fromEntries(Object.entries(sbToStand({})).map((_,i,a)=>a[i])));
+  // Build row directly from body using known mapping
+  const r = {
+    stand_id: body.StandID || uid('STAND'),
+    resort_id: body.ResortID || APP.resortId,
+    stand_number: body.StandNumber || '',
+    stand_name: body.StandName || '',
+    stand_type_id: body.StandTypeID || '',
+    display_name: body.DisplayName || '',
+    description: body.Description || '',
+    active: body.Active === true || body.Active === 'true',
+    soft_deleted: false,
+    base_rate: body.BaseRate || null,
+    peak_rate: body.PeakRate || null,
+    off_peak_rate: body.OffPeakRate || null,
+    weekend_rate: body.WeekendRate || null,
+    shoulder_rate: body.ShoulderRate || null,
+    currency: body.Currency || 'ZAR',
+    max_adults: body.MaxAdults || null,
+    max_children: body.MaxChildren || null,
+    max_toddlers: body.MaxToddlers || null,
+    max_guests: body.MaxGuests || null,
+    max_vehicles: body.MaxVehicles || null,
+    deposit_mode: body.DepositMode || null,
+    deposit_value: body.DepositValue || null,
+    amenities_json: body.AmenitiesJSON || '[]',
+    features_json: body.FeaturesJSON || '[]',
+    extras_json: body.ExtrasJSON || '[]',
+    stand_image_url: body.StandImageURL || null,
+    updated_at: new Date().toISOString(),
+  };
+  const { error } = await sb.from('stands').upsert(r, { onConflict: 'stand_id' });
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbUpsertBooking(body) {
+  const r = {
+    booking_id: body.BookingID || uid('BK'),
+    resort_id: body.ResortID || APP.resortId,
+    stand_id: body.StandID,
+    stand_type_id: body.StandTypeID || null,
+    booking_ref: body.BookingRef,
+    guest_first_name: body.GuestFirstName || '',
+    guest_last_name: body.GuestLastName || '',
+    guest_full_name: body.GuestFullName || '',
+    guest_email: body.GuestEmail || '',
+    guest_phone: body.GuestPhone || '',
+    adults: Number(body.Adults) || 1,
+    children: Number(body.Children) || 0,
+    toddlers: Number(body.Toddlers) || 0,
+    check_in_date: body.CheckInDate,
+    check_out_date: body.CheckOutDate,
+    nights: Number(body.Nights) || 1,
+    status: body.Status || 'reserved',
+    source: body.Source || 'admin',
+    booking_channel: body.BookingChannel || 'admin',
+    guest_notes: body.GuestNotes || '',
+    internal_notes: body.InternalNotes || '',
+    total_snapshot: Number(body.TotalSnapshot) || 0,
+    deposit_required_snapshot: Number(body.DepositRequiredSnapshot) || 0,
+    deposit_paid_snapshot: Number(body.DepositPaidSnapshot) || 0,
+    balance_snapshot: Number(body.BalanceSnapshot) || 0,
+    currency: body.Currency || 'ZAR',
+    pricing_snapshot_json: body.PricingSnapshotJSON || '{}',
+    extras_snapshot_json: body.ExtrasSnapshotJSON || '[]',
+    comms_snapshot: body.CommsSnapshot || null,
+    hold_expires_at: body.HoldExpiresAt || null,
+    soft_deleted: false,
+    updated_at: new Date().toISOString(),
+  };
+  const { error } = await sb.from('bookings').upsert(r, { onConflict: 'booking_id' });
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbUpsertStandType(body) {
+  const r = {
+    stand_type_id: body.StandTypeID || uid('TYPE'),
+    resort_id: body.ResortID || APP.resortId,
+    stand_type_name: body.StandTypeName || '',
+    pricing_mode: body.PricingMode || 'flat',
+    pricing_json: body.PricingJSON || '{}',
+    default_deposit_mode: body.DefaultDepositMode || 'percentage',
+    default_deposit_value: Number(body.DefaultDepositValue) || 0,
+    default_min_nights: Number(body.DefaultMinNights) || 1,
+    default_max_nights: Number(body.DefaultMaxNights) || 21,
+    default_lead_time_days: Number(body.DefaultLeadTimeDays) || 0,
+    default_hold_minutes: Number(body.DefaultHoldMinutes) || 120,
+    default_amenities_json: body.DefaultAmenitiesJSON || '[]',
+    default_features_json: body.DefaultFeaturesJSON || '[]',
+    default_extras_json: body.DefaultExtrasJSON || '[]',
+    default_occupancy_json: body.DefaultOccupancyJSON || '{}',
+    active: body.Active === true || body.Active === 'true',
+    soft_deleted: false,
+    updated_at: new Date().toISOString(),
+  };
+  const { error } = await sb.from('stand_types').upsert(r, { onConflict: 'stand_type_id' });
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbUpsertBlock(body) {
+  const r = {
+    block_id: body.BlockID || uid('BLK'),
+    resort_id: body.ResortID || APP.resortId,
+    stand_id: body.StandID,
+    block_type: body.BlockType || 'maintenance',
+    start_date: body.StartDate,
+    end_date: body.EndDate,
+    reason: body.Reason || '',
+    soft_deleted: false,
+    updated_at: new Date().toISOString(),
+  };
+  const { error } = await sb.from('calendar_blocks').upsert(r, { onConflict: 'block_id' });
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbSoftDelete(table, keyCol, keyVal) {
+  const { error } = await sb.from(table).update({ soft_deleted: true, updated_at: new Date().toISOString() }).eq(keyCol, keyVal);
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbAppendPayment(body) {
+  const r = {
+    payment_id: body.PaymentID || ('PAY-' + Date.now() + '-' + Math.random().toString(36).slice(2,7).toUpperCase()),
+    booking_id: body.BookingID,
+    resort_id: body.ResortID || APP.resortId,
+    payment_type: body.PaymentType || 'deposit',
+    payment_status: body.PaymentStatus || 'completed',
+    payment_method: body.PaymentMethod || 'EFT',
+    amount: Number(body.Amount) || 0,
+    currency: body.Currency || 'ZAR',
+    reference: body.Reference || '',
+    paid_at: body.PaidAt || new Date().toISOString(),
+    captured_at: body.CapturedAt || new Date().toISOString(),
+    received_by: body.ReceivedBy || APP.userEmail || 'admin',
+    notes: body.Notes || '',
+    soft_deleted: false,
+    created_at: new Date().toISOString(),
+  };
+  const { data, error } = await sb.from('booking_payments').insert(r).select().single();
+  if (error) throw new Error(error.message);
+  // Update booking balance
+  const allPay = (APP.state.payments || []).filter(p => p.BookingID === body.BookingID && !p.SoftDeleted);
+  allPay.push(sbToPayment(data));
+  const paid = allPay.reduce((s,p) => p.PaymentType==='refund' ? s-Number(p.Amount||0) : s+Number(p.Amount||0), 0);
+  const booking = APP.state.bookings.find(b => b.BookingID === body.BookingID);
+  const total = booking ? Number(booking.TotalSnapshot || 0) : 0;
+  const balance = Math.max(0, total - paid);
+  await sb.from('bookings').update({ deposit_paid_snapshot: paid, balance_snapshot: balance, updated_at: new Date().toISOString() }).eq('booking_id', body.BookingID);
+  if (booking) { booking.DepositPaidSnapshot = String(paid); booking.BalanceSnapshot = String(balance); }
+  APP.state.payments = [...(APP.state.payments || []).filter(p => p.BookingID !== body.BookingID || !p._optimistic), ...allPay];
+  return { success: true, paidTotal: paid, bookingTotal: total };
+}
+
+async function sbChangeBookingStatus(bookingId, newStatus, actor) {
+  const { error } = await sb.from('bookings').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('booking_id', bookingId);
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbUpsertResortDefaults(body) {
+  const r = {
+    resort_id: body.ResortID || APP.resortId,
+    default_currency: body.DefaultCurrency || 'ZAR',
+    default_check_in_time: body.DefaultCheckInTime || '14:00',
+    default_check_out_time: body.DefaultCheckOutTime || '10:00',
+    default_hold_minutes: Number(body.DefaultHoldMinutes) || 120,
+    default_min_nights: Number(body.DefaultMinNights) || 1,
+    default_max_nights: Number(body.DefaultMaxNights) || 21,
+    default_deposit_mode: body.DefaultDepositMode || 'percentage',
+    default_deposit_value: Number(body.DefaultDepositValue) || 0,
+    age_toddler_max: Number(body.AgeToddlerMax) || 2,
+    age_child_max: Number(body.AgeChildMax) || 12,
+    pre_holiday_treatment: body.PreHolidayTreatment || 'offPeak',
+    season_rules_json: body.SeasonRulesJSON || '{}',
+    active: true, soft_deleted: false,
+    updated_at: new Date().toISOString(),
+  };
+  const { error } = await sb.from('resort_defaults').upsert(r, { onConflict: 'resort_id' });
+  if (error) throw new Error(error.message);
+  return { success: true };
+}
+
+async function sbResetResortData(sections, resortId) {
+  const tableMap = {
+    Bookings: 'bookings', Payments: 'booking_payments',
+    BookingEvents: 'booking_events', CalendarBlocks: 'calendar_blocks',
+    Stands: 'stands', StandTypes: 'stand_types',
+    ResortDefaults: 'resort_defaults', AuditLog: 'audit_log',
+    NewsletterSignups: 'newsletter_signups'
+  };
+  const results = {};
+  for (const section of sections) {
+    const table = tableMap[section];
+    if (!table) continue;
+    const col = ['resort_defaults','newsletter_signups','audit_log'].includes(table) ? 'resort_id' : 'resort_id';
+    const { error, count } = await sb.from(table).delete().eq(col, resortId);
+    results[section] = error ? ('Error: ' + error.message) : 'Deleted';
+  }
+  return { success: true, results, resortId };
+}
+
+async function sbLoadPaymentsForBooking(bookingId) {
+  const { data, error } = await sb.from('booking_payments').select('*').eq('booking_id', bookingId).eq('soft_deleted', false).order('paid_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data || []).map(sbToPayment);
+}
+
+
+// ── Default view helper ───────────────────────────────────────────────────────
 function getDefaultView_() {
   const btn = document.querySelector('.nav button[data-view]');
   return btn ? btn.dataset.view : 'dashboard';
 }
+
 const APP = {
   resortId: '1',
   resortName: 'Kampkiepie Toets Kamp',
@@ -124,56 +712,16 @@ function isStandAvailableForDates(standId,checkIn,checkOut,excludeBookingId){
   return!blockConflict;
 }
 
-function apiUrl(){return(window.__KK_API_URL||localStorage.getItem('kkAdminBackendApi')||new URLSearchParams(location.search).get('api')||document.getElementById('apiUrl').value.trim());}
-function parseConfigText(text){const out={};String(text||'').split(/\r?\n/).forEach(line=>{const raw=line.trim();if(!raw||raw.startsWith('#'))return;const ix=raw.indexOf(':');if(ix<0)return;const key=raw.slice(0,ix).trim();const value=raw.slice(ix+1).trim();if(key)out[key]=value;});return out;}
-async function bootstrapConfig(){
-  try{
-    const res=await fetch('config.txt',{cache:'no-store'});
-    if(res.ok){
-      const text=await res.text();
-      const cfg=parseConfigText(text);
-      if(cfg.adminbackend_script){window.__KK_API_URL=cfg.adminbackend_script;document.getElementById('apiUrl').value=cfg.adminbackend_script;localStorage.setItem('kkAdminBackendApi',cfg.adminbackend_script);}
-      if(cfg.resort_information_sheet_id){window.__KK_RESORT_INFO_ID=extractSheetId(cfg.resort_information_sheet_id);localStorage.setItem('kkResortInfoSheetId',window.__KK_RESORT_INFO_ID);}
-      if(cfg.adminbackend_script){setApiState('Config loaded',null);return cfg.adminbackend_script;}
-    }
-  }catch(err){console.warn('config.txt not loaded:',err);}
-  const savedInfoId=localStorage.getItem('kkResortInfoSheetId')||'';
-  if(savedInfoId)window.__KK_RESORT_INFO_ID=savedInfoId;
-  const saved=localStorage.getItem('kkAdminBackendApi')||'';
-  if(saved)document.getElementById('apiUrl').value=saved;
-  return saved;
-}
-function extractSheetId(value){const s=String(value||'').trim();const match=s.match(/\/d\/([a-zA-Z0-9-_]+)/);return match?match[1]:s;}
-function resortInfoSheetId(){return window.__KK_RESORT_INFO_ID||localStorage.getItem('kkResortInfoSheetId')||'';}
-function setApiState(text,ok){const el=document.getElementById('apiStatePill');if(!el)return;el.textContent=text;if(ok===true){el.style.background='var(--ok-l)';el.style.color='var(--ok)';}else if(ok===false){el.style.background='var(--bad-l)';el.style.color='var(--bad)';}else{el.style.background='var(--bg)';el.style.color='var(--muted)';}}
-function getSession(){return sessionStorage.getItem('kkSession')||'';}
-function setSession(token){if(token)sessionStorage.setItem('kkSession',token);}
-let sessionRedirectTriggered=false;
-function logout(){if(!confirm('Log out and return to the Admin Portal?'))return;sessionStorage.removeItem('kkSession');stopLivePolling();stopSessionWatcher();window.location.href='admin.html';}
-function clearSessionAndReturnToPortal(message){sessionStorage.removeItem('kkSession');stopLivePolling();stopSessionWatcher();sessionRedirectTriggered=true;showAuthRequired(message||'Your session has ended.');setTimeout(()=>{window.location.href='admin.html';},2000);}
-async function apiCall(action,params={},method='GET'){
-  const base=apiUrl();if(!base)throw new Error('No Apps Script endpoint configured');
-  const payload=Object.assign({action,resortId:APP.resortId},params);
-  const infoId=resortInfoSheetId();if(infoId)payload.resortInfoSheetId=infoId;
-  const session=getSession();if(session&&action!=='exchangeBootstrapToken')payload.session=session;
-  let result;
-  if(method==='GET'){
-    const url=new URL(base);
-    Object.entries(payload).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
-    url.searchParams.set('_ts',Date.now().toString());
-    const res=await fetch(url.toString(),{method:'GET',redirect:'follow',cache:'no-store'});
-    const text=await res.text();
-    try{result=JSON.parse(text);}catch(e){throw new Error('Bad JSON: '+text.slice(0,120));}
-  }else{
-    const form=new URLSearchParams();
-    Object.entries(payload).forEach(([k,v])=>form.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
-    const res=await fetch(base,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:form.toString()});
-    const text=await res.text();
-    try{result=JSON.parse(text);}catch(e){throw new Error('Bad JSON: '+text.slice(0,120));}
-  }
-  if(result&&result.requireLogin){if(action!=='exchangeBootstrapToken')clearSessionAndReturnToPortal('Your session has ended. Please sign back in.');throw new Error(result.error||'Session expired');}
-  return result;
-}
+
+
+
+
+
+
+
+
+
+
 async function sendBookingEmailToGuest(bookingId, eventType, extra) {
   extra = extra || {};
   const payload = {
@@ -186,7 +734,7 @@ async function sendBookingEmailToGuest(bookingId, eventType, extra) {
   if (extra.amount !== undefined)      payload.paymentAmount = extra.amount;
   if (extra.paymentType !== undefined) payload.paymentType = extra.paymentType;
   try {
-    const res = await apiCall('sendBookingEmail', payload, 'POST');
+    const res = await gasCall('sendBookingEmail', payload, 'POST');
     if (!res.success) console.warn('Guest email not sent:', res.error);
     return res;
   } catch (e) {
@@ -195,14 +743,12 @@ async function sendBookingEmailToGuest(bookingId, eventType, extra) {
   }
 }
 function connectApi(){const url=document.getElementById('apiUrl').value.trim();if(!url)return;window.__KK_API_URL=url;localStorage.setItem('kkAdminBackendApi',url);attemptConnect();}
-function setConnectProgress(msg){const el=document.getElementById('connectGateProgress');if(el)el.textContent=msg;}
-function showConnectMessage(msg){const gate=document.getElementById('connectGate');const msgEl=document.getElementById('connectGateMsg');gate?.classList.remove('hidden');if(msgEl){msgEl.textContent=msg;msgEl.className='notice info';}document.getElementById('connectGateRetry')?.classList.add('hidden');document.getElementById('connectGateReturnBtn')?.classList.add('hidden');setConnectProgress('Waking up the flock\u2026');}
-function showConnectRetry(msg){const gate=document.getElementById('connectGate');const msgEl=document.getElementById('connectGateMsg');gate?.classList.remove('hidden');if(msgEl){msgEl.textContent=msg;msgEl.className='notice bad';}document.getElementById('connectGateRetry')?.classList.remove('hidden');document.getElementById('connectGateReturnBtn')?.classList.add('hidden');setConnectProgress('The chicken got lost on the way\u2026');}
-function showAuthRequired(msg){const gate=document.getElementById('connectGate');const msgEl=document.getElementById('connectGateMsg');gate?.classList.remove('hidden');document.getElementById('wrapMain')?.classList.add('hidden');if(msgEl){msgEl.textContent=msg;msgEl.className='notice warn';}document.getElementById('connectGateRetry')?.classList.add('hidden');document.getElementById('connectGateReturnBtn')?.classList.remove('hidden');setConnectProgress('Waiting for you to sign in\u2026');}
-function hideConnectGate(){document.getElementById('connectGate')?.classList.add('hidden');document.getElementById('wrapMain')?.classList.remove('hidden');}
-let livePollTimer=null,lastLiveUpdate=null;
-const LIVE_POLL_INTERVAL_MS=10*60*1000;
-function startLivePolling(){if(livePollTimer)clearInterval(livePollTimer);livePollTimer=setInterval(livePoll,LIVE_POLL_INTERVAL_MS);}
+
+
+
+
+
+
 // ── Role access matrix ────────────────────────────────────────────────────────
 // KampKiepie Super Admin (superadmin role) always has full access.
 // Resort roles from Users tab: Super | Manager | Admin | Finance
@@ -289,13 +835,8 @@ function applyRoleToNav() {
   APP._insightAllowed = insightAllowed;
 }
 function applySessionIdentity(){
-  const payload=decodeSessionPayload(getSession());if(!payload)return;
-  APP.role=payload.role||APP.role;
-  APP.userEmail=payload.userEmail||'';
-  APP.resortRole=payload.resortRole||'Super';
-  // Parse per-user permissions from session (empty string → use role defaults)
-  const rawPerms = String(payload.userPermissions||'').trim();
-  APP.userPermissions = rawPerms ? rawPerms.split(',').map(s=>s.trim()).filter(Boolean) : null;
+  // APP.role, APP.userEmail, APP.resortRole are already set by boot() from the JWT.
+  // Just update the UI pill and apply role-based nav visibility.
   const pill=document.getElementById('rolePill');
   if(pill){
     const roleLabel=APP.role==='superadmin'?'KampKiepie Super Admin':(APP.resortRole||APP.role);
@@ -304,25 +845,19 @@ function applySessionIdentity(){
   applyRoleToNav();
   showResetButtonIfSuperAdmin();
 }
-function decodeSessionPayload(token){try{const payloadB64=String(token||'').split('.')[0];let b64=payloadB64.replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';return JSON.parse(decodeURIComponent(escape(atob(b64))));}catch(e){return null;}}
+
 let sessionCheckTimer=null;
 function startSessionWatcher(){if(sessionCheckTimer)clearInterval(sessionCheckTimer);sessionCheckTimer=setInterval(checkSessionExpiry,5000);checkSessionExpiry();}
 function stopSessionWatcher(){if(sessionCheckTimer)clearInterval(sessionCheckTimer);sessionCheckTimer=null;}
 function checkSessionExpiry(){
-  const token=getSession();if(!token)return;
-  const payload=decodeSessionPayload(token);if(!payload)return;
-  const now=Date.now();const nextExpiry=Math.min(payload.absoluteExpiresAt,payload.slidingExpiresAt);
-  const msLeft=nextExpiry-now;
-  if(msLeft<=0){stopSessionWatcher();clearSessionAndReturnToPortal('Your session has expired.');return;}
-  if(msLeft<=60000)showSessionWarning(Math.max(0,Math.ceil(msLeft/1000)));else hideSessionWarning();
+  // Session management now handled by Supabase — no-op stub.
 }
 function showSessionWarning(secondsLeft){const countdownEl=document.getElementById('sessionWarningCountdown');if(countdownEl)countdownEl.textContent=secondsLeft;document.getElementById('sessionWarningModal')?.classList.add('on');}
 function hideSessionWarning(){document.getElementById('sessionWarningModal')?.classList.remove('on');}
 async function clickExtendSession(){try{const res=await apiCall('extendSession',{},'GET');if(!res.success){alert(res.error||'Could not extend session');return;}setSession(res.session);if(typeof res.extendsRemaining==='number'&&res.extendsRemaining<=0)document.getElementById('sessionExtendBtn')?.classList.add('hidden');hideSessionWarning();checkSessionExpiry();}catch(err){console.warn('Extend failed:',err);}}
-function clickRefreshSession(){window.location.href='admin.html';}
-let lastRenewalAttempt=0;
-function touchSession(){if(!getSession())return;const now=Date.now();if(now-lastRenewalAttempt<30000)return;lastRenewalAttempt=now;apiCall('renewSession',{},'GET').then(res=>{if(res&&res.success&&res.session)setSession(res.session);}).catch(()=>{});}
-document.addEventListener('click',touchSession,{capture:true});
+function clickRefreshSession(){window.location.href='../admin/admin.html';}
+
+
 function stopLivePolling(){if(livePollTimer)clearInterval(livePollTimer);livePollTimer=null;}
 async function livePoll(){
   if(document.getElementById('wrapMain')?.classList.contains('hidden'))return;
@@ -340,12 +875,7 @@ async function livePoll(){
   }catch(err){console.warn('Live refresh failed:',err);updateLiveIndicator('Refresh failed, retrying\u2026');}
 }
 function updateLiveIndicator(overrideText){const el=document.getElementById('liveIndicator');if(!el)return;if(overrideText){el.textContent=overrideText;return;}el.textContent=lastLiveUpdate?'Updated '+lastLiveUpdate.toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';}
-async function attemptConnect(){
-  sessionRedirectTriggered=false;
-  showConnectMessage('Connecting to the booking system\u2026');setApiState('Connecting\u2026',null);
-  try{await initLiveData();hideConnectGate();applySessionIdentity();lastLiveUpdate=new Date();updateLiveIndicator();startLivePolling();startSessionWatcher();}
-  catch(err){console.warn(err);setApiState('Offline',false);if(!sessionRedirectTriggered)showConnectRetry('Could not connect: '+(err.message||err));}
-}
+
 function fillInputValue(label,value){return value===undefined||value===null?'':String(value);}
 function modalInputs(modalId){return Array.from(document.querySelectorAll('#'+modalId+' input, #'+modalId+' textarea, #'+modalId+' select')).reduce((acc,el)=>{const field=el.closest('.field');const label=field&&field.querySelector('label')?field.querySelector('label').textContent.trim():'';acc[label]=el.type==='checkbox'?el.checked:el.value;return acc;},{});}
 function modalObject(modalId){
@@ -357,7 +887,8 @@ function modalObject(modalId){
 async function saveModal(kind){
   try{
     let action='',body={};
-    if(kind==='stand'){body=standModalPayload();body.Active=body.Active==='true'||body.Active===true;body.SoftDeleted=false;body.CreatedAt=body.CreatedAt||new Date().toISOString();body.UpdatedAt=new Date().toISOString();action='upsertStand';}
+    if(kind==='stand'){body=standModalPayload();body.Active=body.Active==='true'||body.Active===true;body.SoftDeleted=false;body.CreatedAt=body.CreatedAt||new Date().toISOString();body.UpdatedAt=new Date().toISOString();}
+    if(kind==='stand'){const sbRes=await sbUpsertStand(body);if(!sbRes.success)throw new Error(sbRes.error||'Save failed');try{await initLiveData();}catch(e){}closeModal('standModal');return;}
     if(kind==='booking'){
       enforceBookingDefaults();body=modalObject('bookingModal');body.ResortID=APP.resortId;
       body.StandID=resolveBookingStandId();if(!body.StandID)throw new Error('Please choose a stand/unit from the available list before saving.');
@@ -415,9 +946,15 @@ async function saveModal(kind){
       body.CreatedAt=body.CreatedAt||new Date().toISOString();body.UpdatedAt=new Date().toISOString();body.SoftDeleted=false;action='upsertBlock';
     }
     closeModal(kind+'Modal');
-    try{const res=await apiCall(action,body,'POST');if(!res.success)throw new Error(res.error||'Save failed');try{await apiCall('syncBulk',{resortId:APP.resortId},'POST');}catch(bulkErr){console.warn('Bulk sync failed:',bulkErr);}try{await initLiveData();}catch(refreshErr){console.warn('Post-save refresh failed:',refreshErr);}
-    }catch(apiErr){alert('Save error: '+(apiErr.message||String(apiErr)));}
-  }catch(err){alert(err.message||String(err));}
+    try {
+      if(action==='upsertStand')     await sbUpsertStand(body);
+      else if(action==='upsertBooking')  await sbUpsertBooking(body);
+      else if(action==='upsertStandType') await sbUpsertStandType(body);
+      else if(action==='upsertBlock')    await sbUpsertBlock(body);
+      buildBulk();
+      try { await initLiveData(); } catch(refreshErr) { console.warn('Post-save refresh failed:', refreshErr); }
+    } catch(apiErr) { alert('Save error: ' + (apiErr.message||String(apiErr))); }
+  } catch(err) { alert(err.message||String(err)); }
 }
 async function deleteRecord(kind,id){
   const map={stand:{sheetName:'Stands',keyName:'StandID',modal:'standModal',list:'stands'},standType:{sheetName:'StandTypes',keyName:'StandTypeID',modal:'standTypeModal',list:'standTypes'},booking:{sheetName:'BookingsLines',keyName:'BookingID',modal:'bookingModal',list:'bookings'},block:{sheetName:'CalendarBlocks',keyName:'BlockID',modal:'blockModal',list:'blocks'}};
@@ -425,35 +962,15 @@ async function deleteRecord(kind,id){
   if(kind==='standType'){const linkedCount=APP.state.stands.filter(s=>!s.SoftDeleted&&s.StandTypeID===id).length;if(linkedCount){alert('Cannot delete this stand type - '+linkedCount+' stand(s) still use it.');return;}}
   if(!confirm('Delete this '+kind+'? It will be soft-deleted and hidden from active lists.'))return;
   const applyLocalDelete=()=>{const rec=APP.state[cfg.list].find(x=>x[cfg.keyName]===id);if(rec)rec.SoftDeleted=true;buildBulk();renderStats();renderActive();renderInspector(null);};
-  try{const res=await apiCall('softDelete',{sheetName:cfg.sheetName,keyName:cfg.keyName,keyValue:id},'POST');if(!res.success)throw new Error(res.error||'Delete failed');try{await apiCall('syncBulk',{resortId:APP.resortId},'POST');}catch(bulkErr){console.warn('Bulk sync failed:',bulkErr);}closeModal(cfg.modal);try{await initLiveData();}catch(refreshErr){console.warn('Post-delete refresh failed:',refreshErr);}
-  }catch(err){closeModal(cfg.modal);applyLocalDelete();alert('Deleted locally (no live API connection). '+(err.message||err));}
+  const sbMap={stand:{table:'stands',keyCol:'stand_id'},standType:{table:'stand_types',keyCol:'stand_type_id'},booking:{table:'bookings',keyCol:'booking_id'},block:{table:'calendar_blocks',keyCol:'block_id'}};
+  const sbCfg=sbMap[kind];
+  try {
+    if(sbCfg) await sbSoftDelete(sbCfg.table, sbCfg.keyCol, id);
+    closeModal(cfg.modal);
+    try { await initLiveData(); } catch(e) {}
+  } catch(err) { closeModal(cfg.modal); applyLocalDelete(); alert('Delete error: '+(err.message||err)); }
 }
-async function initLiveData(){
-  setConnectProgress('Waking up the flock\u2026');
-  const res=await apiCall('init',{},'GET');if(!res.success)throw new Error(res.error||'Init failed');
-  setConnectProgress('Checking the coop details\u2026');
-  const boot=await apiCall('getBootPayload',{resortId:APP.resortId},'GET');
-  if(boot.success&&boot.payload){APP.resortId=String(boot.payload.resortId||APP.resortId);if(boot.payload.resortName)APP.resortName=boot.payload.resortName;APP.resortTotalViews=Number(boot.payload.resort&&boot.payload.resort['Scoring/TotalViews'])||0;APP.state.resort=boot.payload.resort||{};APP.kkbookLevel=String(boot.payload.kkbookLevel||'').trim().toUpperCase();const _ril=document.getElementById('resortIdLabel');if(_ril)_ril.textContent=APP.resortId;}
-  setConnectProgress('Gathering the coop data\u2026');
-  const[standsR,bookingsR,blocksR,standTypesR,defaultsR,bulkR,paymentsR]=await Promise.allSettled([apiCall('listStands',{},'GET'),apiCall('listBookings',{},'GET'),apiCall('listBlocks',{},'GET'),apiCall('listStandTypes',{},'GET'),apiCall('getResortDefaults',{resortId:APP.resortId},'GET'),apiCall('getBulk',{},'GET'),apiCall('listPayments',{},'GET')]);
-  function fromSettled(settled,key,fallback,label){if(settled.status==='fulfilled'&&settled.value&&settled.value.success)return settled.value[key]||fallback;console.warn('Could not refresh '+label+':',settled.status==='rejected'?settled.reason:settled.value?.error);return fallback;}
-  setConnectProgress('Almost hatched\u2026');
-  APP.state.stands=fromSettled(standsR,'stands',APP.state.stands||[],'stands');
-  APP.state.bookings=fromSettled(bookingsR,'bookings',APP.state.bookings||[],'bookings');
-  APP.state.blocks=fromSettled(blocksR,'blocks',APP.state.blocks||[],'blocks');
-  APP.state.standTypes=fromSettled(standTypesR,'standTypes',APP.state.standTypes||[],'stand types');
-  APP.state.resortDefaults=fromSettled(defaultsR,'defaults',APP.state.resortDefaults||{},'resort defaults');
-  const bulkRows=fromSettled(bulkR,'bulk',[],'bulk cache');
-  const paymentsRows=fromSettled(paymentsR,'payments',APP.state.payments||[],'payments');
-  APP.state.payments=(paymentsRows||[]).filter(p=>!truthy(p.SoftDeleted));
-  APP.state.tiers=[];TIERS_DATA=[];
-  APP.state.bulk={};
-  (bulkRows||[]).forEach(row=>{const parsed={ResortID:row.ResortID,StandID:row.StandID};APP.monthKeys.forEach(month=>{try{parsed[month]=JSON.parse(row[month]||'[]');}catch(e){parsed[month]=[];}try{parsed[month+'m']=JSON.parse(row[month+'m']||'{}');}catch(e){parsed[month+'m']={};}} );APP.state.bulk[row.StandID]=parsed;});
-  if(!APP.state.bulk||!Object.keys(APP.state.bulk).length)buildBulk();
-  setApiState('Connected',true);renderStats();renderActive();renderInspector(null);
-  // Load tiers silently in background after boot — GAS is warm by now
-  setTimeout(async()=>{try{const r=await apiCall('listTiers',{},'GET');if(r&&r.success&&r.tiers&&r.tiers.length){APP.state.tiers=r.tiers;TIERS_DATA=r.tiers;}}catch(e){}},1000);
-}
+
 function showResetButtonIfSuperAdmin(){const btn=document.getElementById('resetBtn');if(!btn)return;if(APP.role==='KampKiepie Super Admin')btn.classList.remove('hidden');else btn.classList.add('hidden');}
 function openResetModal(){document.getElementById('resetModal').classList.add('on');}
 async function submitReset(){
@@ -463,7 +980,7 @@ async function submitReset(){
   const selected=[];Object.keys(sectionMap).forEach(id=>{const el=document.getElementById(id);if(el&&el.checked&&!el.disabled)selected.push(sectionMap[id]);});
   if(!selected.length){if(msg)msg.innerHTML='<div class="notice warn">Please tick at least one section.</div>';return;}
   if(btn)btn.disabled=true;if(msg)msg.innerHTML='<div class="notice info">Deleting\u2026</div>';
-  try{const res=await apiCall('resetResortData',{sections:JSON.stringify(selected)},'POST');if(!res.success)throw new Error(res.error||'Reset failed');const lines=Object.entries(res.results||{}).map(([k,v])=>'<li><strong>'+esc(k)+'</strong>: '+esc(v)+'</li>').join('');if(msg)msg.innerHTML='<div class="notice ok">Reset complete for Resort '+esc(res.resortId)+'.</div><ul style="font-size:12px;font-weight:700;padding-left:18px;line-height:1.9">'+lines+'</ul>';try{await initLiveData();}catch(e){}
+  try{const res=await sbResetResortData(selected,APP.resortId);if(!res.success)throw new Error(res.error||'Reset failed');const lines=Object.entries(res.results||{}).map(([k,v])=>'<li><strong>'+esc(k)+'</strong>: '+esc(v)+'</li>').join('');if(msg)msg.innerHTML='<div class="notice ok">Reset complete for Resort '+esc(res.resortId)+'.</div><ul style="font-size:12px;font-weight:700;padding-left:18px;line-height:1.9">'+lines+'</ul>';try{await initLiveData();}catch(e){}
   }catch(err){if(msg)msg.innerHTML='<div class="notice bad">'+esc(err.message||String(err))+'</div>';if(btn)btn.disabled=false;}
 }
 
@@ -686,15 +1203,18 @@ function computeDateRange(key){
     case 'today':return[fmt(todayUTC),fmt(todayUTC)];
     case 'tomorrow':{const t=shiftDays(todayUTC,1);return[fmt(t),fmt(t)];}
     case 'lastWeek':return[fmt(shiftDays(todayUTC,-7)),fmt(shiftDays(todayUTC,-1))];
+    case 'thisWeek':{const dow=todayUTC.getUTCDay();const mon=shiftDays(todayUTC,-(dow===0?6:dow-1));return[fmt(mon),fmt(shiftDays(mon,6))];}
     case 'nextWeek':return[fmt(shiftDays(todayUTC,1)),fmt(shiftDays(todayUTC,7))];
     case 'lastMonth':return[fmt(new Date(Date.UTC(y,m-1,1))),fmt(new Date(Date.UTC(y,m,0)))];
+    case 'thisMonth':return[fmt(new Date(Date.UTC(y,m,1))),fmt(new Date(Date.UTC(y,m+1,0)))];
     case 'nextMonth':return[fmt(new Date(Date.UTC(y,m+1,1))),fmt(new Date(Date.UTC(y,m+2,0)))];
     case 'lastYear':return[fmt(new Date(Date.UTC(y-1,0,1))),fmt(new Date(Date.UTC(y-1,11,31)))];
+    case 'thisYear':return[fmt(new Date(Date.UTC(y,0,1))),fmt(new Date(Date.UTC(y,11,31)))];
     case 'nextYear':return[fmt(new Date(Date.UTC(y+1,0,1))),fmt(new Date(Date.UTC(y+1,11,31)))];
     default:return null;
   }
 }
-function dateFilterLabel(key){const map={'':'All Time',today:'Today',tomorrow:'Tomorrow',lastWeek:'Last Week',nextWeek:'Next Week',lastMonth:'Last Month',nextMonth:'Next Month',lastYear:'Last Year',nextYear:'Next Year'};return map[key]??'Today';}
+function dateFilterLabel(key){const map={'':'All Time',today:'Today',tomorrow:'Tomorrow',lastWeek:'Last Week',thisWeek:'This Week',nextWeek:'Next Week',lastMonth:'Last Month',thisMonth:'This Month',nextMonth:'Next Month',lastYear:'Last Year',thisYear:'This Year',nextYear:'Next Year'};return map[key]??'Selected Range';}
 function getArrivalsInRange(range){return APP.state.bookings.filter(b=>{if(b.SoftDeleted||!['reserved','confirmed','part-paid'].includes(String(b.Status||'').toLowerCase()))return false;const d=displayDate(b.CheckInDate);if(!d)return false;return!range||(d>=range[0]&&d<=range[1]);});}
 function getDeparturesInRange(range){return APP.state.bookings.filter(b=>{if(b.SoftDeleted||!['checked-in','confirmed','part-paid','reserved'].includes(String(b.Status||'').toLowerCase()))return false;const d=displayDate(b.CheckOutDate);if(!d)return false;return!range||(d>=range[0]&&d<=range[1]);});}
 function getNewRequestsInRange(range){return APP.state.bookings.filter(b=>{if(b.SoftDeleted)return false;const d=displayDate(b.CreatedAt);if(!d)return false;return!range||(d>=range[0]&&d<=range[1]);}).sort((a,b)=>new Date(b.CreatedAt)-new Date(a.CreatedAt));}
@@ -761,10 +1281,8 @@ function renderDashboard(){
   const dateFilterVal=document.getElementById('dateFilter')?.value??'today';const range=dateFilterVal?computeDateRange(dateFilterVal):null;const rangeLabel=dateFilterLabel(dateFilterVal);
   const arrivals=getArrivalsInRange(range),departures=getDeparturesInRange(range),newRequests=getNewRequestsInRange(range),inHouse=getInHouseNow(),expiredReservations=getExpiredReservations(),overdueCheckouts=getOverdueCheckouts(),overdueCheckins=getOverdueCheckins(),activeBlocks=getActiveBlocksInRange(range),occ=getOccupancyToday();
   const tile=(label,count,warn,onclick)=>`<div class="dashtile ${warn?'dashtile-warn':''}" onclick="${onclick}"><div class="dashtile-count">${esc(count)}</div><div class="dashtile-label">${esc(label)}</div></div>`;
-  const currency=APP.state.resortDefaults?.DefaultCurrency||'ZAR';const revenue=getRevenueSnapshot();const week=getWeekLookahead();const weekArrivals=week.reduce((s,d)=>s+d.arrivals,0),weekDepartures=week.reduce((s,d)=>s+d.departures,0);
-  const weekArrivalsId=registerRowsFilter(APP.state.bookings.filter(b=>!b.SoftDeleted&&week.some(d=>d.date===displayDate(b.CheckInDate))&&['reserved','confirmed','part-paid'].includes(String(b.Status||'').toLowerCase())),'Arrivals This Week');
-  const weekDeparturesId=registerRowsFilter(APP.state.bookings.filter(b=>!b.SoftDeleted&&week.some(d=>d.date===displayDate(b.CheckOutDate))&&['checked-in','confirmed','part-paid','reserved'].includes(String(b.Status||'').toLowerCase())),'Departures This Week');
-  const sourceBreakdown=getSourceBreakdown(),utilization=getStandTypeUtilization();
+  const currency=APP.state.resortDefaults?.DefaultCurrency||'ZAR';const revenue=getRevenueSnapshot();const week=getWeekLookahead();
+  const utilization=getStandTypeUtilization();
   const staticTile=(label,value)=>`<div class="dashtile dashtile-static"><div class="dashtile-count">${esc(value)}</div><div class="dashtile-label">${esc(label)}</div></div>`;
   const specialRequests=getSpecialRequests(range),repeatGuests=getRepeatGuestsUpcoming(range),upcomingHoliday=getUpcomingHoliday(),cancellations=getRecentCancellations();
   const attnTiles=[];
@@ -776,7 +1294,24 @@ function renderDashboard(){
   if(rangeRevenue.bookings.length){const id=registerRowsFilter(rangeRevenue.bookings,'Check-ins \xb7 '+rangeLabel);attnTiles.push(`<div class="dashtile" onclick="goToPendingFilter(${id})"><div class="dashtile-count" style="font-size:15px;line-height:1.35">${esc(formatMoney(rangeRevenue.revenue,currency))}<br>${esc(formatMoney(rangeRevenue.outstanding,currency))}</div><div class="dashtile-label">Revenue / Outstanding \xb7 ${esc(rangeLabel)}</div></div>`);}
   const checkInStandBreakdown=getWeekStandBreakdown('CheckInDate'),checkOutStandBreakdown=getWeekStandBreakdown('CheckOutDate');
   const weekDayCard=(title,field,statusFilter,standBreakdown)=>`<div class="card" style="margin:0"><div class="section-t">${esc(title)}</div><div class="weekstrip">${week.map(d=>{const dayRows=APP.state.bookings.filter(b=>!b.SoftDeleted&&statusFilter.includes(String(b.Status||'').toLowerCase())&&displayDate(b[field])===d.date);const id=registerRowsFilter(dayRows,title+' \xb7 '+displayDate(d.date));const count=field==='CheckInDate'?d.arrivals:d.departures;return `<div class="weekday-col" onclick="goToPendingFilter(${id})"><div class="small" style="font-weight:800">${esc((parseDateOnly(d.date)||new Date()).toLocaleDateString('en-ZA',{weekday:'short',timeZone:'UTC'}))}</div><div class="small">${esc(d.date.slice(8,10))}</div><div style="font-size:13px;font-weight:800;color:var(--brand-d);margin-top:4px">${esc(count)}</div></div>`;}).join('')}</div><div class="divider" style="margin:10px 0"></div>${standBreakdown.length?standBreakdown.map(r=>{const id=registerRowsFilter(APP.state.bookings.filter(b=>!b.SoftDeleted&&b.StandID===r.standId&&statusFilter.includes(String(b.Status||'').toLowerCase())&&week.some(d=>d.date===displayDate(b[field]))),title+' \xb7 '+r.label);return `<div class="kv attn-row" style="grid-template-columns:1fr auto" onclick="goToPendingFilter(${id})"><span>${esc(r.label)}</span><strong>${esc(r.count)}</strong></div>`;}).join(''):`<div class="small" style="padding:6px 0">No stands with activity this week.</div>`}</div>`;
-  return `<div class="panel-b stack"><div class="notice info">Live overview for <strong>${esc(APP.resortName)}</strong> \u2014 ${esc(new Date().toLocaleDateString('en-ZA',{weekday:'long',year:'numeric',month:'long',day:'numeric'}))}. Date range: <strong>${esc(rangeLabel)}</strong>.</div><div class="dashgrid">${tile('Check-ins Due \xb7 '+rangeLabel,arrivals.length,false,`goToDashboardFilter('arrivalsRange','Check-ins Due \xb7 ${esc(rangeLabel)}')`)}${tile('Check-outs Due \xb7 '+rangeLabel,departures.length,false,`goToDashboardFilter('departuresRange','Check-outs Due \xb7 ${esc(rangeLabel)}')`)}${tile('New Requests \xb7 '+rangeLabel,newRequests.length,false,`goToDashboardFilter('newRequestsRange','New Requests \xb7 ${esc(rangeLabel)}')`)}${tile('Currently In-House',inHouse.length,false,"goToDashboardFilter('inHouse','Currently In-House')")}${tile('Expired Reservations',expiredReservations.length,expiredReservations.length>0,"goToDashboardFilter('expiredReservations','Expired Reservations')")}${(()=>{const warn=overdueCheckins.length>0||overdueCheckouts.length>0;const id=registerRowsFilter([...overdueCheckins,...overdueCheckouts],'Overdue In / Out');return `<div class="dashtile ${warn?'dashtile-warn':''}" onclick="goToPendingFilter(${id})"><div class="dashtile-count">${esc(overdueCheckins.length)}/${esc(overdueCheckouts.length)}</div><div class="dashtile-label">Overdue in / out</div></div>`;})()}${tile('Occupancy Today',occ.percent+'%',false,"goToView('bulk')")}${tile('Blocked / Maintenance \xb7 '+rangeLabel,activeBlocks.length,activeBlocks.length>0,"goToView('blocks')")}</div><div class="section-divider"></div><div class="dashgrid">${staticTile("Today's Revenue",formatMoney(revenue.todayRevenue,currency))}${staticTile('Outstanding Balance',formatMoney(revenue.outstanding,currency))}${tile('Arrivals This Week',weekArrivals,false,`goToPendingFilter(${weekArrivalsId})`)}${tile('Departures This Week',weekDepartures,false,`goToPendingFilter(${weekDeparturesId})`)}${sourceBreakdown.map(([src,count])=>{const id=registerRowsFilter(APP.state.bookings.filter(b=>!b.SoftDeleted&&String(b.Source||'unknown').toLowerCase()===src),src.charAt(0).toUpperCase()+src.slice(1)+' Bookings');return tile(esc(src)+' Bookings',count,false,`goToPendingFilter(${id})`);}).join('')}${utilization.map(u=>tile(esc(u.name)+' Utilization',u.occupied+'/'+u.total,false,`goToStandsFiltered('${esc(u.id)}')`)).join('')}</div><div class="section-divider"></div><div class="weekgrid">${weekDayCard('Check-ins This Week','CheckInDate',['reserved','confirmed','part-paid'],checkInStandBreakdown)}<div class="week-vdivider"></div>${weekDayCard('Check-outs This Week','CheckOutDate',['checked-in','confirmed','part-paid','reserved'],checkOutStandBreakdown)}</div>${attnTiles.length?`<div class="section-divider"></div><div class="dashgrid">${attnTiles.join('')}</div>`:''}</div>`;
+  return `<div class="panel-b stack"><div class="notice info">Live overview for <strong>${esc(APP.resortName)}</strong> \u2014 ${esc(new Date().toLocaleDateString('en-ZA',{weekday:'long',year:'numeric',month:'long',day:'numeric'}))}. Date range: <strong>${esc(rangeLabel)}</strong>.</div><div class="dashgrid">${tile('Check-ins Due \xb7 '+rangeLabel,arrivals.length,false,`goToDashboardFilter('arrivalsRange','Check-ins Due \xb7 ${esc(rangeLabel)}')`)}${tile('Check-outs Due \xb7 '+rangeLabel,departures.length,false,`goToDashboardFilter('departuresRange','Check-outs Due \xb7 ${esc(rangeLabel)}')`)}${tile('New Requests \xb7 '+rangeLabel,newRequests.length,false,`goToDashboardFilter('newRequestsRange','New Requests \xb7 ${esc(rangeLabel)}')`)}${tile('Currently In-House',inHouse.length,false,"goToDashboardFilter('inHouse','Currently In-House')")}${tile('Expired Reservations',expiredReservations.length,expiredReservations.length>0,"goToDashboardFilter('expiredReservations','Expired Reservations')")}${(()=>{const warn=overdueCheckins.length>0||overdueCheckouts.length>0;const id=registerRowsFilter([...overdueCheckins,...overdueCheckouts],'Overdue In / Out');return `<div class="dashtile ${warn?'dashtile-warn':''}" onclick="goToPendingFilter(${id})"><div class="dashtile-count">${esc(overdueCheckins.length)}/${esc(overdueCheckouts.length)}</div><div class="dashtile-label">Overdue in / out</div></div>`;})()}${tile('Occupancy Today',occ.percent+'%',false,"goToView('bulk')")}${tile('Blocked / Maintenance \xb7 '+rangeLabel,activeBlocks.length,activeBlocks.length>0,"goToView('blocks')")}</div><div class="section-divider"></div><div class="dashgrid">${(()=>{
+      // Revenue tile — always today
+      const revTile=`<div class="dashtile dashtile-static" id="tile-today-revenue"><div class="dashtile-count">${esc(formatMoney(revenue.todayRevenue,currency))}</div><div class="dashtile-label">Today's Revenue</div></div>`;
+      // Outstanding — all active bookings
+      const outTile=`<div class="dashtile dashtile-static" id="tile-outstanding"><div class="dashtile-count">${esc(formatMoney(revenue.outstanding,currency))}</div><div class="dashtile-label">Outstanding Balance</div></div>`;
+      // Arrivals/Departures — respect the date filter range
+      const arrId=registerRowsFilter(getArrivalsInRange(range),'Arrivals \xb7 '+rangeLabel);
+      const depId=registerRowsFilter(getDeparturesInRange(range),'Departures \xb7 '+rangeLabel);
+      const arrTile=`<div class="dashtile" id="tile-arrivals" onclick="goToPendingFilter(${arrId})"><div class="dashtile-count">${getArrivalsInRange(range).length}</div><div class="dashtile-label">Arrivals \xb7 ${esc(rangeLabel)}</div></div>`;
+      const depTile=`<div class="dashtile" id="tile-departures" onclick="goToPendingFilter(${depId})"><div class="dashtile-count">${getDeparturesInRange(range).length}</div><div class="dashtile-label">Departures \xb7 ${esc(rangeLabel)}</div></div>`;
+      // Source breakdown — filter by range
+      const rangeBookings=range?APP.state.bookings.filter(b=>{if(b.SoftDeleted)return false;const d=displayDate(b.CheckInDate);return d>=range[0]&&d<=range[1];}):APP.state.bookings.filter(b=>!b.SoftDeleted);
+      const srcMap={}; rangeBookings.forEach(b=>{const s=String(b.Source||'unknown').toLowerCase();srcMap[s]=(srcMap[s]||0)+1;});
+      const srcTiles=Object.entries(srcMap).map(([src,count])=>{const id=registerRowsFilter(rangeBookings.filter(b=>String(b.Source||'unknown').toLowerCase()===src),src.charAt(0).toUpperCase()+src.slice(1)+' Bookings \xb7 '+rangeLabel);return `<div class="dashtile" id="tile-src-${esc(src)}" onclick="goToPendingFilter(${id})"><div class="dashtile-count">${count}</div><div class="dashtile-label">${esc(src.charAt(0).toUpperCase()+src.slice(1))} Bookings \xb7 ${esc(rangeLabel)}</div></div>`;}).join('');
+      // Stand type utilization — occupancy within the filter range
+      const utilTiles=utilization.map(u=>`<div class="dashtile" id="tile-util-${esc(u.id)}" onclick="goToStandsFiltered('${esc(u.id)}')"><div class="dashtile-count">${esc(String(u.occupied))}/${esc(String(u.total))}</div><div class="dashtile-label">${esc(u.name)} Utilization</div></div>`).join('');
+      return revTile+outTile+arrTile+depTile+srcTiles+utilTiles;
+    })()}</div><div class="section-divider"></div><div class="weekgrid">${weekDayCard('Check-ins This Week','CheckInDate',['reserved','confirmed','part-paid'],checkInStandBreakdown)}<div class="week-vdivider"></div>${weekDayCard('Check-outs This Week','CheckOutDate',['checked-in','confirmed','part-paid','reserved'],checkOutStandBreakdown)}</div>${attnTiles.length?`<div class="section-divider"></div><div class="dashgrid">${attnTiles.join('')}</div>`:''}</div>`;
 }
 function setDashboardTab(tab){APP.dashboardTab=tab;renderActive();}
 function setStandPerfSort(sortBy){APP.standPerfSortBy=sortBy;renderActive();}
@@ -873,7 +1408,7 @@ async function quickStatusChangeFromRow(bookingId,newStatus,sendEmail,emailEvent
   const actionLabel=newStatus==='checked-in'?'Checking in ':newStatus==='checked-out'?'Checking out ':'Updating ';
   showActionModal(actionLabel+guestName+'\u2026');
   try{
-    const res=await apiCall('changeBookingStatus',{BookingID:bookingId,NewStatus:newStatus,Actor:APP.userEmail||APP.role||'admin'},'POST');
+    const res=await sbChangeBookingStatus(bookingId,newStatus,APP.userEmail||APP.role||'admin');
     if(!res.success){actionModalError(res.error||'Could not update status');return;}
     booking.Status=newStatus;booking.UpdatedAt=new Date().toISOString();
     buildBulk();renderStats();renderActive();
@@ -957,7 +1492,7 @@ async function saveResortDefaults(){
     const holdHours=Number(document.getElementById('rdHoldHours')?.value||2);
     const existing=Object.assign({},APP.state.resortDefaults);delete existing.PublicHolidaysList;
     const body=Object.assign(existing,{ResortID:APP.resortId,DefaultCurrency:document.getElementById('rdCurrency')?.value||'ZAR',DefaultCheckInTime:document.getElementById('rdCheckIn')?.value||'14:00',DefaultCheckOutTime:document.getElementById('rdCheckOut')?.value||'10:00',DefaultHoldMinutes:Math.round(holdHours*60),DefaultMinNights:document.getElementById('rdMinNights')?.value||1,DefaultMaxNights:document.getElementById('rdMaxNights')?.value||21,DefaultDepositMode:document.getElementById('rdDepositMode')?.value||'percentage',DefaultDepositValue:document.getElementById('rdDepositValue')?.value||0,AgeToddlerMax:document.getElementById('rdAgeToddlerMax')?.value||2,AgeChildMax:document.getElementById('rdAgeChildMax')?.value||12,PreHolidayTreatment:document.getElementById('rdPreHolidayTreatment')?.value||'offPeak',SeasonRulesJSON:JSON.stringify(APP._seasonRulesDraft||{peak:[],shoulder:[]}),Active:true,SoftDeleted:false});
-    const res=await apiCall('upsertResortDefaults',body,'POST');if(!res.success)throw new Error(res.error||'Save failed');
+    const res=await sbUpsertResortDefaults(body);if(!res.success)throw new Error(res.error||'Save failed');
     APP.state.resortDefaults=Object.assign({},APP.state.resortDefaults,body);
     if(msg)msg.innerHTML=`<div class="notice ok">Saved.</div>`;setTimeout(()=>{if(msg)msg.innerHTML='';},3000);
   }catch(err){if(msg)msg.innerHTML=`<div class="notice bad">${esc(err.message||String(err))}</div>`;}finally{if(btn)btn.disabled=false;}
@@ -998,7 +1533,7 @@ ${canAccessView('reallocate')?`<div style="display:flex;gap:6px;margin-top:6px">
 
 
 async function loadAndRenderPayments(bookingId) {
-  try { const res=await apiCall('listPayments',{bookingId},'GET'); if(!res.success)throw new Error(res.error||'Failed'); APP.paymentsCache[bookingId]=(res.payments||[]).filter(p=>!truthy(p.SoftDeleted)); } catch(err) { APP.paymentsCache[bookingId]=APP.paymentsCache[bookingId]||[]; }
+  try { const payments=await sbLoadPaymentsForBooking(bookingId); APP.paymentsCache[bookingId]=payments; } catch(err) { APP.paymentsCache[bookingId]=APP.paymentsCache[bookingId]||[]; }
   renderPaymentsList(bookingId);
 }
 function renderPaymentsList(bookingId) {
@@ -1034,7 +1569,7 @@ async function submitPayment(bookingId){
   const booking=APP.state.bookings.find(b=>b.BookingID===bookingId);
   msg.innerHTML=`<div class="notice info">Recording payment\u2026</div>`;
   try {
-    const res=await apiCall('appendPayment',{BookingID:bookingId,ResortID:booking?.ResortID||APP.resortId,PaymentType:typeEl?.value||'deposit',PaymentStatus:'completed',PaymentMethod:methodEl?.value||'EFT',Amount:amount,Currency:booking?.Currency||'ZAR',Reference:refEl?.value||'',PaidAt:new Date().toISOString(),CapturedAt:new Date().toISOString(),ReceivedBy:APP.userEmail||APP.role||'admin',Notes:notesEl?.value||'',CreatedAt:new Date().toISOString(),UpdatedAt:new Date().toISOString(),SoftDeleted:false},'POST');
+    const res=await sbAppendPayment({BookingID:bookingId,ResortID:booking?.ResortID||APP.resortId,PaymentType:typeEl?.value||'deposit',PaymentStatus:'completed',PaymentMethod:methodEl?.value||'EFT',Amount:amount,Currency:booking?.Currency||'ZAR',Reference:refEl?.value||'',PaidAt:new Date().toISOString(),CapturedAt:new Date().toISOString(),ReceivedBy:APP.userEmail||APP.role||'admin',Notes:notesEl?.value||''});
     if(!res.success)throw new Error(res.error||'Failed to record payment');
     if(amountEl)amountEl.value=''; if(refEl)refEl.value=''; if(notesEl)notesEl.value='';
     const optimisticPayment={BookingID:bookingId,ResortID:booking?.ResortID||APP.resortId,PaymentType:typeEl?.value||'deposit',PaymentStatus:'completed',PaymentMethod:methodEl?.value||'EFT',Amount:amount,Currency:booking?.Currency||'ZAR',Reference:refEl?.value||'',PaidAt:new Date().toISOString(),ReceivedBy:APP.userEmail||APP.role||'admin',Notes:notesEl?.value||'',SoftDeleted:false,_optimistic:true};
@@ -1061,7 +1596,7 @@ async function submitQuickStatusChange(bookingId){
   if(!booking||!newStatus||!msg)return;
   if(newStatus===booking.Status){msg.innerHTML=`<div class="notice info">Status is already "${esc(newStatus)}".</div>`;return;}
   msg.innerHTML=`<div class="notice info">Updating status\u2026</div>`;if(btn)btn.disabled=true;
-  try{const res=await apiCall('changeBookingStatus',{BookingID:bookingId,NewStatus:newStatus,Actor:APP.userEmail||APP.role||'admin'},'POST');if(!res.success)throw new Error(res.error||'Status change failed');const oldSt=booking.Status;booking.Status=newStatus;booking.UpdatedAt=new Date().toISOString();buildBulk();renderStats();renderActive();selectBooking(bookingId);if(qsEmail)await sendBookingEmailToGuest(bookingId,'status_change',{newStatus,oldStatus:oldSt});}
+  try{const res=await sbChangeBookingStatus(bookingId,newStatus,APP.userEmail||APP.role||'admin');if(!res.success)throw new Error(res.error||'Status change failed');const oldSt=booking.Status;booking.Status=newStatus;booking.UpdatedAt=new Date().toISOString();buildBulk();renderStats();renderActive();selectBooking(bookingId);if(qsEmail)await sendBookingEmailToGuest(bookingId,'status_change',{newStatus,oldStatus:oldSt});}
   catch(err){msg.innerHTML=`<div class="notice bad">${esc(err.message||String(err))}</div>`;if(btn)btn.disabled=false;}
 }
 function selectStand(id){const s=APP.state.stands.find(x=>x.StandID===id);if(!s)return;APP.selected={kind:'stand',data:s};renderInspector(APP.selected);}
@@ -1271,7 +1806,7 @@ function openGraphModal(el,title){const svg=el.querySelector('svg');if(!svg)retu
 // ── USER MANAGEMENT ──────────────────────────────────────────────────────────
 async function loadUsersView() {
   try {
-    const res = await apiCall('listUsers', {}, 'GET');
+    const res = await gasCall('listUsers', {}, 'GET');
     if (!res.success) throw new Error(res.error || 'Failed to load users');
     APP.state.users = res.users || [];
     const pill = document.getElementById('userCountPill');
@@ -1383,7 +1918,7 @@ async function deleteUser(email) {
   const msg = document.getElementById('uMsg');
   if (msg) msg.innerHTML = '<div class="notice info">Removing\u2026</div>';
   try {
-    const res = await apiCall('upsertUser', { Email: email, ResortID: APP.resortId, SoftDeleted: 'true' }, 'POST');
+    const res = await gasCall('upsertUser', { Email: email, ResortID: APP.resortId, SoftDeleted: 'true' }, 'POST');
     if (!res.success) throw new Error(res.error || 'Failed');
     APP.selected = null;
     renderInspector(null);
@@ -1406,7 +1941,7 @@ async function saveSelfPassword() {
   }
   if (msg) msg.innerHTML = '<div class="notice info">Saving\u2026</div>';
   try {
-    const res = await apiCall('changeOwnPassword', { Password: newPw }, 'POST');
+    const res = await sb.auth.updateUser({ password: newPw }).then(({error})=>error?{success:false,error:error.message}:{success:true});
     if (!res.success) throw new Error(res.error || 'Failed');
     if (msg) msg.innerHTML = '<div class="notice ok">Password changed successfully.</div>';
     const f1 = document.getElementById('selfNewPw');
@@ -1451,7 +1986,7 @@ async function saveUser() {
   const permsStr = useDefaults ? '' : ALL_PERM_KEYS.filter(k => document.getElementById('uperm_'+k)?.checked).join(',');
   if(msg) msg.innerHTML=`<div class="notice info">Saving…</div>`;
   try {
-    const res = await apiCall('upsertUser', {
+    const res = await gasCall('upsertUser', {
       Email: email, Name: name, Password: password || '',
       Role: role, Active: active ? 'true' : 'false',
       Permissions: permsStr, Notes: notes, ResortID: APP.resortId
@@ -2130,10 +2665,10 @@ document.addEventListener('click', function(e) {
 }, false);
 // ── Cross-page navigation — carries session through URL ───────────────────────
 function navigateToPage_(page) {
-  const params = new URLSearchParams(location.search);
-  const session = getSession();
-  if (session) params.set('_ks', session);   // _ks = KampKiepie session handoff
-  window.location.href = page + '?' + params.toString();
+  // Session is managed by Supabase — just pass the resort ID.
+  const params = new URLSearchParams();
+  if (APP.resortId) params.set('resort', APP.resortId);
+  window.location.href = page + (params.toString() ? '?' + params.toString() : '');
 }
 
 // ── Commission Split Modal ────────────────────────────────────────────────────
@@ -2254,72 +2789,50 @@ async function saveTier(){
 async function deleteTierRow(tierId){
   if(!confirm(`Delete tier "${tierId}"? This cannot be undone.`))return;
   try{
-    const res=await apiCall('deleteTier',{TierID:tierId},'POST');if(!res.success)throw new Error(res.error||'Failed');
+    const res=await gasCall('deleteTier',{TierID:tierId},'POST');if(!res.success)throw new Error(res.error||'Failed');
     TIERS_DATA=TIERS_DATA.filter(t=>t.TierID!==tierId);renderTiersTable();
   }catch(err){alert(err.message);}
 }
 
 async function boot() {
-  const cfg = await bootstrapConfig();
-  const urlParams = new URLSearchParams(location.search);
+  await loadConfig();
+  createMonthKeys();
+  APP.resortId = getQueryResortId();
+  showConnectMessage('Loading booking data\u2026');
+  setApiState('Connecting\u2026', null);
 
-  // ── Pick up cross-page session handoff ────────────────────────────────────
-  const handoffSession = urlParams.get('_ks');
-  if (handoffSession) {
-    setSession(handoffSession);
-    urlParams.delete('_ks');
-    history.replaceState({}, '', location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : ''));
+  // Restore Supabase session
+  const { data: { session }, error: sessErr } = await sb.auth.getSession();
+  if (sessErr || !session) {
+    showAuthRequired('Please sign in through the Admin Portal.');
+    return;
   }
 
-  const bootstrapToken = urlParams.get('token');
-  const urlResortId = urlParams.get('resort');
-  if (urlResortId) APP.resortId = urlResortId;
-  if (bootstrapToken) {
-    urlParams.delete('token');
-    const cleanQuery = urlParams.toString();
-    history.replaceState({}, '', location.pathname + (cleanQuery ? '?' + cleanQuery : ''));
-  }
-  if (!cfg) { setApiState('Not connected', false); showConnectRetry('Booking system is not configured yet. Enter your Apps Script URL below.'); return; }
-  if (bootstrapToken) {
-    showConnectMessage('Waking up the server…');
-    // Ping first to warm up GAS before spending the one-use token
-    let warmed = false;
-    for (let attempt = 1; attempt <= 5; attempt++) {
-      try {
-        if (attempt > 1) await new Promise(r => setTimeout(r, 2000));
-        setConnectProgress('Waking up the flock…' + (attempt > 1 ? ' (' + attempt + '/5)' : ''));
-        const ping = await apiCall('ping', {}, 'GET');
-        if (ping && ping.success) { warmed = true; break; }
-      } catch(e) { /* still cold */ }
-    }
-    if (!warmed) {
-      showAuthRequired('Could not reach the booking server. Please go back and try again.');
-      return;
-    }
-    showConnectMessage('Verifying your login…');
-    try {
-      const res = await apiCall('exchangeBootstrapToken', { token: bootstrapToken }, 'GET');
-      if (!res.success) throw new Error(res.error || 'Login link invalid');
-      setSession(res.session);
-      if (res.requestedResortId) APP.resortId = res.requestedResortId;
-    } catch (err) {
-      showAuthRequired('Could not verify your login — ' + (err.message || String(err)) + '. Go back to the Admin Portal and click Manage Bookings again.');
-      return;
-    }
-  }
-  if (!getSession()) { showAuthRequired('Please sign in through the Admin Portal to continue.'); return; }
-  // Retry connect to handle GAS cold-start
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      if (attempt > 1) {
-        setConnectProgress('Warming up\u2026 retrying (' + attempt + '/3)');
-        await new Promise(r => setTimeout(r, 2500));
-      }
-      await attemptConnect();
-      break;
-    } catch(e) {
-      if (attempt === 3) showConnectRetry('Could not connect. Click Connect to try again.');
-    }
+  // Read identity from JWT app_metadata
+  let meta = {};
+  try {
+    const claims = JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    meta = claims.app_metadata || {};
+  } catch(_) {}
+  if (!meta.role && !meta.resort_id) meta = session.user?.app_metadata || {};
+
+  APP.userEmail  = session.user?.email || '';
+  APP.resortRole = meta.role || 'Super';
+  APP.resortId   = meta.role === 'KampKiepie'
+    ? (getQueryResortId() || meta.resort_id || APP.resortId)
+    : String(meta.resort_id || getQueryResortId() || APP.resortId);
+  APP.role = meta.role === 'KampKiepie' ? 'superadmin' : 'resort';
+
+  try {
+    await initLiveData();
+    hideConnectGate();
+    applySessionIdentity();
+    lastLiveUpdate = new Date(); updateLiveIndicator();
+    startLivePolling();
+  } catch(err) {
+    console.warn(err);
+    setApiState('Offline', false);
+    showConnectRetry('Could not load data: ' + (err.message || err));
   }
 }
 boot();

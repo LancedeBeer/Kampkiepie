@@ -178,6 +178,7 @@ td.num,th.num{text-align:right;}
     <div class="rbox-body" id="refundModalBody"></div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── Shared utilities ──────────────────────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -186,51 +187,17 @@ function displayDate(v){const s=String(v||'').trim();if(!s)return'';return s.inc
 function formatMoney(amount,currency){const sym={ZAR:'R',USD:'$',EUR:'€',GBP:'£'};const s=currency?(sym[String(currency).toUpperCase()]||String(currency)+' '):'R';return s+Math.round(Number(amount||0)).toLocaleString();}
 function pct(n,d){return d?Math.round((n/d)*100)+'%':'0%';}
 
-// ── Session ───────────────────────────────────────────────────────────────────
-function getSession(){return sessionStorage.getItem('kkSession')||'';}
-function setSession(t){if(t)sessionStorage.setItem('kkSession',t);}
-function decodeSessionPayload(token){
-  try{const b64=String(token||'').split('.')[0].replace(/-/g,'+').replace(/_/g,'/');
-  let p=b64;while(p.length%4)p+='=';return JSON.parse(decodeURIComponent(escape(atob(p))));}
-  catch(e){return null;}
-}
+// ── Supabase client ───────────────────────────────────────────────────────────
+const SUPABASE_URL      = 'https://vgqxaubluvqjbvzgsvze.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZncXhhdWJsdXZxamJ2emdzdnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MDI5MzEsImV4cCI6MjEwNDk3ODkzMX0.YSrWrmIREgwYXdW2l6OVbegsymxNC8yHO6uMePFTSoo';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── Config + API ──────────────────────────────────────────────────────────────
-let __API_URL='';
-async function bootstrapConfig(){
-  try{
-    const r=await fetch('config.txt',{cache:'no-store'});
-    if(!r.ok)return '';
-    const text=await r.text();
-    const line=text.split(/\r?\n/).find(l=>l.trim().startsWith('adminbackend_script'));
-    if(line){const url=line.split(':').slice(1).join(':').trim();__API_URL=url;return url;}
-  }catch(_){}
-  return localStorage.getItem('kkAdminBackendApi')||'';
-}
-async function apiCall(action,params={},method='GET'){
-  if(!__API_URL)throw new Error('API not configured');
-  const payload=Object.assign({action,resortId:APP.resortId},params);
-  const infoId=localStorage.getItem('kkResortInfoSheetId')||'';
-  if(infoId)payload.resortInfoSheetId=infoId;
-  const session=getSession();
-  if(session&&action!=='exchangeBootstrapToken')payload.session=session;
-  if(method==='GET'){
-    const url=new URL(__API_URL);
-    Object.entries(payload).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
-    url.searchParams.set('_ts',Date.now());
-    const res=await fetch(url.toString(),{method:'GET',redirect:'follow',cache:'no-store'});
-    const result=JSON.parse(await res.text());
-    if(result&&result.requireLogin){showAuthRequired('Session expired.');throw new Error('Session expired');}
-    return result;
-  }else{
-    const form=new URLSearchParams();
-    Object.entries(payload).forEach(([k,v])=>form.set(k,typeof v==='object'?JSON.stringify(v):String(v)));
-    const res=await fetch(__API_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:form.toString()});
-    const result=JSON.parse(await res.text());
-    if(result&&result.requireLogin){showAuthRequired('Session expired.');throw new Error('Session expired');}
-    return result;
-  }
-}
+// ── Column maps (Supabase snake_case → PascalCase for report rendering) ───────
+function sbToBooking(r){return{BookingID:r.booking_id,ResortID:r.resort_id,StandID:r.stand_id,StandTypeID:r.stand_type_id,BookingRef:r.booking_ref,GuestFirstName:r.guest_first_name,GuestLastName:r.guest_last_name,GuestFullName:r.guest_full_name,GuestEmail:r.guest_email,CheckInDate:r.check_in_date,CheckOutDate:r.check_out_date,Nights:r.nights,Status:r.status,Source:r.source,BookingChannel:r.booking_channel,TotalSnapshot:r.total_snapshot,DepositPaidSnapshot:r.deposit_paid_snapshot,BalanceSnapshot:r.balance_snapshot,Currency:r.currency,CommsSnapshot:r.comms_snapshot,SoftDeleted:r.soft_deleted};}
+function sbToPayment(r){return{PaymentID:r.payment_id,BookingID:r.booking_id,ResortID:r.resort_id,PaymentType:r.payment_type,PaymentMethod:r.payment_method,Amount:r.amount,Currency:r.currency,Reference:r.reference,PaidAt:r.paid_at,ReceivedBy:r.received_by,Notes:r.notes,SoftDeleted:r.soft_deleted};}
+function sbToStand(r){return{StandID:r.stand_id,ResortID:r.resort_id,StandNumber:r.stand_number,StandName:r.stand_name,StandTypeID:r.stand_type_id,Currency:r.currency,Active:r.active,SoftDeleted:r.soft_deleted};}
+function sbToStandType(r){return{StandTypeID:r.stand_type_id,ResortID:r.resort_id,StandTypeName:r.stand_type_name,Active:r.active,SoftDeleted:r.soft_deleted};}
+
 
 // ── App state ─────────────────────────────────────────────────────────────────
 const APP={resortId:'1',resortName:'',role:'',userEmail:'',
@@ -251,10 +218,8 @@ function hideConnectGate(){
   document.getElementById('periodBar').classList.remove('hidden');
 }
 function goBack(){
-  const session=getSession();
   const params=new URLSearchParams();
   if(APP.resortId)params.set('resort',APP.resortId);
-  if(session)params.set('_ks',session);
   window.location.href='adminbackend.html'+(params.toString()?'?'+params.toString():'');
 }
 
@@ -294,47 +259,48 @@ function onPeriodChange(){
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 async function boot(){
-  const cfg=await bootstrapConfig();
-  const urlParams=new URLSearchParams(location.search);
-  const handoff=urlParams.get('_ks');
-  const urlResort=urlParams.get('resort');
-  if(urlResort)APP.resortId=urlResort;
-  if(handoff){
-    setSession(handoff);
-    urlParams.delete('_ks');
-    history.replaceState({},'',location.pathname+(urlParams.toString()?'?'+urlParams.toString():''));
-  }
-  if(!cfg){showAuthRequired('Booking system not configured.');return;}
-  if(!getSession()){showAuthRequired('Please sign in through the Admin Portal.');return;}
-  // Read identity from session
-  const payload=decodeSessionPayload(getSession());
-  if(payload){
-    APP.role=payload.role||'';APP.userEmail=payload.userEmail||'';
-    APP.resortId=payload.resortId||APP.resortId;
-    document.getElementById('rolePill').textContent=payload.resortRole||payload.role||'';
-  }
-  // Load data
-  document.getElementById('connectMsg').textContent='Loading data…';
-  try{
-    const [bootsR,standsR,bookingsR,paymentsR,standTypesR]=await Promise.all([
-      apiCall('getBootPayload',{resortId:APP.resortId},'GET'),
-      apiCall('listStands',{},'GET'),
-      apiCall('listBookings',{},'GET'),
-      apiCall('listPayments',{},'GET'),
-      apiCall('listStandTypes',{},'GET'),
+  const urlParams = new URLSearchParams(location.search);
+  const urlResort = urlParams.get('resort');
+  if (urlResort) APP.resortId = urlResort;
+
+  // Restore Supabase session
+  const { data: { session }, error } = await sb.auth.getSession();
+  if (error || !session) { showAuthRequired('Please sign in through the Admin Portal.'); return; }
+
+  // Read identity from JWT
+  let meta = {};
+  try {
+    const claims = JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+    meta = claims.app_metadata || {};
+  } catch(_) {}
+  if (!meta.role && !meta.resort_id) meta = session.user?.app_metadata || {};
+
+  APP.userEmail = session.user?.email || '';
+  APP.role      = meta.role || '';
+  if (!urlResort) APP.resortId = String(meta.resort_id || APP.resortId);
+  document.getElementById('rolePill').textContent = meta.role || '';
+
+  document.getElementById('connectMsg').textContent = 'Loading report data…';
+  try {
+    const [resortR, standsR, bookingsR, paymentsR, standTypesR] = await Promise.all([
+      sb.from('resorts').select('resort_name').eq('resort_id', APP.resortId).single(),
+      sb.from('stands').select('stand_id,resort_id,stand_number,stand_name,stand_type_id,currency,active,soft_deleted').eq('resort_id', APP.resortId),
+      sb.from('bookings').select('*').eq('resort_id', APP.resortId),
+      sb.from('booking_payments').select('payment_id,booking_id,resort_id,payment_type,payment_method,amount,currency,reference,paid_at,received_by,notes,soft_deleted').eq('resort_id', APP.resortId),
+      sb.from('stand_types').select('stand_type_id,resort_id,stand_type_name,active,soft_deleted').eq('resort_id', APP.resortId),
     ]);
-    if(bootsR.success&&bootsR.payload){
-      APP.resortName=bootsR.payload.resortName||'Resort '+APP.resortId;
-      document.getElementById('resortPill').textContent=APP.resortName;
+    if (!resortR.error && resortR.data) {
+      APP.resortName = resortR.data.resort_name || ('Resort ' + APP.resortId);
+      document.getElementById('resortPill').textContent = APP.resortName;
     }
-    APP.state.stands=(standsR.stands||[]).filter(s=>!truthy(s.SoftDeleted));
-    APP.state.bookings=(bookingsR.bookings||[]).filter(b=>!truthy(b.SoftDeleted));
-    APP.state.payments=(paymentsR.payments||[]).filter(p=>!truthy(p.SoftDeleted));
-    APP.state.standTypes=(standTypesR.standTypes||[]).filter(t=>!truthy(t.SoftDeleted));
+    APP.state.stands      = (standsR.data     || []).map(sbToStand).filter(s => !s.SoftDeleted && truthy(s.Active));
+    APP.state.bookings    = (bookingsR.data    || []).map(sbToBooking).filter(b => !b.SoftDeleted);
+    APP.state.payments    = (paymentsR.data    || []).map(sbToPayment).filter(p => !p.SoftDeleted);
+    APP.state.standTypes  = (standTypesR.data  || []).map(sbToStandType).filter(t => !t.SoftDeleted);
     hideConnectGate();
     generateReports();
-  }catch(err){
-    showAuthRequired('Could not load data: '+(err.message||err));
+  } catch(err) {
+    showAuthRequired('Could not load data: ' + (err.message || err));
   }
 }
 

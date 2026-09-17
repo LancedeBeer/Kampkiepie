@@ -610,7 +610,7 @@ async function loadEdit(resortId) {
   showMsg('editMsg', '');
   document.getElementById('btnManageImages').style.display = 'none';
   document.getElementById('editWrap').innerHTML = '<div class="spin-wrap"><div class="spin"></div>Loading resort data...</div>';
-  const { data, error } = await sb.from('resorts').select('*').eq('resort_id', resortId).single();
+  const { data, error } = await sb.from('resorts').select('*').eq('resort_id', resortId).maybeSingle();
   if (error || !data) {
     document.getElementById('editWrap').innerHTML = '<div class="msg msg-err">' + esc((error && error.message) || 'Resort not found') + '</div>';
     return;
@@ -1223,14 +1223,13 @@ async function goToBookingBackend() {
   const btn = document.getElementById('btnManageBookings');
   if (btn) { btn.disabled = true; btn.textContent = 'Opening\u2026'; }
   try {
+    // Supabase session persists in the browser — just navigate directly.
+    // adminbackend.js will pick up the session via sb.auth.getSession() on load.
     const { data: { session } } = await sb.auth.getSession();
-    if (!session) throw new Error('Not authenticated');
-    const res = await apiBackend({ action:'mintBootstrapFromJWT', token: session.access_token, resortId });
-    if (!res.success) throw new Error(res.error || 'Could not open booking system');
-    window.location.href = '../adminbackend.html?resort=' + encodeURIComponent(resortId) + '&token=' + encodeURIComponent(res.token);
+    if (!session) throw new Error('Not authenticated — please log in again.');
+    window.location.href = 'adminbackend.html?resort=' + encodeURIComponent(resortId);
   } catch(err) {
     alert('Could not open booking system: ' + (err.message || err));
-  } finally {
     if (btn) { btn.disabled = false; btn.textContent = '\uD83D\uDCC5 Manage Bookings'; }
   }
 }

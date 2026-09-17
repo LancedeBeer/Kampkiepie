@@ -253,10 +253,17 @@ tr:hover td{background:#fffdfa}
         <div class="flex">
           <input class="input" id="search" style="width:208px" placeholder="Search stands, bookings, refs..." oninput="clearDashboardFilterAndRender()">
           <select class="select" id="dateFilter" style="width:auto;height:28px;padding:0 10px;font-size:11px" onchange="clearDashboardFilterAndRender()">
-            <option value="">Any date</option><option value="today" selected>Today</option>
-            <option value="tomorrow">Tomorrow</option><option value="lastWeek">Last week</option>
-            <option value="nextWeek">Next week</option><option value="lastMonth">Last month</option>
-            <option value="nextMonth">Next month</option><option value="lastYear">Last year</option>
+            <option value="">Any date</option>
+            <option value="today">Today</option>
+            <option value="tomorrow">Tomorrow</option>
+            <option value="lastWeek">Last week</option>
+            <option value="thisWeek">This week</option>
+            <option value="nextWeek">Next week</option>
+            <option value="lastMonth">Last month</option>
+            <option value="thisMonth" selected>This month</option>
+            <option value="nextMonth">Next month</option>
+            <option value="lastYear">Last year</option>
+            <option value="thisYear">This year</option>
             <option value="nextYear">Next year</option>
           </select>
           <select class="select" id="filter" style="width:auto" onchange="clearDashboardFilterAndRender()">
@@ -283,8 +290,8 @@ tr:hover td{background:#fffdfa}
 <div class="modal" id="graphModal" onclick="if(event.target.id==='graphModal')closeModal('graphModal')" style="padding:20px"><div style="background:#fff;border-radius:18px;padding:24px 24px 16px;width:min(1200px,95vw);max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.28)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="panel-t" id="graphModalTitle">Chart</div><button class="btn btn-soft" onclick="closeModal('graphModal')">x Close</button></div><div id="graphModalBody" style="width:100%;min-height:320px"></div></div></div>
 <div class="modal" id="resetModal" onclick="modalBackdrop(event,'resetModal')"><div class="modal-box" style="max-width:500px"><div class="modal-h"><div class="panel-t" style="color:var(--bad)">Reset Resort Data</div><button class="btn btn-soft" onclick="closeModal('resetModal')">Cancel</button></div><div class="modal-b"><div class="notice bad" style="margin-bottom:14px">This permanently hard-deletes records. This cannot be undone.</div><div class="form-grid" style="margin-bottom:14px"><label class="check"><input type="checkbox" id="rst_Bookings"> Bookings</label><label class="check"><input type="checkbox" id="rst_Payments"> Payments</label><label class="check"><input type="checkbox" id="rst_BookingEvents"> Booking Events</label><label class="check"><input type="checkbox" id="rst_CalendarBlocks"> Calendar Blocks</label><label class="check"><input type="checkbox" id="rst_Stands" onchange="document.getElementById('rst_StandTypes').disabled=!this.checked"> Stands</label><label class="check"><input type="checkbox" id="rst_StandTypes" disabled> Stand Types</label><label class="check"><input type="checkbox" id="rst_ResortDefaults"> Resort Defaults</label><label class="check"><input type="checkbox" id="rst_AuditLog"> Audit Log</label><label class="check"><input type="checkbox" id="rst_NewsletterSignups"> Newsletter Signups</label></div><div class="field" style="margin-bottom:14px"><label>Type <strong>Delete Forever!</strong> to confirm</label><input class="input" id="resetConfirmInput" oninput="document.getElementById('resetConfirmBtn').disabled=this.value!=='Delete Forever!'"></div><button class="btn btn-bad" id="resetConfirmBtn" disabled style="width:100%" onclick="submitReset()">Delete Selected Data</button><div id="resetMsg" style="margin-top:10px"></div></div></div></div>
 <div class="action-modal-ovl" id="actionModal"><div class="action-modal-box"><div class="action-modal-spin" id="actionModalSpin"></div><div class="action-modal-msg" id="actionModalMsg">Processing…</div><div class="action-modal-err" id="actionModalErr" style="display:none"></div><button class="action-modal-close" id="actionModalClose" style="display:none" onclick="closeActionModal()">Close</button></div></div>
-<script>window.KK_PAGE="operations";</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="adminbackend.js?v=20260901.6"></script>
+<script>window.KK_PAGE="operations";</script>
+<script src="adminbackend.js"></script>
 </body>
 </html>

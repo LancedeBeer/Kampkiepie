@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Redirect old dead pages first (single hop, absolute target)
+RewriteRule ^night$ https://www.kampkiepie.co.za/index2.html [L,R=301]
+RewriteRule ^promosie\.html$ https://www.kampkiepie.co.za/index.html [L,R=301]
+RewriteRule ^kontak\.html$ https://www.kampkiepie.co.za/contact.html [L,R=301]
+
+# Force HTTPS and www together in a single hop
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^ https://www.kampkiepie.co.za%{REQUEST_URI} [L,R=301]
