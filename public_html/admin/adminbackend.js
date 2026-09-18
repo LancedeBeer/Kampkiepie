@@ -53,6 +53,7 @@ const sbToStand     = function(r){
   if(r.pricing_json!==undefined)out.PricingJSON=r.pricing_json;
   if(r.occupancy_json!==undefined)out.OccupancyJSON=r.occupancy_json;
   if(r.stand_image_url!==undefined)out.StandImageURL=r.stand_image_url;
+  if(r.stand_visibility!==undefined)out.StandVisibility=r.stand_visibility;
   if(r.created_at!==undefined)out.CreatedAt=r.created_at;
   if(r.updated_at!==undefined)out.UpdatedAt=r.updated_at;
   return out;
@@ -409,6 +410,7 @@ async function sbUpsertStand(body) {
     features_json: body.FeaturesJSON || '[]',
     extras_json: body.ExtrasJSON || '[]',
     stand_image_url: body.StandImageURL || null,
+    stand_visibility: body.StandVisibility === false || body.StandVisibility === 'false' ? false : true,
     updated_at: new Date().toISOString(),
   };
   const { error } = await sb.from('stands').upsert(r, { onConflict: 'stand_id' });
@@ -1639,6 +1641,7 @@ function renderStandModal(data={}) {
     <div class="field"><label>Stand Number</label><input class="input" value="${esc(data.StandNumber||'')}"></div>
     <div class="field"><label>Stand Name</label><input class="input" value="${esc(data.StandName||'')}"></div>
     <div class="field"><label>Active</label><select class="select" id="standActive">${optionHtml('true','Active',data.Active===undefined||truthy(data.Active))}${optionHtml('false','Inactive',data.Active!==undefined&&!truthy(data.Active))}</select></div>
+    <div class="field"><label>Visible for Public Booking</label><label class="check" style="margin-top:6px"><input type="checkbox" id="standVisibility" ${data.StandVisibility===false||data.StandVisibility==='false'?'':' checked'}> <span>Allow guests to see and book this stand</span></label></div>
     <div class="field"><label>Stand Type</label><div class="flex"><select class="select" id="standTypeSelect" style="flex:1">${typeOptions}</select><button type="button" class="btn btn-soft" onclick="loadStandTypeDefaults()">Load Defaults</button></div></div>
     <div class="field"><label>Display Name</label><input class="input" value="${esc(data.DisplayName||'')}"></div>
     <div class="field full"><label>Description</label><textarea class="textarea">${esc(data.Description||'')}</textarea></div>
@@ -1784,7 +1787,7 @@ function renderStandTypeModal(data={}) {
   </div>`;
   if(document.getElementById('stPricingMode'))document.getElementById('stPricingMode').dataset.prevMode=pricingMode;
 }
-function standModalPayload(){const base=modalObject('standModal');base.StandImageURL=document.getElementById('standImageURL')?.value||'';base.AmenitiesJSON=textToJsonArray(document.getElementById('standAmenitiesJSON')?.value);base.FeaturesJSON=textToJsonArray(document.getElementById('standFeaturesJSON')?.value);base.ExtrasJSON=textToJsonArray(document.getElementById('standExtrasJSON')?.value);if(base.Description)base.Description=sanitizeText(base.Description);return base;}
+function standModalPayload(){const base=modalObject('standModal');base.StandImageURL=document.getElementById('standImageURL')?.value||'';base.StandVisibility=document.getElementById('standVisibility')?.checked!==false;base.AmenitiesJSON=textToJsonArray(document.getElementById('standAmenitiesJSON')?.value);base.FeaturesJSON=textToJsonArray(document.getElementById('standFeaturesJSON')?.value);base.ExtrasJSON=textToJsonArray(document.getElementById('standExtrasJSON')?.value);if(base.Description)base.Description=sanitizeText(base.Description);return base;}
 function standTypeModalPayload(){const mode=document.getElementById('stPricingMode')?.value||'flat';return{ResortID:document.getElementById('stResortID')?.value||APP.resortId,StandTypeID:document.getElementById('stStandTypeID')?.value||uid('TYPE'),StandTypeName:document.getElementById('stStandTypeName')?.value||'',PricingMode:mode,PricingJSON:collectPricingJSON(mode),DefaultDepositMode:document.getElementById('stDefaultDepositMode')?.value||'percentage',DefaultDepositValue:document.getElementById('stDefaultDepositValue')?.value||0,DefaultMinNights:document.getElementById('stDefaultMinNights')?.value||1,DefaultMaxNights:document.getElementById('stDefaultMaxNights')?.value||21,DefaultLeadTimeDays:document.getElementById('stDefaultLeadTimeDays')?.value||0,Active:document.getElementById('stActive')?.value==='true',DefaultAmenitiesJSON:textToJsonArray(document.getElementById('stDefaultAmenitiesJSON')?.value),DefaultFeaturesJSON:textToJsonArray(document.getElementById('stDefaultFeaturesJSON')?.value),DefaultExtrasJSON:textToJsonArray(document.getElementById('stDefaultExtrasJSON')?.value),DefaultOccupancyJSON:JSON.stringify({adults:Number(document.getElementById('stDefaultMaxAdults')?.value||0),children:Number(document.getElementById('stDefaultMaxChildren')?.value||0),toddlers:Number(document.getElementById('stDefaultMaxToddlers')?.value||0)})};}
 function renderRecordModal(){const body=document.getElementById('recordModalBody'),rec=APP.selected;if(!rec){body.innerHTML=`<div class="notice warn">Nothing selected.</div>`;return;}body.innerHTML=`<div class="notice info">Record data (read-only JSON view).</div><pre class="small mono" style="white-space:pre-wrap;overflow:auto;max-height:70vh;margin-top:12px">${esc(JSON.stringify(rec.data,null,2))}</pre>`;}
 function editRecord(kind,id){

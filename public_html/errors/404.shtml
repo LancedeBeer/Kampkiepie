@@ -135,8 +135,8 @@
       </p>
 
       <div class="buttons">
-        <a href="index.html" class="btn">🏕️ Tuis / Home</a>
-        <a href="kontak.html" class="btn secondary">📞 Kontak / Contact</a>
+        <a href="/index.html" class="btn">🏕️ Tuis / Home</a>
+        <a href="/contact.html" class="btn secondary">📞 Kontak / Contact</a>
       </div>
     </div>
 
